@@ -5,10 +5,7 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Employee Attendance</title>
 
@@ -105,6 +102,23 @@
             font-size: 16px;
         }
 
+        .refresh {
+            width: 100%;
+            padding: 14px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .refresh:active,
+        .logout:active {
+            transform: scale(0.98);
+        }
+
     </style>
 
 </head>
@@ -191,34 +205,57 @@
         <div class="location">
 
             <div>
+
                 Distance from Office:
+
                 <strong id="distance">
                     Checking...
                 </strong>
+
             </div>
 
 
             <div>
+
                 Office Radius:
+
                 <strong id="radius">
                     —
                 </strong>
+
             </div>
 
 
             <div>
+
+                GPS Accuracy:
+
+                <strong id="accuracy">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div>
+
                 Latitude:
+
                 <strong id="latitude">
                     —
                 </strong>
+
             </div>
 
 
             <div>
+
                 Longitude:
+
                 <strong id="longitude">
                     —
                 </strong>
+
             </div>
 
         </div>
@@ -227,6 +264,15 @@
         <p id="message">
             Office location की जानकारी ली जा रही है...
         </p>
+
+
+        <button
+            class="refresh"
+            onclick="requestLocation()">
+
+            📍 Refresh Location
+
+        </button>
 
     </div>
 
@@ -254,6 +300,7 @@
    SUPABASE CONFIG
 ===================================== */
 
+
 const SUPABASE_URL =
 "https://mxolpvdaengfpmlkgprc.supabase.co";
 
@@ -274,6 +321,7 @@ supabase.createClient(
    GLOBAL VARIABLES
 ===================================== */
 
+
 let currentEmployee = null;
 
 let office = null;
@@ -289,6 +337,7 @@ let isInside = false;
 /* =====================================
    GET CURRENT USER
 ===================================== */
+
 
 async function getCurrentUser() {
 
@@ -322,6 +371,7 @@ async function getCurrentUser() {
 /* =====================================
    LOAD EMPLOYEE
 ===================================== */
+
 
 async function loadEmployee(user) {
 
@@ -383,6 +433,7 @@ async function loadEmployee(user) {
    LOAD OFFICE
 ===================================== */
 
+
 async function loadOffice() {
 
     const ownerId =
@@ -435,10 +486,6 @@ async function loadOffice() {
     }
 
 
-    /*
-       सबसे नया office
-    */
-
     office =
         data[0];
 
@@ -459,6 +506,7 @@ async function loadOffice() {
 /* =====================================
    DISTANCE CALCULATION
 ===================================== */
+
 
 function calculateDistance(
     lat1,
@@ -536,6 +584,7 @@ function calculateDistance(
    TODAY DATE RANGE
 ===================================== */
 
+
 function getTodayRange() {
 
     const now =
@@ -584,6 +633,7 @@ function getTodayRange() {
    LOAD TODAY ATTENDANCE
 ===================================== */
 
+
 async function loadAttendance() {
 
     const range =
@@ -625,6 +675,12 @@ async function loadAttendance() {
             error
         );
 
+        document.getElementById(
+            "message"
+        ).innerText =
+            "Attendance load error: " +
+            error.message;
+
         return;
     }
 
@@ -650,10 +706,12 @@ async function loadAttendance() {
    MARK IN
 ===================================== */
 
+
 async function markIN(
     latitude,
     longitude
 ) {
+
 
     /*
        Already marked IN
@@ -702,6 +760,7 @@ async function markIN(
             error
         );
 
+
         document.getElementById(
             "message"
         ).innerText =
@@ -737,6 +796,7 @@ async function markIN(
 /* =====================================
    MARK OUT
 ===================================== */
+
 
 async function markOUT(
     latitude,
@@ -814,6 +874,7 @@ async function markOUT(
             error
         );
 
+
         document.getElementById(
             "message"
         ).innerText =
@@ -850,6 +911,7 @@ async function markOUT(
    HANDLE LOCATION
 ===================================== */
 
+
 async function handleLocation(
     position
 ) {
@@ -864,6 +926,14 @@ async function handleLocation(
 
     const accuracy =
         position.coords.accuracy;
+
+
+    console.log(
+        "GPS LOCATION:",
+        latitude,
+        longitude,
+        accuracy
+    );
 
 
     /*
@@ -882,9 +952,27 @@ async function handleLocation(
         longitude.toFixed(6);
 
 
+    document.getElementById(
+        "accuracy"
+    ).innerText =
+        Math.round(accuracy) +
+        " meters";
+
+
     /*
        Calculate distance
     */
+
+    if (!office) {
+
+        document.getElementById(
+            "message"
+        ).innerText =
+            "Office location अभी load नहीं हुई।";
+
+        return;
+    }
+
 
     const distance =
         calculateDistance(
@@ -893,9 +981,9 @@ async function handleLocation(
 
             longitude,
 
-            office.latitude,
+            Number(office.latitude),
 
-            office.longitude
+            Number(office.longitude)
 
         );
 
@@ -952,7 +1040,10 @@ async function handleLocation(
            First time entering
         */
 
-        if (!isInside) {
+        if (
+            !isInside &&
+            !currentAttendance
+        ) {
 
             isInside = true;
 
@@ -1016,7 +1107,59 @@ async function handleLocation(
    LOCATION ERROR
 ===================================== */
 
+
 function locationError(error) {
+
+    console.log(
+        "Location Error Code:",
+        error.code
+    );
+
+
+    console.log(
+        "Location Error Message:",
+        error.message
+    );
+
+
+    let msg = "";
+
+
+    if (error.code === 1) {
+
+        msg =
+            "Location permission BLOCK है। " +
+            "Browser में Location → Allow करें।";
+
+    }
+
+
+    else if (error.code === 2) {
+
+        msg =
+            "GPS location उपलब्ध नहीं है। " +
+            "Phone की Location/GPS ON करें।";
+
+    }
+
+
+    else if (error.code === 3) {
+
+        msg =
+            "GPS location लेने में समय लग रहा है। " +
+            "खुले स्थान पर जाकर दोबारा कोशिश करें।";
+
+    }
+
+
+    else {
+
+        msg =
+            "Location Error: " +
+            error.message;
+
+    }
+
 
     document.getElementById(
         "status"
@@ -1033,35 +1176,28 @@ function locationError(error) {
     document.getElementById(
         "message"
     ).innerText =
-        "Location Error: " +
-        error.message;
+        msg;
 
 }
 
 
 
 /* =====================================
-   START LOCATION TRACKING
+   REQUEST LOCATION
 ===================================== */
 
-function startLocationTracking() {
+
+function requestLocation() {
 
     if (!navigator.geolocation) {
 
-        document.getElementById(
-            "status"
-        ).innerText =
-            "⚠️ GPS उपलब्ध नहीं है";
-
-
-        document.getElementById(
-            "message"
-        ).innerText =
-            "इस browser/device में geolocation support नहीं है।";
-
+        locationError({
+            code: 2,
+            message:
+                "Geolocation browser में available नहीं है"
+        });
 
         return;
-
     }
 
 
@@ -1080,30 +1216,195 @@ function startLocationTracking() {
     document.getElementById(
         "message"
     ).innerText =
-        "Location permission माँगी जा रही है...";
+        "GPS location माँगी जा रही है...";
 
 
-    watchId =
-        navigator.geolocation.watchPosition(
+    navigator.geolocation.getCurrentPosition(
 
-            handleLocation,
+        function(position) {
 
-            locationError,
+            console.log(
+                "GPS SUCCESS:",
+                position
+            );
 
-            {
 
-                enableHighAccuracy:
-                    true,
+            handleLocation(
+                position
+            );
 
-                timeout:
-                    15000,
+        },
 
-                maximumAge:
-                    5000
+
+        function(error) {
+
+            console.log(
+                "GPS ERROR:",
+                error
+            );
+
+
+            locationError(
+                error
+            );
+
+        },
+
+
+        {
+
+            enableHighAccuracy:
+                true,
+
+            timeout:
+                20000,
+
+            maximumAge:
+                0
+
+        }
+
+    );
+
+}
+
+
+
+/* =====================================
+   START LOCATION TRACKING
+===================================== */
+
+
+function startLocationTracking() {
+
+    if (!navigator.geolocation) {
+
+        locationError({
+            code: 2,
+            message:
+                "इस browser में GPS उपलब्ध नहीं है"
+        });
+
+        return;
+    }
+
+
+    document.getElementById(
+        "status"
+    ).innerText =
+        "📍 Location Checking...";
+
+
+    document.getElementById(
+        "status"
+    ).className =
+        "status waiting";
+
+
+    document.getElementById(
+        "message"
+    ).innerText =
+        "GPS location की permission माँगी जा रही है...";
+
+
+    /*
+       पहले एक बार current location लें
+    */
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            console.log(
+                "GPS FIRST SUCCESS:",
+                position
+            );
+
+
+            handleLocation(
+                position
+            );
+
+
+            /*
+               अब लगातार location track करें
+            */
+
+            if (watchId !== null) {
+
+                navigator.geolocation.clearWatch(
+                    watchId
+                );
 
             }
 
-        );
+
+            watchId =
+                navigator.geolocation.watchPosition(
+
+                    function(position) {
+
+                        handleLocation(
+                            position
+                        );
+
+                    },
+
+                    function(error) {
+
+                        locationError(
+                            error
+                        );
+
+                    },
+
+                    {
+
+                        enableHighAccuracy:
+                            true,
+
+                        timeout:
+                            20000,
+
+                        maximumAge:
+                            0
+
+                    }
+
+                );
+
+        },
+
+
+        function(error) {
+
+            console.log(
+                "FIRST GPS ERROR:",
+                error
+            );
+
+
+            locationError(
+                error
+            );
+
+        },
+
+
+        {
+
+            enableHighAccuracy:
+                true,
+
+            timeout:
+                20000,
+
+            maximumAge:
+                0
+
+        }
+
+    );
 
 }
 
@@ -1112,6 +1413,7 @@ function startLocationTracking() {
 /* =====================================
    UPDATE ATTENDANCE DISPLAY
 ===================================== */
+
 
 function updateAttendanceDisplay() {
 
@@ -1189,7 +1491,7 @@ function updateAttendanceDisplay() {
         const minutes =
             Number(
                 currentAttendance
-                .working_minutes
+                    .working_minutes
             );
 
 
@@ -1221,6 +1523,7 @@ function updateAttendanceDisplay() {
    FORMAT TIME
 ===================================== */
 
+
 function formatTime(
     value
 ) {
@@ -1249,6 +1552,7 @@ function formatTime(
 /* =====================================
    LOGOUT
 ===================================== */
+
 
 async function logout() {
 
@@ -1280,50 +1584,72 @@ async function logout() {
    START APPLICATION
 ===================================== */
 
+
 async function startApp() {
 
-    const user =
-        await getCurrentUser();
+    try {
+
+        const user =
+            await getCurrentUser();
 
 
-    if (!user) {
-        return;
+        if (!user) {
+            return;
+        }
+
+
+        const employeeLoaded =
+            await loadEmployee(
+                user
+            );
+
+
+        if (!employeeLoaded) {
+            return;
+        }
+
+
+        const officeLoaded =
+            await loadOffice();
+
+
+        if (!officeLoaded) {
+            return;
+        }
+
+
+        await loadAttendance();
+
+
+        /*
+           Start GPS
+        */
+
+        startLocationTracking();
+
     }
 
+    catch (error) {
 
-    const employeeLoaded =
-        await loadEmployee(
-            user
+        console.log(
+            "START APP ERROR:",
+            error
         );
 
 
-    if (!employeeLoaded) {
-        return;
+        document.getElementById(
+            "message"
+        ).innerText =
+            "Application Error: " +
+            error.message;
+
     }
-
-
-    const officeLoaded =
-        await loadOffice();
-
-
-    if (!officeLoaded) {
-        return;
-    }
-
-
-    await loadAttendance();
-
-
-    /*
-       Start GPS
-    */
-
-    startLocationTracking();
 
 }
 
 
 startApp();
+
 
 </script>
 
