@@ -119,6 +119,17 @@
             transform: scale(0.98);
         }
 
+        .warning-box {
+            display: none;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #9a3412;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            line-height: 1.5;
+        }
+
     </style>
 
 </head>
@@ -261,8 +272,20 @@
         </div>
 
 
+        <div
+            id="outsideWarning"
+            class="warning-box">
+
+            ⚠️ आप Office से बाहर हैं।<br>
+            लगातार 5 मिनट बाहर रहने पर OUT दर्ज होगा।
+
+        </div>
+
+
         <p id="message">
+
             Office location की जानकारी ली जा रही है...
+
         </p>
 
 
@@ -331,6 +354,25 @@ let currentAttendance = null;
 let watchId = null;
 
 let isInside = false;
+
+
+/*
+   बाहर जाने का समय
+
+   अगर employee लगातार 5 मिनट
+   office से बाहर रहता है,
+   तभी OUT होगा.
+*/
+
+let outsideSince = null;
+
+
+/*
+   5 मिनट = 300000 milliseconds
+*/
+
+const OUTSIDE_GRACE_PERIOD =
+    5 * 60 * 1000;
 
 
 
@@ -675,11 +717,13 @@ async function loadAttendance() {
             error
         );
 
+
         document.getElementById(
             "message"
         ).innerText =
             "Attendance load error: " +
             error.message;
+
 
         return;
     }
@@ -714,11 +758,14 @@ async function markIN(
 
 
     /*
-       Already marked IN
+       अगर पहले से attendance मौजूद है
+       तो नया IN नहीं बनाएँ
     */
 
     if (currentAttendance) {
+
         return;
+
     }
 
 
@@ -767,7 +814,9 @@ async function markIN(
             "IN attendance error: " +
             error.message;
 
+
         return;
+
     }
 
 
@@ -778,6 +827,7 @@ async function markIN(
 
         currentAttendance =
             data[0];
+
 
         updateAttendanceDisplay();
 
@@ -881,7 +931,9 @@ async function markOUT(
             "OUT attendance error: " +
             error.message;
 
+
         return;
+
     }
 
 
@@ -892,6 +944,7 @@ async function markOUT(
 
         currentAttendance =
             data[0];
+
 
         updateAttendanceDisplay();
 
@@ -937,7 +990,7 @@ async function handleLocation(
 
 
     /*
-       Show current coordinates
+       Coordinates show करें
     */
 
     document.getElementById(
@@ -960,7 +1013,7 @@ async function handleLocation(
 
 
     /*
-       Calculate distance
+       Office check
     */
 
     if (!office) {
@@ -971,8 +1024,13 @@ async function handleLocation(
             "Office location अभी load नहीं हुई।";
 
         return;
+
     }
 
+
+    /*
+       Distance calculate
+    */
 
     const distance =
         calculateDistance(
@@ -995,34 +1053,40 @@ async function handleLocation(
         " meters";
 
 
-    /*
-       Accuracy information
-    */
-
-    document.getElementById(
-        "message"
-    ).innerText =
-        "GPS Accuracy: " +
-        Math.round(accuracy) +
-        " meters";
-
-
-    /*
-       Check office radius
-    */
-
-    const inside =
-        distance <=
+    const officeRadius =
         Number(
             office.radius_meters
         );
 
 
-    /* =========================
+    /*
+       Inside / Outside
+    */
+
+    const inside =
+        distance <= officeRadius;
+
+
+
+    /* =================================
        INSIDE OFFICE
-    ========================= */
+    ================================= */
+
 
     if (inside) {
+
+        /*
+           बाहर वाला timer cancel
+        */
+
+        outsideSince = null;
+
+
+        document.getElementById(
+            "outsideWarning"
+        ).style.display =
+            "none";
+
 
         document.getElementById(
             "status"
@@ -1037,67 +1101,215 @@ async function handleLocation(
 
 
         /*
-           First time entering
+           अगर अभी attendance नहीं है
+           तो IN करें
         */
 
         if (
-            !isInside &&
-            !currentAttendance
+            !currentAttendance ||
+            currentAttendance.out_time
         ) {
+
+            /*
+               अगर पुरानी attendance completed है
+               तो नया attendance session बनाया जा सकता है
+            */
+
+            if (
+                currentAttendance &&
+                currentAttendance.out_time
+            ) {
+
+                currentAttendance =
+                    null;
+
+            }
+
+
+            if (!isInside) {
+
+                isInside = true;
+
+
+                await markIN(
+                    latitude,
+                    longitude
+                );
+
+            }
+
+        }
+
+        else {
 
             isInside = true;
 
-
-            await markIN(
-                latitude,
-                longitude
-            );
-
         }
+
+
+        document.getElementById(
+            "message"
+        ).innerText =
+            "आप Office के अंदर हैं। GPS Accuracy: " +
+            Math.round(accuracy) +
+            " meters";
+
+
+
+        return;
 
     }
 
 
-    /* =========================
+
+    /* =================================
        OUTSIDE OFFICE
-    ========================= */
-
-    else {
-
-        document.getElementById(
-            "status"
-        ).innerText =
-            "🔴 OUT - Office से बाहर";
+    ================================= */
 
 
-        document.getElementById(
-            "status"
-        ).className =
-            "status outside";
+    document.getElementById(
+        "status"
+    ).innerText =
+        "🟠 Office से बाहर";
 
+
+    document.getElementById(
+        "status"
+    ).className =
+        "status outside";
+
+
+    /*
+       अगर current attendance open है
+    */
+
+    if (
+        currentAttendance &&
+        !currentAttendance.out_time
+    ) {
 
         /*
-           OUT तभी जब पहले
-           IN detect हुआ हो
+           पहली बार बाहर मिले
         */
 
-        if (
-            isInside &&
-            currentAttendance &&
-            !currentAttendance.out_time
-        ) {
+        if (!outsideSince) {
+
+            outsideSince =
+                Date.now();
+
+
+            document.getElementById(
+                "outsideWarning"
+            ).style.display =
+                "block";
+
+
+            document.getElementById(
+                "message"
+            ).innerText =
+                "आप Office से बाहर हैं। " +
+                "5 मिनट लगातार बाहर रहने पर OUT होगा।";
+
 
             isInside = false;
 
 
-            await markOUT(
-                latitude,
-                longitude
-            );
+            return;
 
         }
 
+
+        /*
+           कितने समय से बाहर हैं
+        */
+
+        const outsideTime =
+            Date.now() -
+            outsideSince;
+
+
+        const remaining =
+            OUTSIDE_GRACE_PERIOD -
+            outsideTime;
+
+
+        /*
+           5 मिनट पूरे नहीं हुए
+        */
+
+        if (
+            remaining > 0
+        ) {
+
+            const remainingMinutes =
+                Math.ceil(
+                    remaining / 60000
+                );
+
+
+            document.getElementById(
+                "outsideWarning"
+            ).style.display =
+                "block";
+
+
+            document.getElementById(
+                "message"
+            ).innerText =
+                "आप Office से बाहर हैं। " +
+                "लगभग " +
+                remainingMinutes +
+                " मिनट बाद OUT होगा।";
+
+
+            return;
+
+        }
+
+
+        /*
+           5 मिनट पूरे हो गए
+        */
+
+        outsideSince =
+            null;
+
+
+        document.getElementById(
+            "outsideWarning"
+        ).style.display =
+            "none";
+
+
+        isInside = false;
+
+
+        await markOUT(
+            latitude,
+            longitude
+        );
+
+
+        return;
+
     }
+
+
+    /*
+       Attendance नहीं है
+    */
+
+    document.getElementById(
+        "outsideWarning"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "message"
+    ).innerText =
+        "आप Office से बाहर हैं। " +
+        "Office में पहुँचने पर automatic IN होगा।";
 
 }
 
@@ -1125,29 +1337,35 @@ function locationError(error) {
     let msg = "";
 
 
-    if (error.code === 1) {
+    if (
+        error.code === 1
+    ) {
 
         msg =
             "Location permission BLOCK है। " +
-            "Browser में Location → Allow करें।";
+            "Browser settings में Location → Allow करें.";
 
     }
 
 
-    else if (error.code === 2) {
+    else if (
+        error.code === 2
+    ) {
 
         msg =
             "GPS location उपलब्ध नहीं है। " +
-            "Phone की Location/GPS ON करें।";
+            "Phone/Computer की Location ON करें.";
 
     }
 
 
-    else if (error.code === 3) {
+    else if (
+        error.code === 3
+    ) {
 
         msg =
             "GPS location लेने में समय लग रहा है। " +
-            "खुले स्थान पर जाकर दोबारा कोशिश करें।";
+            "खुले स्थान पर जाकर दोबारा कोशिश करें.";
 
     }
 
@@ -1189,15 +1407,22 @@ function locationError(error) {
 
 function requestLocation() {
 
-    if (!navigator.geolocation) {
+    if (
+        !navigator.geolocation
+    ) {
 
         locationError({
+
             code: 2,
+
             message:
-                "Geolocation browser में available नहीं है"
+                "Geolocation available नहीं है"
+
         });
 
+
         return;
+
     }
 
 
@@ -1277,15 +1502,22 @@ function requestLocation() {
 
 function startLocationTracking() {
 
-    if (!navigator.geolocation) {
+    if (
+        !navigator.geolocation
+    ) {
 
         locationError({
+
             code: 2,
+
             message:
                 "इस browser में GPS उपलब्ध नहीं है"
+
         });
 
+
         return;
+
     }
 
 
@@ -1308,7 +1540,7 @@ function startLocationTracking() {
 
 
     /*
-       पहले एक बार current location लें
+       पहले current location
     */
 
     navigator.geolocation.getCurrentPosition(
@@ -1327,10 +1559,12 @@ function startLocationTracking() {
 
 
             /*
-               अब लगातार location track करें
+               लगातार tracking
             */
 
-            if (watchId !== null) {
+            if (
+                watchId !== null
+            ) {
 
                 navigator.geolocation.clearWatch(
                     watchId
@@ -1350,6 +1584,7 @@ function startLocationTracking() {
 
                     },
 
+
                     function(error) {
 
                         locationError(
@@ -1357,6 +1592,7 @@ function startLocationTracking() {
                         );
 
                     },
+
 
                     {
 
@@ -1417,7 +1653,9 @@ function startLocationTracking() {
 
 function updateAttendanceDisplay() {
 
-    if (!currentAttendance) {
+    if (
+        !currentAttendance
+    ) {
 
         document.getElementById(
             "inTime"
@@ -1438,6 +1676,7 @@ function updateAttendanceDisplay() {
 
 
         return;
+
     }
 
 
@@ -1473,6 +1712,15 @@ function updateAttendanceDisplay() {
             formatTime(
                 currentAttendance.out_time
             );
+
+    }
+
+    else {
+
+        document.getElementById(
+            "outTime"
+        ).innerText =
+            "—";
 
     }
 
@@ -1514,6 +1762,95 @@ function updateAttendanceDisplay() {
             "m";
 
     }
+
+    else {
+
+        /*
+           अगर employee अभी IN है
+           तो live working time दिखाएँ
+        */
+
+        if (
+            currentAttendance.in_time &&
+            !currentAttendance.out_time
+        ) {
+
+            updateLiveWorkingTime();
+
+        }
+
+        else {
+
+            document.getElementById(
+                "workingTime"
+            ).innerText =
+                "—";
+
+        }
+
+    }
+
+}
+
+
+
+/* =====================================
+   LIVE WORKING TIME
+===================================== */
+
+
+function updateLiveWorkingTime() {
+
+    if (
+        !currentAttendance ||
+        !currentAttendance.in_time ||
+        currentAttendance.out_time
+    ) {
+
+        return;
+
+    }
+
+
+    const inTime =
+        new Date(
+            currentAttendance.in_time
+        );
+
+
+    const now =
+        new Date();
+
+
+    const minutes =
+        Math.max(
+            0,
+            Math.floor(
+                (
+                    now -
+                    inTime
+                ) / 60000
+            )
+        );
+
+
+    const hours =
+        Math.floor(
+            minutes / 60
+        );
+
+
+    const mins =
+        minutes % 60;
+
+
+    document.getElementById(
+        "workingTime"
+    ).innerText =
+        hours +
+        "h " +
+        mins +
+        "m";
 
 }
 
@@ -1581,6 +1918,22 @@ async function logout() {
 
 
 /* =====================================
+   LIVE TIMER
+===================================== */
+
+
+setInterval(
+    function() {
+
+        updateLiveWorkingTime();
+
+    },
+    30000
+);
+
+
+
+/* =====================================
    START APPLICATION
 ===================================== */
 
@@ -1594,7 +1947,9 @@ async function startApp() {
 
 
         if (!user) {
+
             return;
+
         }
 
 
@@ -1605,7 +1960,9 @@ async function startApp() {
 
 
         if (!employeeLoaded) {
+
             return;
+
         }
 
 
@@ -1614,7 +1971,9 @@ async function startApp() {
 
 
         if (!officeLoaded) {
+
             return;
+
         }
 
 
@@ -1622,12 +1981,13 @@ async function startApp() {
 
 
         /*
-           Start GPS
+           GPS शुरू करें
         */
 
         startLocationTracking();
 
     }
+
 
     catch (error) {
 
