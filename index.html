@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office Attendance - Owner Login</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <h1>Office Attendance</h1>
+    <p>Owner Login</p>
+
+    <input
+        type="email"
+        id="email"
+        placeholder="Email Address"
+    >
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Password"
+    >
+
+    <button onclick="login()">Login</button>
+
+    <p id="message"></p>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://mxolpvdaengfpmlkgprc.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_KaXl_tgIR8VZhmWR6vuAgQ_FswcmZes";
+
+const supabaseClient =
+supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+async function login() {
+
+    const email =
+        document.getElementById("email").value.trim();
+
+    const password =
+        document.getElementById("password").value;
+
+    const message =
+        document.getElementById("message");
+
+    if (!email || !password) {
+
+        message.innerText =
+            "Email और Password भरें";
+
+        return;
+    }
+
+    message.innerText = "Login हो रहा है...";
+
+    const { data, error } =
+        await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+    if (error) {
+
+        message.innerText =
+            "Login Failed: " + error.message;
+
+        return;
+    }
+
+    message.innerText =
+        "Login Successful!";
+
+    setTimeout(() => {
+
+        window.location.href =
+            "dashboard.html";
+
+    }, 1000);
+}
+
+</script>
+
+</body>
+</html>

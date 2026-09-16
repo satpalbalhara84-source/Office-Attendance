@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Employee Login - Office Attendance</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f3f6fa;
+        }
+
+        .login-box {
+            width: 380px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.12);
+            text-align: center;
+        }
+
+        h1 {
+            color: #2563eb;
+            margin-bottom: 8px;
+        }
+
+        p {
+            color: #666;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            margin-top: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 18px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <h1>Employee Login</h1>
+
+    <p>Office Attendance</p>
+
+    <input
+        type="email"
+        id="email"
+        placeholder="Employee Email"
+    >
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Password"
+    >
+
+    <button onclick="loginEmployee()">
+        Login
+    </button>
+
+    <p id="message"></p>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://mxolpvdaengfpmlkgprc.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_KaXl_tgIR8VZhmWR6vuAgQ_FswcmZes";
+
+const supabaseClient =
+supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+async function loginEmployee() {
+
+    const email =
+        document.getElementById("email").value.trim();
+
+    const password =
+        document.getElementById("password").value;
+
+    const message =
+        document.getElementById("message");
+
+
+    if (!email || !password) {
+
+        message.innerText =
+            "Email और Password भरें";
+
+        message.style.color = "red";
+
+        return;
+    }
+
+
+    message.innerText =
+        "Login हो रहा है...";
+
+    message.style.color = "#2563eb";
+
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient.auth.signInWithPassword({
+
+        email: email,
+
+        password: password
+
+    });
+
+
+    if (error) {
+
+        message.innerText =
+            "Login Failed: " +
+            error.message;
+
+        message.style.color = "red";
+
+        return;
+    }
+
+
+    message.innerText =
+        "Login Successful ✅";
+
+    message.style.color = "green";
+
+
+    setTimeout(() => {
+
+        window.location.href =
+            "employee-dashboard.html";
+
+    }, 700);
+
+}
+
+</script>
+
+</body>
+
+</html>
