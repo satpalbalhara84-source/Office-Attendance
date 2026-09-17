@@ -1,231 +1,248 @@
 <!DOCTYPE html>
 <html lang="hi">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Employee Attendance</title>
+<title>Employee Attendance</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+<style>
 
-        body {
-            margin: 0;
-            background: #f3f6fa;
-            color: #111827;
-        }
+*{
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
 
-        .header {
-            background: #2563eb;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
+body{
+    margin:0;
+    background:#f3f6fa;
+}
 
-        .header h2 {
-            margin: 0;
-        }
+.header{
+    background:#2563eb;
+    color:white;
+    padding:20px;
+}
 
-        .header p {
-            margin: 6px 0 0;
-        }
+.header h2{
+    margin:0;
+}
 
-        .container {
-            max-width: 650px;
-            margin: auto;
-            padding: 20px;
-        }
+.header p{
+    margin:6px 0 0;
+}
 
-        .card {
-            background: white;
-            padding: 22px;
-            margin-bottom: 18px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
+.container{
+    max-width:650px;
+    margin:auto;
+    padding:25px;
+}
 
-        .status {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
+.card{
+    background:white;
+    padding:25px;
+    margin-bottom:20px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
 
-        .inside {
-            color: #16a34a;
-        }
+.status{
+    font-size:23px;
+    font-weight:bold;
+    margin:20px 0;
+}
 
-        .outside {
-            color: #dc2626;
-        }
+.inside{
+    color:#16a34a;
+}
 
-        .waiting {
-            color: #d97706;
-        }
+.outside{
+    color:#dc2626;
+}
 
-        .time {
-            font-size: 18px;
-            margin: 12px 0;
-        }
+.waiting{
+    color:#d97706;
+}
 
-        .location {
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 10px;
-            line-height: 1.9;
-        }
+.time{
+    font-size:18px;
+    margin:12px 0;
+}
 
-        .timerBox {
-            margin-top: 15px;
-            padding: 13px;
-            border-radius: 10px;
-            background: #fff7ed;
-            display: none;
-            font-weight: bold;
-            color: #c2410c;
-        }
+.location{
+    background:#f8fafc;
+    padding:15px;
+    border-radius:10px;
+    line-height:1.8;
+}
 
-        #message {
-            color: #4b5563;
-            margin-top: 15px;
-            line-height: 1.5;
-        }
+.location div{
+    margin-bottom:5px;
+}
 
-        .refresh {
-            width: 100%;
-            padding: 13px;
-            margin-top: 15px;
-            border: none;
-            border-radius: 8px;
-            background: #2563eb;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-        }
+#message{
+    color:#555;
+    margin-top:15px;
+    line-height:1.5;
+}
 
-        .logout {
-            width: 100%;
-            padding: 14px;
-            background: #dc2626;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-        }
+.grace{
+    background:#fff7ed;
+    padding:15px;
+    border-radius:10px;
+    margin-top:15px;
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    color:#c2410c;
+}
 
-        .small {
-            font-size: 13px;
-            color: #6b7280;
-            margin-top: 12px;
-        }
-    </style>
+.refresh{
+    width:100%;
+    padding:13px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    margin-top:10px;
+}
+
+.logout{
+    width:100%;
+    padding:14px;
+    background:#dc2626;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+</style>
 </head>
 
 <body>
 
 <div class="header">
-    <h2>Office Attendance</h2>
-    <p>Employee Dashboard</p>
+
+<h2>Office Attendance</h2>
+
+<p>Employee Dashboard</p>
+
 </div>
+
 
 <div class="container">
 
-    <div class="card">
 
-        <h2 id="employeeName">Loading...</h2>
+<!-- ATTENDANCE -->
 
-        <div id="status" class="status waiting">
-            📍 Location Checking...
-        </div>
+<div class="card">
 
-        <div class="time">
-            IN Time:
-            <strong id="inTime">—</strong>
-        </div>
+<h2 id="employeeName">
+Loading...
+</h2>
 
-        <div class="time">
-            OUT Time:
-            <strong id="outTime">—</strong>
-        </div>
+<div id="status" class="status waiting">
+📍 Location Checking...
+</div>
 
-        <div class="time">
-            Working Time:
-            <strong id="workingTime">—</strong>
-        </div>
+<div class="time">
+IN Time:
+<strong id="inTime">—</strong>
+</div>
 
-        <div id="outsideTimerBox" class="timerBox">
-            Office से बाहर हैं। Auto OUT:
-            <span id="outsideTimer">05:00</span>
-        </div>
+<div class="time">
+OUT Time:
+<strong id="outTime">—</strong>
+</div>
 
-    </div>
+<div class="time">
+Working Time:
+<strong id="workingTime">—</strong>
+</div>
 
+<div id="graceBox" class="grace" style="display:none;">
 
-    <div class="card">
+Office से बाहर
 
-        <h3>📍 Location Status</h3>
+<br>
 
-        <div class="location">
+Auto OUT:
+<span id="graceTimer">05:00</span>
 
-            <div>
-                Distance from Office:
-                <strong id="distance">Checking...</strong>
-            </div>
+</div>
 
-            <div>
-                Office Radius:
-                <strong id="radius">—</strong>
-            </div>
-
-            <div>
-                GPS Accuracy:
-                <strong id="accuracy">—</strong>
-            </div>
-
-            <div>
-                Latitude:
-                <strong id="latitude">—</strong>
-            </div>
-
-            <div>
-                Longitude:
-                <strong id="longitude">—</strong>
-            </div>
-
-        </div>
-
-        <div id="message">
-            Office location की जानकारी ली जा रही है...
-        </div>
-
-        <button class="refresh" onclick="refreshLocation()">
-            📍 Refresh Location
-        </button>
-
-        <div class="small">
-            Attendance के लिए Location/GPS ON रखें।
-        </div>
-
-    </div>
+</div>
 
 
-    <button class="logout" onclick="logout()">
-        Logout
-    </button>
+<!-- LOCATION -->
+
+<div class="card">
+
+<h3>
+📍 Location Status
+</h3>
+
+<div class="location">
+
+<div>
+Distance from Office:
+<strong id="distance">Checking...</strong>
+</div>
+
+<div>
+Office Radius:
+<strong id="radius">—</strong>
+</div>
+
+<div>
+GPS Accuracy:
+<strong id="accuracy">—</strong>
+</div>
+
+<div>
+Latitude:
+<strong id="latitude">—</strong>
+</div>
+
+<div>
+Longitude:
+<strong id="longitude">—</strong>
+</div>
+
+</div>
+
+<p id="message">
+Office location की जानकारी ली जा रही है...
+</p>
+
+<button class="refresh" onclick="refreshLocation()">
+🔄 Refresh Location
+</button>
+
+</div>
+
+
+<button class="logout" onclick="logout()">
+Logout
+</button>
+
 
 </div>
 
 
 <script>
 
-/* =====================================================
+
+/* =====================================
    SUPABASE
-===================================================== */
+===================================== */
 
 const SUPABASE_URL =
 "https://mxolpvdaengfpmlkgprc.supabase.co";
@@ -240,68 +257,36 @@ supabase.createClient(
 );
 
 
-/* =====================================================
-   SETTINGS
-===================================================== */
-
-/*
-   Employee लगातार 5 मिनट office से बाहर
-   रहने पर automatic OUT होगा.
-*/
-
-const OUTSIDE_GRACE_PERIOD =
-5 * 60 * 1000;
-
-
-/* =====================================================
-   GLOBAL VARIABLES
-===================================================== */
+/* =====================================
+   VARIABLES
+===================================== */
 
 let currentEmployee = null;
+
 let office = null;
+
 let currentAttendance = null;
 
 let watchId = null;
 
 let isInside = false;
 
-let outsideSince = null;
 let outsideTimer = null;
 
-let lastLatitude = null;
-let lastLongitude = null;
-
-let locationProcessing = false;
-let attendanceProcessing = false;
+const GRACE_TIME =
+5 * 60 * 1000;
 
 
-/* =====================================================
-   ELEMENT SHORTCUT
-===================================================== */
+/* =====================================
+   USER
+===================================== */
 
-function el(id) {
-    return document.getElementById(id);
-}
+async function getCurrentUser(){
 
+    const {data,error} =
+        await supabaseClient.auth.getSession();
 
-/* =====================================================
-   GET LOGIN USER
-===================================================== */
-
-async function getCurrentUser() {
-
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-        .auth
-        .getSession();
-
-    if (
-        error ||
-        !data.session
-    ) {
+    if(error || !data.session){
 
         window.location.href =
             "employee-login.html";
@@ -313,198 +298,123 @@ async function getCurrentUser() {
 }
 
 
-/* =====================================================
-   LOAD EMPLOYEE
-===================================================== */
+/* =====================================
+   EMPLOYEE
+===================================== */
 
-async function loadEmployee(user) {
+async function loadEmployee(user){
 
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
+    const {data,error} =
+        await supabaseClient
         .from("employees")
         .select("*")
-        .eq(
-            "email",
-            user.email
-        )
+        .eq("email",user.email)
         .limit(1);
 
-
-    if (
+    if(
         error ||
         !data ||
-        data.length === 0
-    ) {
+        data.length===0
+    ){
 
-        el("employeeName").innerText =
+        document.getElementById(
+            "employeeName"
+        ).innerText =
             "Employee profile नहीं मिला";
 
-        el("message").innerText =
+        document.getElementById(
+            "message"
+        ).innerText =
             error?.message ||
             "Employee record नहीं मिला";
 
         return false;
     }
 
-
     currentEmployee =
         data[0];
 
-
-    el("employeeName").innerText =
+    document.getElementById(
+        "employeeName"
+    ).innerText =
         "Welcome, " +
         currentEmployee.name;
-
 
     return true;
 }
 
 
-/* =====================================================
-   LOAD OFFICE
-===================================================== */
+/* =====================================
+   OFFICE
+===================================== */
 
-async function loadOffice() {
+async function loadOffice(){
 
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
+    const ownerId =
+        currentEmployee.owner_id;
+
+    const {data,error} =
+        await supabaseClient
         .from("offices")
         .select("*")
-        .eq(
-            "owner_id",
-            currentEmployee.owner_id
-        )
+        .eq("owner_id",ownerId)
         .order(
             "created_at",
-            {
-                ascending: false
-            }
+            {ascending:false}
         )
         .limit(1);
 
-
-    if (
+    if(
         error ||
         !data ||
-        data.length === 0
-    ) {
+        data.length===0
+    ){
 
-        el("message").innerText =
-            "Office location नहीं मिली: " +
-            (
-                error?.message ||
-                "No office found"
-            );
+        document.getElementById(
+            "message"
+        ).innerText =
+            "Office location नहीं मिली";
 
         return false;
     }
 
-
     office =
         data[0];
 
-
-    el("radius").innerText =
+    document.getElementById(
+        "radius"
+    ).innerText =
         office.radius_meters +
         " meters";
-
 
     return true;
 }
 
 
-/* =====================================================
-   DISTANCE CALCULATION
-===================================================== */
-
-function calculateDistance(
-    lat1,
-    lon1,
-    lat2,
-    lon2
-) {
-
-    const R = 6371000;
-
-    const dLat =
-        (lat2 - lat1) *
-        Math.PI / 180;
-
-    const dLon =
-        (lon2 - lon1) *
-        Math.PI / 180;
-
-
-    const a =
-        Math.sin(dLat / 2) *
-        Math.sin(dLat / 2)
-        +
-        Math.cos(
-            lat1 *
-            Math.PI / 180
-        )
-        *
-        Math.cos(
-            lat2 *
-            Math.PI / 180
-        )
-        *
-        Math.sin(dLon / 2)
-        *
-        Math.sin(dLon / 2);
-
-
-    const c =
-        2 *
-        Math.atan2(
-            Math.sqrt(a),
-            Math.sqrt(1 - a)
-        );
-
-
-    return R * c;
-}
-
-
-/* =====================================================
+/* =====================================
    TODAY RANGE
-===================================================== */
+===================================== */
 
-function getTodayRange() {
+function getTodayRange(){
 
     const now =
         new Date();
-
 
     const start =
         new Date(
             now.getFullYear(),
             now.getMonth(),
             now.getDate(),
-            0,
-            0,
-            0,
-            0
+            0,0,0,0
         );
-
 
     const end =
         new Date(
             now.getFullYear(),
             now.getMonth(),
-            now.getDate() + 1,
-            0,
-            0,
-            0,
-            0
+            now.getDate()+1,
+            0,0,0,0
         );
-
 
     return {
 
@@ -518,21 +428,17 @@ function getTodayRange() {
 }
 
 
-/* =====================================================
-   LOAD LATEST ATTENDANCE
-===================================================== */
+/* =====================================
+   LOAD ATTENDANCE
+===================================== */
 
-async function loadAttendance() {
+async function loadAttendance(){
 
     const range =
         getTodayRange();
 
-
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
+    const {data,error} =
+        await supabaseClient
         .from("attendance")
         .select("*")
         .eq(
@@ -549,1025 +455,1188 @@ async function loadAttendance() {
         )
         .order(
             "created_at",
-            {
-                ascending: false
-            }
+            {ascending:false}
         )
         .limit(1);
 
-
-    if (error) {
+    if(error){
 
         console.log(
-            "Attendance load error:",
+            "ATTENDANCE ERROR:",
             error
         );
 
         return;
     }
 
-
-    if (
-        data &&
-        data.length > 0
-    ) {
+    if(data && data.length>0){
 
         currentAttendance =
             data[0];
 
-    } else {
+        updateAttendanceDisplay();
 
-        currentAttendance =
-            null;
+        /*
+         IMPORTANT:
+         Refresh ke baad agar employee
+         already office se bahar tha
+         to saved outside_since se timer
+         dobara wahi se chalega.
+        */
+
+        if(
+            currentAttendance.outside_since &&
+            !currentAttendance.out_time
+        ){
+
+            startOutsideTimer(
+                new Date(
+                    currentAttendance
+                    .outside_since
+                ).getTime()
+            );
+        }
     }
-
-
-    updateAttendanceDisplay();
 }
 
 
-/* =====================================================
+/* =====================================
    MARK IN
-===================================================== */
+===================================== */
 
 async function markIN(
     latitude,
     longitude
-) {
+){
 
     /*
-       अगर current attendance अभी open है
-       तो duplicate IN नहीं बनाना.
+      Sirf OPEN attendance hone par
+      duplicate IN roko.
     */
 
-    if (
+    if(
         currentAttendance &&
         !currentAttendance.out_time
-    ) {
+    ){
         return;
     }
 
-
-    if (attendanceProcessing) {
-        return;
-    }
-
-
-    attendanceProcessing =
-        true;
-
-
-    try {
-
-        const {
-            data,
-            error
-        } =
+    const {data,error} =
         await supabaseClient
-            .from("attendance")
-            .insert({
+        .from("attendance")
+        .insert({
 
-                employee_id:
-                    currentEmployee.id,
+            employee_id:
+                currentEmployee.id,
 
-                office_id:
-                    office.id,
+            office_id:
+                office.id,
 
-                in_time:
-                    new Date()
-                    .toISOString(),
+            in_time:
+                new Date().toISOString(),
 
-                status:
-                    "present",
+            status:
+                "present",
 
-                last_latitude:
-                    latitude,
+            last_latitude:
+                latitude,
 
-                last_longitude:
-                    longitude
+            last_longitude:
+                longitude,
 
-            })
-            .select()
-            .limit(1);
+            outside_since:
+                null
 
+        })
+        .select()
+        .limit(1);
 
-        if (error) {
+    if(error){
 
-            console.log(
-                "IN ERROR:",
-                error
-            );
+        console.log(
+            "IN ERROR:",
+            error
+        );
 
-            el("message").innerText =
-                "IN attendance error: " +
-                error.message;
+        document.getElementById(
+            "message"
+        ).innerText =
+            "IN attendance error: " +
+            error.message;
 
-            return;
-        }
-
-
-        if (
-            data &&
-            data.length > 0
-        ) {
-
-            currentAttendance =
-                data[0];
-
-            updateAttendanceDisplay();
-        }
-
-
-        el("message").innerText =
-            "✅ Office में प्रवेश दर्ज हो गया";
-
+        return;
     }
-    finally {
 
-        attendanceProcessing =
-            false;
+    if(data && data.length>0){
+
+        currentAttendance =
+            data[0];
+
+        updateAttendanceDisplay();
     }
+
+    document.getElementById(
+        "message"
+    ).innerText =
+        "Office में प्रवेश दर्ज हो गया ✅";
 }
 
 
-/* =====================================================
-   MARK OUT
-===================================================== */
+/* =====================================
+   SAVE OUTSIDE START
+===================================== */
 
-async function markOUT(
+async function saveOutsideSince(
     latitude,
     longitude
-) {
+){
 
-    if (
+    if(
         !currentAttendance ||
         currentAttendance.out_time
-    ) {
+    ){
         return;
     }
 
+    /*
+      Agar already saved hai to
+      dobara timer start mat karo.
+    */
 
-    if (attendanceProcessing) {
+    if(currentAttendance.outside_since){
+
         return;
     }
 
+    const outsideTime =
+        new Date();
 
-    attendanceProcessing =
-        true;
-
-
-    try {
-
-        const outTime =
-            new Date();
-
-
-        const inTime =
-            new Date(
-                currentAttendance.in_time
-            );
-
-
-        const minutes =
-            Math.max(
-                0,
-                Math.round(
-                    (
-                        outTime -
-                        inTime
-                    ) / 60000
-                )
-            );
-
-
-        const {
-            data,
-            error
-        } =
+    const {data,error} =
         await supabaseClient
-            .from("attendance")
-            .update({
+        .from("attendance")
+        .update({
 
-                out_time:
-                    outTime.toISOString(),
+            outside_since:
+                outsideTime.toISOString(),
 
-                working_minutes:
-                    minutes,
+            last_latitude:
+                latitude,
 
-                status:
-                    "completed",
+            last_longitude:
+                longitude
 
-                last_latitude:
-                    latitude,
+        })
+        .eq(
+            "id",
+            currentAttendance.id
+        )
+        .select()
+        .limit(1);
 
-                last_longitude:
-                    longitude
+    if(error){
 
-            })
-            .eq(
-                "id",
-                currentAttendance.id
-            )
-            .select()
-            .limit(1);
+        console.log(
+            "OUTSIDE TIME ERROR:",
+            error
+        );
 
-
-        if (error) {
-
-            console.log(
-                "OUT ERROR:",
-                error
-            );
-
-            el("message").innerText =
-                "OUT attendance error: " +
-                error.message;
-
-            return;
-        }
-
-
-        if (
-            data &&
-            data.length > 0
-        ) {
-
-            currentAttendance =
-                data[0];
-
-            updateAttendanceDisplay();
-        }
-
-
-        stopOutsideTimer();
-
-
-        el("status").innerText =
-            "🔴 OUT - Office से बाहर";
-
-        el("status").className =
-            "status outside";
-
-
-        el("message").innerText =
-            "✅ Office से बाहर निकलना दर्ज हो गया";
-
-    }
-    finally {
-
-        attendanceProcessing =
-            false;
-    }
-}
-
-
-/* =====================================================
-   START OUTSIDE TIMER
-===================================================== */
-
-function startOutsideTimer() {
-
-    /*
-       Attendance open नहीं है तो timer की जरूरत नहीं.
-    */
-
-    if (
-        !currentAttendance ||
-        currentAttendance.out_time
-    ) {
         return;
     }
 
+    if(data && data.length>0){
 
-    /*
-       Timer पहले से चल रहा है.
-    */
-
-    if (outsideSince) {
-        return;
+        currentAttendance =
+            data[0];
     }
 
-
-    outsideSince =
-        Date.now();
-
-
-    el("outsideTimerBox").style.display =
-        "block";
-
-
-    updateOutsideTimer();
-
-
-    outsideTimer =
-        setInterval(
-            async function () {
-
-                await updateOutsideTimer();
-
-            },
-            1000
-        );
+    startOutsideTimer(
+        outsideTime.getTime()
+    );
 }
 
 
-/* =====================================================
-   UPDATE OUTSIDE TIMER
-===================================================== */
+/* =====================================
+   CANCEL OUTSIDE TIMER
+===================================== */
 
-async function updateOutsideTimer() {
+async function cancelOutsideTimer(){
 
-    if (!outsideSince) {
-        return;
-    }
-
-
-    const elapsed =
-        Date.now() -
-        outsideSince;
-
-
-    const remaining =
-        Math.max(
-            0,
-            OUTSIDE_GRACE_PERIOD -
-            elapsed
-        );
-
-
-    const totalSeconds =
-        Math.ceil(
-            remaining / 1000
-        );
-
-
-    const minutes =
-        Math.floor(
-            totalSeconds / 60
-        );
-
-
-    const seconds =
-        totalSeconds % 60;
-
-
-    el("outsideTimer").innerText =
-        String(minutes)
-        .padStart(2, "0")
-        +
-        ":"
-        +
-        String(seconds)
-        .padStart(2, "0");
-
-
-    /*
-       IMPORTANT:
-       GPS callback की जरूरत नहीं.
-       Timer खुद OUT करेगा.
-    */
-
-    if (
-        elapsed >=
-        OUTSIDE_GRACE_PERIOD
-    ) {
-
-        const lat =
-            lastLatitude;
-
-        const lng =
-            lastLongitude;
-
-
-        stopOutsideTimer();
-
-
-        if (
-            currentAttendance &&
-            !currentAttendance.out_time
-        ) {
-
-            await markOUT(
-                lat,
-                lng
-            );
-        }
-    }
-}
-
-
-/* =====================================================
-   STOP OUTSIDE TIMER
-===================================================== */
-
-function stopOutsideTimer() {
-
-    if (outsideTimer) {
+    if(outsideTimer){
 
         clearInterval(
             outsideTimer
         );
 
-        outsideTimer =
-            null;
+        outsideTimer = null;
     }
 
-
-    outsideSince =
-        null;
-
-
-    el("outsideTimerBox").style.display =
+    document.getElementById(
+        "graceBox"
+    ).style.display =
         "none";
 
 
-    el("outsideTimer").innerText =
-        "05:00";
+    if(
+        !currentAttendance ||
+        currentAttendance.out_time
+    ){
+
+        return;
+    }
+
+    /*
+      Database se outside_since clear
+      kar do.
+    */
+
+    const {data,error} =
+        await supabaseClient
+        .from("attendance")
+        .update({
+
+            outside_since:
+                null
+
+        })
+        .eq(
+            "id",
+            currentAttendance.id
+        )
+        .select()
+        .limit(1);
+
+    if(!error && data && data.length>0){
+
+        currentAttendance =
+            data[0];
+    }
 }
 
 
-/* =====================================================
-   HANDLE GPS LOCATION
-===================================================== */
+/* =====================================
+   OUTSIDE TIMER
+===================================== */
 
-async function handleLocation(
-    position
-) {
+function startOutsideTimer(
+    startTime
+){
 
-    if (
-        locationProcessing ||
-        !office
-    ) {
+    /*
+      Existing timer clear
+    */
+
+    if(outsideTimer){
+
+        clearInterval(
+            outsideTimer
+        );
+    }
+
+
+    document.getElementById(
+        "graceBox"
+    ).style.display =
+        "block";
+
+
+    function updateTimer(){
+
+        if(
+            !currentAttendance ||
+            currentAttendance.out_time
+        ){
+
+            clearInterval(
+                outsideTimer
+            );
+
+            outsideTimer = null;
+
+            document.getElementById(
+                "graceBox"
+            ).style.display =
+                "none";
+
+            return;
+        }
+
+
+        const elapsed =
+            Date.now() -
+            startTime;
+
+        const remaining =
+            GRACE_TIME -
+            elapsed;
+
+
+        if(remaining <= 0){
+
+            clearInterval(
+                outsideTimer
+            );
+
+            outsideTimer = null;
+
+            document.getElementById(
+                "graceTimer"
+            ).innerText =
+                "00:00";
+
+            markOUT(
+                lastLatitude,
+                lastLongitude
+            );
+
+            return;
+        }
+
+
+        const totalSeconds =
+            Math.ceil(
+                remaining / 1000
+            );
+
+        const minutes =
+            Math.floor(
+                totalSeconds / 60
+            );
+
+        const seconds =
+            totalSeconds % 60;
+
+
+        document.getElementById(
+            "graceTimer"
+        ).innerText =
+
+            String(minutes)
+            .padStart(2,"0")
+
+            + ":" +
+
+            String(seconds)
+            .padStart(2,"0");
+    }
+
+
+    updateTimer();
+
+    outsideTimer =
+        setInterval(
+            updateTimer,
+            1000
+        );
+}
+
+
+/* =====================================
+   LAST GPS
+===================================== */
+
+let lastLatitude = null;
+
+let lastLongitude = null;
+
+
+/* =====================================
+   MARK OUT
+===================================== */
+
+async function markOUT(
+    latitude,
+    longitude
+){
+
+    if(
+        !currentAttendance ||
+        currentAttendance.out_time
+    ){
+
         return;
     }
 
 
-    locationProcessing =
-        true;
+    const outTime =
+        new Date();
+
+    const inTime =
+        new Date(
+            currentAttendance.in_time
+        );
 
 
-    try {
-
-        const latitude =
-            position.coords.latitude;
-
-        const longitude =
-            position.coords.longitude;
-
-        const accuracy =
-            position.coords.accuracy;
-
-
-        lastLatitude =
-            latitude;
-
-        lastLongitude =
-            longitude;
+    const minutes =
+        Math.max(
+            0,
+            Math.round(
+                (
+                    outTime -
+                    inTime
+                ) / 60000
+            )
+        );
 
 
-        el("latitude").innerText =
-            latitude.toFixed(6);
+    const {data,error} =
+        await supabaseClient
+        .from("attendance")
+        .update({
 
-        el("longitude").innerText =
-            longitude.toFixed(6);
+            out_time:
+                outTime.toISOString(),
 
-        el("accuracy").innerText =
-            Math.round(accuracy) +
-            " meters";
+            working_minutes:
+                minutes,
 
+            status:
+                "completed",
 
-        const distance =
-            calculateDistance(
+            outside_since:
+                null,
 
+            last_latitude:
                 latitude,
-                longitude,
 
-                Number(
-                    office.latitude
-                ),
+            last_longitude:
+                longitude
 
-                Number(
-                    office.longitude
-                )
-            );
-
-
-        el("distance").innerText =
-            Math.round(distance) +
-            " meters";
+        })
+        .eq(
+            "id",
+            currentAttendance.id
+        )
+        .select()
+        .limit(1);
 
 
-        const radius =
-            Number(
-                office.radius_meters
-            );
-
-
-        /*
-           GPS accuracy खराब होने पर तुरंत
-           गलत OUT से बचने के लिए थोड़ा buffer.
-
-           Employee को OUTSIDE तभी माना जाएगा
-           जब उसकी calculated distance radius
-           से बाहर हो.
-        */
-
-        const inside =
-            distance <= radius;
-
-
-        /* =========================================
-           INSIDE OFFICE
-        ========================================= */
-
-        if (inside) {
-
-            isInside =
-                true;
-
-
-            stopOutsideTimer();
-
-
-            el("status").innerText =
-                "🟢 IN - Office में";
-
-            el("status").className =
-                "status inside";
-
-
-            /*
-               अगर कोई open attendance नहीं है
-               तो automatic IN.
-            */
-
-            if (
-                !currentAttendance ||
-                currentAttendance.out_time
-            ) {
-
-                await markIN(
-                    latitude,
-                    longitude
-                );
-
-            } else {
-
-                el("message").innerText =
-                    "📍 Office के अंदर हैं | GPS Accuracy: " +
-                    Math.round(accuracy) +
-                    " meters";
-            }
-
-        }
-
-
-        /* =========================================
-           OUTSIDE OFFICE
-        ========================================= */
-
-        else {
-
-            isInside =
-                false;
-
-
-            el("status").innerText =
-                "🟠 Office से बाहर";
-
-            el("status").className =
-                "status waiting";
-
-
-            /*
-               अगर employee का IN चल रहा है,
-               तभी 5 minute timer.
-            */
-
-            if (
-                currentAttendance &&
-                !currentAttendance.out_time
-            ) {
-
-                startOutsideTimer();
-
-
-                el("message").innerText =
-                    "Office से बाहर हैं। 5 मिनट तक वापस नहीं आए तो Automatic OUT होगा.";
-
-            }
-
-            /*
-               पहले ही OUT हो चुका है.
-            */
-
-            else {
-
-                stopOutsideTimer();
-
-
-                el("status").innerText =
-                    "🔴 OUT - Office से बाहर";
-
-                el("status").className =
-                    "status outside";
-
-
-                el("message").innerText =
-                    "Employee office से बाहर है.";
-            }
-        }
-
-
-        updateAttendanceDisplay();
-
-    }
-    catch (error) {
+    if(error){
 
         console.log(
-            "Location processing error:",
+            "OUT ERROR:",
             error
         );
 
-    }
-    finally {
-
-        locationProcessing =
-            false;
-    }
-}
-
-
-/* =====================================================
-   LOCATION ERROR
-===================================================== */
-
-function locationError(
-    error
-) {
-
-    el("status").innerText =
-        "⚠️ Location नहीं मिली";
-
-    el("status").className =
-        "status waiting";
-
-
-    let message =
-        error.message;
-
-
-    if (error.code === 1) {
-
-        message =
-            "Location permission बंद है। Browser में Location Allow करें.";
-
-    }
-
-    else if (error.code === 2) {
-
-        message =
-            "GPS location अभी उपलब्ध नहीं है। GPS ON रखें.";
-
-    }
-
-    else if (error.code === 3) {
-
-        message =
-            "Location मिलने में समय लग रहा है।";
-    }
-
-
-    el("message").innerText =
-        message;
-}
-
-
-/* =====================================================
-   START GPS TRACKING
-===================================================== */
-
-function startLocationTracking() {
-
-    if (
-        !navigator.geolocation
-    ) {
-
-        el("status").innerText =
-            "⚠️ GPS उपलब्ध नहीं है";
-
-        el("message").innerText =
-            "इस browser/device में geolocation support नहीं है।";
+        document.getElementById(
+            "message"
+        ).innerText =
+            "OUT attendance error: " +
+            error.message;
 
         return;
     }
 
 
-    if (
-        watchId !== null
-    ) {
+    if(
+        data &&
+        data.length>0
+    ){
 
-        navigator.geolocation
-            .clearWatch(
-                watchId
-            );
+        currentAttendance =
+            data[0];
+
+        updateAttendanceDisplay();
     }
 
 
-    el("status").innerText =
-        "📍 Location Checking...";
+    document.getElementById(
+        "graceBox"
+    ).style.display =
+        "none";
 
-    el("status").className =
+
+    document.getElementById(
+        "message"
+    ).innerText =
+        "5 मिनट बाहर रहने के बाद OUT दर्ज हो गया ✅";
+
+
+    document.getElementById(
+        "status"
+    ).innerText =
+        "🔴 OUT - Office से बाहर";
+
+
+    document.getElementById(
+        "status"
+    ).className =
+        "status outside";
+}
+
+
+/* =====================================
+   DISTANCE
+===================================== */
+
+function calculateDistance(
+    lat1,
+    lon1,
+    lat2,
+    lon2
+){
+
+    const R =
+        6371000;
+
+    const dLat =
+        (
+            lat2 -
+            lat1
+        ) *
+        Math.PI / 180;
+
+    const dLon =
+        (
+            lon2 -
+            lon1
+        ) *
+        Math.PI / 180;
+
+
+    const a =
+        Math.sin(dLat/2) *
+        Math.sin(dLat/2)
+
+        +
+
+        Math.cos(
+            lat1 *
+            Math.PI/180
+        )
+
+        *
+
+        Math.cos(
+            lat2 *
+            Math.PI/180
+        )
+
+        *
+
+        Math.sin(dLon/2) *
+        Math.sin(dLon/2);
+
+
+    const c =
+        2 *
+        Math.atan2(
+            Math.sqrt(a),
+            Math.sqrt(1-a)
+        );
+
+
+    return R*c;
+}
+
+
+/* =====================================
+   HANDLE LOCATION
+===================================== */
+
+async function handleLocation(
+    position
+){
+
+    const latitude =
+        position.coords.latitude;
+
+    const longitude =
+        position.coords.longitude;
+
+    const accuracy =
+        position.coords.accuracy;
+
+
+    lastLatitude =
+        latitude;
+
+    lastLongitude =
+        longitude;
+
+
+    document.getElementById(
+        "latitude"
+    ).innerText =
+        latitude.toFixed(6);
+
+
+    document.getElementById(
+        "longitude"
+    ).innerText =
+        longitude.toFixed(6);
+
+
+    document.getElementById(
+        "accuracy"
+    ).innerText =
+        Math.round(accuracy) +
+        " meters";
+
+
+    const distance =
+        calculateDistance(
+
+            latitude,
+            longitude,
+
+            office.latitude,
+            office.longitude
+        );
+
+
+    document.getElementById(
+        "distance"
+    ).innerText =
+        Math.round(distance) +
+        " meters";
+
+
+    const radius =
+        Number(
+            office.radius_meters
+        );
+
+
+    const inside =
+        distance <= radius;
+
+
+    /* =================================
+       INSIDE
+    ================================= */
+
+    if(inside){
+
+        isInside = true;
+
+
+        document.getElementById(
+            "status"
+        ).innerText =
+            "🟢 IN - Office में";
+
+
+        document.getElementById(
+            "status"
+        ).className =
+            "status inside";
+
+
+        /*
+          Agar employee grace period
+          ke andar wapas aa gaya.
+        */
+
+        if(
+            currentAttendance &&
+            !currentAttendance.out_time &&
+            currentAttendance.outside_since
+        ){
+
+            await cancelOutsideTimer();
+
+            document.getElementById(
+                "message"
+            ).innerText =
+                "आप वापस Office में आ गए ✅";
+
+        }
+
+
+        /*
+          New IN only if no open attendance
+        */
+
+        if(
+            !currentAttendance ||
+            currentAttendance.out_time
+        ){
+
+            await markIN(
+                latitude,
+                longitude
+            );
+        }
+
+
+        return;
+    }
+
+
+    /* =================================
+       OUTSIDE
+    ================================= */
+
+    isInside = false;
+
+
+    /*
+      Agar attendance hi nahi hai,
+      to OUT mat karo.
+    */
+
+    if(
+        !currentAttendance
+    ){
+
+        document.getElementById(
+            "status"
+        ).innerText =
+            "🟠 Office से बाहर";
+
+
+        document.getElementById(
+            "status"
+        ).className =
+            "status waiting";
+
+
+        document.getElementById(
+            "message"
+        ).innerText =
+            "Office radius से बाहर हैं। IN attendance नहीं है।";
+
+        return;
+    }
+
+
+    /*
+      Agar already OUT ho chuka hai
+    */
+
+    if(
+        currentAttendance.out_time
+    ){
+
+        document.getElementById(
+            "status"
+        ).innerText =
+            "🔴 OUT - Office से बाहर";
+
+
+        document.getElementById(
+            "status"
+        ).className =
+            "status outside";
+
+
+        return;
+    }
+
+
+    /*
+      IMPORTANT:
+      Pehli baar bahar jaate hi
+      database mein outside_since save hoga.
+    */
+
+    document.getElementById(
+        "status"
+    ).innerText =
+        "🟠 Office से बाहर - 5 मिनट Grace";
+
+
+    document.getElementById(
+        "status"
+    ).className =
         "status waiting";
 
 
-    el("message").innerText =
-        "Location permission माँगी जा रही है...";
+    document.getElementById(
+        "message"
+    ).innerText =
+        "आप Office radius से बाहर हैं। 5 मिनट के अंदर वापस आने पर OUT नहीं होगा।";
+
+
+    /*
+      Agar outside_since already saved hai
+      to नया timer नहीं बनेगा.
+    */
+
+    if(
+        currentAttendance.outside_since
+    ){
+
+        startOutsideTimer(
+            new Date(
+                currentAttendance.outside_since
+            ).getTime()
+        );
+
+    }else{
+
+        await saveOutsideSince(
+            latitude,
+            longitude
+        );
+    }
+}
+
+
+/* =====================================
+   LOCATION ERROR
+===================================== */
+
+function locationError(error){
+
+    document.getElementById(
+        "status"
+    ).innerText =
+        "⚠️ Location नहीं मिली";
+
+
+    document.getElementById(
+        "status"
+    ).className =
+        "status waiting";
+
+
+    document.getElementById(
+        "message"
+    ).innerText =
+        "Location Error: " +
+        error.message;
+}
+
+
+/* =====================================
+   START GPS
+===================================== */
+
+function startLocationTracking(){
+
+    if(
+        !navigator.geolocation
+    ){
+
+        document.getElementById(
+            "status"
+        ).innerText =
+            "⚠️ GPS उपलब्ध नहीं है";
+
+        return;
+    }
 
 
     watchId =
-        navigator.geolocation
-            .watchPosition(
-
-                handleLocation,
-
-                locationError,
-
-                {
-                    enableHighAccuracy:
-                        true,
-
-                    timeout:
-                        20000,
-
-                    maximumAge:
-                        3000
-                }
-            );
-}
-
-
-/* =====================================================
-   MANUAL REFRESH GPS
-===================================================== */
-
-function refreshLocation() {
-
-    if (
-        !navigator.geolocation
-    ) {
-        return;
-    }
-
-
-    el("message").innerText =
-        "नई location check की जा रही है...";
-
-
-    navigator.geolocation
-        .getCurrentPosition(
+        navigator.geolocation.watchPosition(
 
             handleLocation,
 
             locationError,
 
             {
-                enableHighAccuracy:
-                    true,
 
-                timeout:
-                    20000,
+                enableHighAccuracy:true,
 
-                maximumAge:
-                    0
+                timeout:20000,
+
+                maximumAge:3000
+
             }
         );
 }
 
 
-/* =====================================================
+/* =====================================
+   REFRESH LOCATION
+===================================== */
+
+function refreshLocation(){
+
+    if(
+        !navigator.geolocation
+    ){
+
+        return;
+    }
+
+
+    document.getElementById(
+        "message"
+    ).innerText =
+        "GPS location refresh हो रही है...";
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        handleLocation,
+
+        locationError,
+
+        {
+
+            enableHighAccuracy:true,
+
+            timeout:20000,
+
+            maximumAge:0
+
+        }
+    );
+}
+
+
+/* =====================================
    ATTENDANCE DISPLAY
-===================================================== */
+===================================== */
 
-function updateAttendanceDisplay() {
+function updateAttendanceDisplay(){
 
-    if (!currentAttendance) {
+    if(!currentAttendance){
 
-        el("inTime").innerText =
+        document.getElementById(
+            "inTime"
+        ).innerText =
             "—";
 
-        el("outTime").innerText =
+        document.getElementById(
+            "outTime"
+        ).innerText =
             "—";
 
-        el("workingTime").innerText =
+        document.getElementById(
+            "workingTime"
+        ).innerText =
             "—";
 
         return;
     }
 
 
-    /* IN TIME */
-
-    if (
+    if(
         currentAttendance.in_time
-    ) {
+    ){
 
-        el("inTime").innerText =
+        document.getElementById(
+            "inTime"
+        ).innerText =
             formatTime(
                 currentAttendance.in_time
             );
-
-    } else {
-
-        el("inTime").innerText =
-            "—";
     }
 
 
-    /* OUT TIME */
-
-    if (
+    if(
         currentAttendance.out_time
-    ) {
+    ){
 
-        el("outTime").innerText =
+        document.getElementById(
+            "outTime"
+        ).innerText =
             formatTime(
                 currentAttendance.out_time
             );
+    }else{
 
-    } else {
-
-        el("outTime").innerText =
+        document.getElementById(
+            "outTime"
+        ).innerText =
             "—";
     }
 
 
-    /* COMPLETED WORKING TIME */
-
-    if (
-        currentAttendance.out_time
-    ) {
+    if(
+        currentAttendance.out_time &&
+        currentAttendance.working_minutes !== null
+    ){
 
         const minutes =
             Number(
                 currentAttendance
-                    .working_minutes || 0
+                .working_minutes
             );
 
 
-        el("workingTime").innerText =
-            formatMinutes(
-                minutes
+        const hours =
+            Math.floor(
+                minutes/60
             );
 
-        return;
+
+        const mins =
+            minutes%60;
+
+
+        document.getElementById(
+            "workingTime"
+        ).innerText =
+            hours +
+            "h " +
+            mins +
+            "m";
+
+    }else{
+
+        startWorkingTimeClock();
+    }
+}
+
+
+/* =====================================
+   WORKING TIME CLOCK
+===================================== */
+
+let workingClock = null;
+
+
+function startWorkingTimeClock(){
+
+    if(workingClock){
+
+        clearInterval(
+            workingClock
+        );
     }
 
 
-    /* LIVE WORKING TIME */
+    function update(){
 
-    if (
-        currentAttendance.in_time
-    ) {
+        if(
+            !currentAttendance ||
+            !currentAttendance.in_time
+        ){
+
+            return;
+        }
+
+
+        if(
+            currentAttendance.out_time
+        ){
+
+            return;
+        }
+
 
         const start =
             new Date(
                 currentAttendance.in_time
-            );
+            ).getTime();
 
 
-        const minutes =
+        const diff =
             Math.max(
                 0,
-                Math.floor(
-                    (
-                        Date.now() -
-                        start.getTime()
-                    ) / 60000
-                )
+                Date.now()-start
             );
 
 
-        el("workingTime").innerText =
-            formatMinutes(
-                minutes
+        const totalMinutes =
+            Math.floor(
+                diff/60000
             );
+
+
+        const hours =
+            Math.floor(
+                totalMinutes/60
+            );
+
+
+        const mins =
+            totalMinutes%60;
+
+
+        document.getElementById(
+            "workingTime"
+        ).innerText =
+            hours +
+            "h " +
+            mins +
+            "m";
     }
+
+
+    update();
+
+
+    workingClock =
+        setInterval(
+            update,
+            30000
+        );
 }
 
 
-/* =====================================================
-   LIVE WORKING TIMER
-===================================================== */
-
-function startWorkingTimeClock() {
-
-    setInterval(
-        function () {
-
-            if (
-                currentAttendance &&
-                !currentAttendance.out_time
-            ) {
-
-                updateAttendanceDisplay();
-            }
-
-        },
-        30000
-    );
-}
-
-
-/* =====================================================
-   FORMAT MINUTES
-===================================================== */
-
-function formatMinutes(
-    totalMinutes
-) {
-
-    const minutes =
-        Math.max(
-            0,
-            Number(
-                totalMinutes
-            ) || 0
-        );
-
-
-    const hours =
-        Math.floor(
-            minutes / 60
-        );
-
-
-    const mins =
-        Math.floor(
-            minutes % 60
-        );
-
-
-    return (
-        hours +
-        "h " +
-        mins +
-        "m"
-    );
-}
-
-
-/* =====================================================
+/* =====================================
    FORMAT TIME
-===================================================== */
+===================================== */
 
-function formatTime(
-    value
-) {
-
-    if (!value) {
-        return "—";
-    }
-
+function formatTime(value){
 
     return new Date(value)
         .toLocaleTimeString(
             "en-IN",
             {
-                hour:
-                    "2-digit",
 
-                minute:
-                    "2-digit",
+                hour:"2-digit",
 
-                second:
-                    "2-digit"
+                minute:"2-digit",
+
+                second:"2-digit"
+
             }
         );
 }
 
 
-/* =====================================================
+/* =====================================
+   VISIBILITY
+===================================== */
+
+document.addEventListener(
+    "visibilitychange",
+    function(){
+
+        if(
+            document.visibilityState ===
+            "visible"
+        ){
+
+            refreshLocation();
+        }
+
+    }
+);
+
+
+/* =====================================
    LOGOUT
-===================================================== */
+===================================== */
 
-async function logout() {
+async function logout(){
 
-    stopOutsideTimer();
-
-
-    if (
+    if(
         watchId !== null
-    ) {
+    ){
 
         navigator.geolocation
-            .clearWatch(
-                watchId
-            );
+        .clearWatch(
+            watchId
+        );
+
+        watchId = null;
+    }
 
 
-        watchId =
-            null;
+    if(outsideTimer){
+
+        clearInterval(
+            outsideTimer
+        );
+
+        outsideTimer = null;
+    }
+
+
+    if(workingClock){
+
+        clearInterval(
+            workingClock
+        );
+
+        workingClock = null;
     }
 
 
@@ -1581,52 +1650,26 @@ async function logout() {
 }
 
 
-/* =====================================================
-   PAGE VISIBILITY
-===================================================== */
-
-/*
-   Employee वापस browser page खोले तो
-   location तुरंत दोबारा check होगी.
-*/
-
-document.addEventListener(
-    "visibilitychange",
-    function () {
-
-        if (
-            document.visibilityState ===
-            "visible"
-        ) {
-
-            refreshLocation();
-        }
-    }
-);
-
-
-/* =====================================================
+/* =====================================
    START APP
-===================================================== */
+===================================== */
 
-async function startApp() {
+async function startApp(){
 
     const user =
         await getCurrentUser();
 
+    if(!user){
 
-    if (!user) {
         return;
     }
 
 
     const employeeLoaded =
-        await loadEmployee(
-            user
-        );
+        await loadEmployee(user);
 
+    if(!employeeLoaded){
 
-    if (!employeeLoaded) {
         return;
     }
 
@@ -1634,23 +1677,27 @@ async function startApp() {
     const officeLoaded =
         await loadOffice();
 
+    if(!officeLoaded){
 
-    if (!officeLoaded) {
         return;
     }
 
 
+    /*
+      पहले database से attendance
+      load होगी.
+    */
+
     await loadAttendance();
 
 
-    startWorkingTimeClock();
-
+    /*
+      उसके बाद GPS start होगा.
+    */
 
     startLocationTracking();
 }
 
-
-/* START */
 
 startApp();
 
