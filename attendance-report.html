@@ -13,216 +13,254 @@
 
 <style>
 
-* {
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+*{
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
 }
 
-body {
-    margin: 0;
-    background: #f3f6fa;
-    color: #111827;
+body{
+    margin:0;
+    background:#f3f6fa;
+    color:#111827;
 }
 
-.header {
-    background: #2563eb;
-    color: white;
-    padding: 20px;
+.header{
+    background:#2563eb;
+    color:white;
+    padding:20px;
 }
 
-.header h2 {
-    margin: 0;
+.header h2{
+    margin:0;
 }
 
-.header p {
-    margin: 6px 0 0;
+.header p{
+    margin:6px 0 0;
 }
 
-.container {
-    max-width: 1100px;
-    margin: auto;
-    padding: 20px;
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:20px;
 }
 
-.card {
-    background: white;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 14px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+.card{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.07);
 }
 
-.controls {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    flex-wrap: wrap;
+.controls{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
 }
 
-.controls input {
-    padding: 11px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
+.controls input{
+    padding:11px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    font-size:15px;
 }
 
-button {
-    padding: 11px 18px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    background: #2563eb;
-    color: white;
-    font-size: 15px;
+button{
+    padding:11px 18px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#2563eb;
+    color:white;
+    font-size:15px;
 }
 
-.refresh {
-    background: #16a34a;
+button:hover{
+    opacity:.9;
 }
 
-.logout {
-    background: #dc2626;
+.refresh{
+    background:#16a34a;
 }
 
-.stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
+.logout{
+    background:#dc2626;
+    margin-bottom:20px;
 }
 
-.stat {
-    background: white;
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
 }
 
-.stat-title {
-    color: #6b7280;
-    font-size: 14px;
+.stat{
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.07);
 }
 
-.stat-value {
-    font-size: 28px;
-    font-weight: bold;
-    margin-top: 8px;
+.stat-title{
+    color:#6b7280;
+    font-size:14px;
 }
 
-.blue {
-    color: #2563eb;
+.stat-value{
+    font-size:28px;
+    font-weight:bold;
+    margin-top:8px;
 }
 
-.green {
-    color: #16a34a;
+.blue{
+    color:#2563eb;
 }
 
-.orange {
-    color: #ea580c;
+.green{
+    color:#16a34a;
 }
 
-.red {
-    color: #dc2626;
+.orange{
+    color:#ea580c;
 }
 
-.employee {
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    margin-bottom: 18px;
-    overflow: hidden;
+.red{
+    color:#dc2626;
 }
 
-.employee-header {
-    padding: 16px;
-    background: #f8fafc;
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    flex-wrap: wrap;
+.employee{
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    margin-bottom:18px;
+    overflow:hidden;
 }
 
-.employee-name {
-    font-size: 20px;
-    font-weight: bold;
+.employee-header{
+    padding:16px;
+    background:#f8fafc;
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    flex-wrap:wrap;
 }
 
-.employee-total {
-    font-size: 20px;
-    font-weight: bold;
-    color: #2563eb;
+.employee-name{
+    font-size:20px;
+    font-weight:bold;
 }
 
-.employee-body {
-    padding: 15px;
+.employee-info{
+    margin-top:5px;
+    color:#6b7280;
+    font-size:14px;
 }
 
-.day {
-    border-bottom: 1px solid #e5e7eb;
-    padding: 12px 0;
+.employee-total{
+    font-size:20px;
+    font-weight:bold;
+    color:#2563eb;
 }
 
-.day:last-child {
-    border-bottom: none;
+.employee-body{
+    padding:15px;
 }
 
-.day-header {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    margin-bottom: 8px;
+.day{
+    border-bottom:1px solid #e5e7eb;
+    padding:12px 0;
 }
 
-.day-date {
-    font-weight: bold;
+.day:last-child{
+    border-bottom:none;
 }
 
-.day-total {
-    color: #2563eb;
-    font-weight: bold;
+.day-header{
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    margin-bottom:8px;
 }
 
-.session {
-    background: #f8fafc;
-    padding: 8px 12px;
-    margin-top: 6px;
-    border-radius: 7px;
-    font-size: 14px;
+.day-date{
+    font-weight:bold;
 }
 
-.no-data {
-    color: #6b7280;
-    padding: 15px 0;
+.day-total{
+    color:#2563eb;
+    font-weight:bold;
 }
 
-.message {
-    background: #eff6ff;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 20px;
+.session{
+    background:#f8fafc;
+    padding:10px 12px;
+    margin-top:6px;
+    border-radius:7px;
+    font-size:14px;
 }
 
-@media (max-width: 800px) {
+.session-open{
+    border-left:4px solid #16a34a;
+}
 
-    .stats {
-        grid-template-columns: repeat(2, 1fr);
+.no-data{
+    color:#6b7280;
+    padding:15px 0;
+}
+
+.message{
+    background:#eff6ff;
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:20px;
+}
+
+.loading{
+    color:#6b7280;
+}
+
+.success{
+    color:#15803d;
+}
+
+.error{
+    color:#dc2626;
+}
+
+@media(max-width:800px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
     }
 
 }
 
-@media (max-width: 500px) {
+@media(max-width:500px){
 
-    .container {
-        padding: 12px;
+    .container{
+        padding:12px;
     }
 
-    .stats {
-        gap: 10px;
+    .stats{
+        gap:10px;
     }
 
-    .stat {
-        padding: 15px;
+    .stat{
+        padding:15px;
     }
 
-    .stat-value {
-        font-size: 23px;
+    .stat-value{
+        font-size:23px;
+    }
+
+    .controls{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .controls input,
+    .controls button{
+        width:100%;
     }
 
 }
@@ -247,6 +285,8 @@ button {
 <div class="container">
 
 
+<!-- OWNER INFORMATION -->
+
 <div class="card">
 
     <h2 id="ownerName">
@@ -260,7 +300,6 @@ button {
 </div>
 
 
-
 <!-- REPORT CONTROLS -->
 
 <div class="card">
@@ -268,7 +307,6 @@ button {
     <h3>
         📅 Report Select करें
     </h3>
-
 
     <div class="controls">
 
@@ -281,13 +319,9 @@ button {
             id="monthPicker"
         >
 
-
-        <button
-            onclick="loadReport()"
-        >
+        <button onclick="loadReport()">
             🔍 Search
         </button>
-
 
         <button
             class="refresh"
@@ -301,6 +335,7 @@ button {
 </div>
 
 
+<!-- MESSAGE -->
 
 <div
     id="message"
@@ -310,11 +345,9 @@ button {
 </div>
 
 
-
 <!-- SUMMARY -->
 
 <div class="stats">
-
 
     <div class="stat">
 
@@ -379,9 +412,10 @@ button {
 
     </div>
 
-
 </div>
 
+
+<br>
 
 
 <!-- EMPLOYEE REPORT -->
@@ -393,13 +427,10 @@ button {
     </h2>
 
     <div id="reportList">
-
         Loading...
-
     </div>
 
 </div>
-
 
 
 <button
@@ -413,13 +444,13 @@ button {
 </div>
 
 
-
 <script>
 
 
-/* =====================================
+/* =====================================================
    SUPABASE
-===================================== */
+===================================================== */
+
 
 const SUPABASE_URL =
 "https://mxolpvdaengfpmlkgprc.supabase.co";
@@ -436,10 +467,10 @@ supabase.createClient(
 );
 
 
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
 
-/* =====================================
-   GLOBAL
-===================================== */
 
 let currentUser = null;
 
@@ -450,12 +481,33 @@ let employees = [];
 let attendanceData = [];
 
 
+/* =====================================================
+   ELEMENT HELPER
+===================================================== */
 
-/* =====================================
+
+function setMessage(text, type=""){
+
+    const box =
+        document.getElementById("message");
+
+    box.innerText = text;
+
+    box.className = "message";
+
+    if(type){
+        box.classList.add(type);
+    }
+
+}
+
+
+/* =====================================================
    CURRENT USER
-===================================== */
+===================================================== */
 
-async function getCurrentUser() {
+
+async function getCurrentUser(){
 
     const {
         data,
@@ -466,16 +518,27 @@ async function getCurrentUser() {
         .getSession();
 
 
-    if (
-        error ||
-        !data.session
-    ) {
+    if(error){
+
+        setMessage(
+            "Session error: " + error.message,
+            "error"
+        );
+
+        return null;
+    }
+
+
+    if(
+        !data ||
+        !data.session ||
+        !data.session.user
+    ){
 
         window.location.href =
             "employee-login.html";
 
         return null;
-
     }
 
 
@@ -486,7 +549,7 @@ async function getCurrentUser() {
     document.getElementById(
         "ownerEmail"
     ).innerText =
-        currentUser.email;
+        currentUser.email || "—";
 
 
     return currentUser;
@@ -494,12 +557,35 @@ async function getCurrentUser() {
 }
 
 
-
-/* =====================================
+/* =====================================================
    LOAD OWNER
-===================================== */
+===================================================== */
 
-async function loadOwner() {
+/*
+   IMPORTANT:
+
+   Owner login email और employee email अलग हो सकते हैं।
+
+   इसलिए अब currentUser.email को employees.email
+   से match नहीं किया जा रहा।
+
+   Logged-in Supabase user's ID को owner_id माना गया है.
+*/
+
+
+async function loadOwner(){
+
+    if(!currentUser){
+
+        return false;
+    }
+
+
+    /*
+       सबसे पहले current auth user ID को owner_id
+       मानकर employees check करेंगे.
+    */
+
 
     const {
         data,
@@ -507,7 +593,62 @@ async function loadOwner() {
     } =
     await supabaseClient
         .from("employees")
-        .select("owner_id")
+        .select("id,name,email,owner_id")
+        .eq(
+            "owner_id",
+            currentUser.id
+        )
+        .limit(1);
+
+
+    if(error){
+
+        setMessage(
+            "Owner check error: " +
+            error.message,
+            "error"
+        );
+
+        return false;
+    }
+
+
+    if(
+        data &&
+        data.length > 0
+    ){
+
+        ownerId =
+            currentUser.id;
+
+
+        document.getElementById(
+            "ownerName"
+        ).innerText =
+            "Welcome, Owner";
+
+
+        return true;
+    }
+
+
+    /*
+       Fallback:
+
+       अगर किसी पुराने setup में owner_id किसी
+       employee record से identify होता है,
+       तो current user's email वाला employee
+       भी check कर लें।
+    */
+
+
+    const {
+        data: emailData,
+        error: emailError
+    } =
+    await supabaseClient
+        .from("employees")
+        .select("owner_id,name,email")
         .eq(
             "email",
             currentUser.email
@@ -515,43 +656,55 @@ async function loadOwner() {
         .limit(1);
 
 
-    if (
-        error ||
-        !data ||
-        data.length === 0
-    ) {
+    if(
+        !emailError &&
+        emailData &&
+        emailData.length > 0 &&
+        emailData[0].owner_id
+    ){
+
+        ownerId =
+            emailData[0].owner_id;
+
 
         document.getElementById(
-            "message"
+            "ownerName"
         ).innerText =
-            "Owner information नहीं मिली।";
+            "Welcome, Owner";
 
-        return false;
 
+        return true;
     }
 
 
-    ownerId =
-        data[0].owner_id;
+    setMessage(
+        "Owner information नहीं मिली। Logged-in account का owner_id employees table से match नहीं हो रहा।",
+        "error"
+    );
 
 
-    document.getElementById(
-        "ownerName"
-    ).innerText =
-        "Welcome, Owner";
-
-
-    return true;
+    return false;
 
 }
 
 
-
-/* =====================================
+/* =====================================================
    LOAD EMPLOYEES
-===================================== */
+===================================================== */
 
-async function loadEmployees() {
+
+async function loadEmployees(){
+
+    if(!ownerId){
+
+        setMessage(
+            "Owner ID नहीं मिली।",
+            "error"
+        );
+
+        return false;
+    }
+
 
     const {
         data,
@@ -567,21 +720,20 @@ async function loadEmployees() {
         .order(
             "name",
             {
-                ascending: true
+                ascending:true
             }
         );
 
 
-    if (error) {
+    if(error){
 
-        document.getElementById(
-            "message"
-        ).innerText =
+        setMessage(
             "Employee load error: " +
-            error.message;
+            error.message,
+            "error"
+        );
 
         return false;
-
     }
 
 
@@ -594,14 +746,30 @@ async function loadEmployees() {
 }
 
 
-
-/* =====================================
+/* =====================================================
    MONTH RANGE
-===================================== */
+===================================================== */
 
-function getMonthRange(
-    monthValue
-) {
+
+function getMonthRange(monthValue){
+
+    if(!monthValue){
+
+        const now =
+            new Date();
+
+        const year =
+            now.getFullYear();
+
+        const month =
+            String(
+                now.getMonth()+1
+            ).padStart(2,"0");
+
+        monthValue =
+            year + "-" + month;
+    }
+
 
     const parts =
         monthValue.split("-");
@@ -615,10 +783,16 @@ function getMonthRange(
         Number(parts[1]);
 
 
+    /*
+       Local timezone के हिसाब से month start
+       बनाकर UTC ISO में Supabase को भेजते हैं।
+    */
+
+
     const start =
         new Date(
             year,
-            month - 1,
+            month-1,
             1,
             0,
             0,
@@ -652,22 +826,22 @@ function getMonthRange(
 }
 
 
-
-/* =====================================
+/* =====================================================
    LOAD ATTENDANCE
-===================================== */
+===================================================== */
 
-async function loadAttendance() {
 
-    if (
+async function loadAttendance(){
+
+    attendanceData = [];
+
+
+    if(
+        !employees ||
         employees.length === 0
-    ) {
-
-        attendanceData =
-            [];
+    ){
 
         return true;
-
     }
 
 
@@ -677,10 +851,14 @@ async function loadAttendance() {
         ).value;
 
 
+    if(!month){
+
+        return false;
+    }
+
+
     const range =
-        getMonthRange(
-            month
-        );
+        getMonthRange(month);
 
 
     const employeeIds =
@@ -712,21 +890,20 @@ async function loadAttendance() {
         .order(
             "created_at",
             {
-                ascending: true
+                ascending:true
             }
         );
 
 
-    if (error) {
+    if(error){
 
-        document.getElementById(
-            "message"
-        ).innerText =
+        setMessage(
             "Attendance load error: " +
-            error.message;
+            error.message,
+            "error"
+        );
 
         return false;
-
     }
 
 
@@ -739,19 +916,16 @@ async function loadAttendance() {
 }
 
 
-
-/* =====================================
+/* =====================================================
    FORMAT TIME
-===================================== */
+===================================================== */
 
-function formatTime(
-    value
-) {
 
-    if (!value) {
+function formatTime(value){
+
+    if(!value){
 
         return "—";
-
     }
 
 
@@ -759,62 +933,83 @@ function formatTime(
         .toLocaleTimeString(
             "en-IN",
             {
-
-                hour:
-                    "2-digit",
-
-                minute:
-                    "2-digit",
-
-                second:
-                    "2-digit"
-
+                hour:"2-digit",
+                minute:"2-digit",
+                second:"2-digit"
             }
         );
 
 }
 
 
-
-/* =====================================
+/* =====================================================
    FORMAT DATE
-===================================== */
+===================================================== */
 
-function formatDate(
-    value
-) {
+
+function formatDate(value){
+
+    if(!value){
+
+        return "—";
+    }
+
 
     return new Date(value)
         .toLocaleDateString(
             "en-IN",
             {
-
-                day:
-                    "2-digit",
-
-                month:
-                    "2-digit",
-
-                year:
-                    "numeric"
-
+                day:"2-digit",
+                month:"2-digit",
+                year:"numeric"
             }
         );
 
 }
 
 
+/* =====================================================
+   GET DATE KEY
+===================================================== */
 
-/* =====================================
+
+function getDateKey(value){
+
+    const date =
+        new Date(value);
+
+
+    return (
+        date.getFullYear() +
+        "-" +
+        String(
+            date.getMonth()+1
+        ).padStart(2,"0") +
+        "-" +
+        String(
+            date.getDate()
+        ).padStart(2,"0")
+    );
+
+}
+
+
+/* =====================================================
    FORMAT MINUTES
-===================================== */
+===================================================== */
 
-function formatMinutes(
-    minutes
-) {
+
+function formatMinutes(minutes){
 
     minutes =
         Number(minutes) || 0;
+
+
+    minutes =
+        Math.max(
+            0,
+            Math.floor(minutes)
+        );
 
 
     const hours =
@@ -837,61 +1032,79 @@ function formatMinutes(
 }
 
 
+/* =====================================================
+   GET SESSION WORKING MINUTES
+===================================================== */
 
-/* =====================================
+
+function getSessionMinutes(row){
+
+    /*
+       Completed session
+    */
+
+    if(
+        row.out_time
+    ){
+
+        return Math.max(
+            0,
+            Number(
+                row.working_minutes
+            ) || 0
+        );
+    }
+
+
+    /*
+       Open session
+
+       Current time - IN time
+    */
+
+
+    if(
+        row.in_time
+    ){
+
+        const diff =
+            Math.floor(
+                (
+                    Date.now() -
+                    new Date(
+                        row.in_time
+                    ).getTime()
+                ) / 60000
+            );
+
+
+        return Math.max(
+            0,
+            diff
+        );
+    }
+
+
+    return 0;
+
+}
+
+
+/* =====================================================
    EMPLOYEE TOTAL
-===================================== */
+===================================================== */
 
-function getEmployeeTotal(
-    rows
-) {
 
-    let total =
-        0;
+function getEmployeeTotal(rows){
+
+    let total = 0;
 
 
     rows.forEach(
         row => {
 
-            if (
-                row.out_time &&
-                row.working_minutes !== null &&
-                row.working_minutes !== undefined
-            ) {
-
-                total +=
-                    Number(
-                        row.working_minutes
-                    );
-
-            }
-
-            else if (
-                row.in_time &&
-                !row.out_time
-            ) {
-
-                const live =
-                    Math.floor(
-
-                        (
-                            Date.now() -
-                            new Date(
-                                row.in_time
-                            ).getTime()
-
-                        ) / 60000
-
-                    );
-
-
-                total +=
-                    Math.max(
-                        0,
-                        live
-                    );
-
-            }
+            total +=
+                getSessionMinutes(row);
 
         }
     );
@@ -902,53 +1115,35 @@ function getEmployeeTotal(
 }
 
 
-
-/* =====================================
+/* =====================================================
    GROUP BY DATE
-===================================== */
+===================================================== */
 
-function groupByDate(
-    rows
-) {
 
-    const groups =
-        {};
+function groupByDate(rows){
+
+    const groups = {};
 
 
     rows.forEach(
         row => {
 
-            const date =
-                new Date(
+            const key =
+                getDateKey(
                     row.created_at
                 );
 
 
-            const key =
-                date.getFullYear() +
-                "-" +
-                String(
-                    date.getMonth() + 1
-                ).padStart(2, "0") +
-                "-" +
-                String(
-                    date.getDate()
-                ).padStart(2, "0");
-
-
-            if (
+            if(
                 !groups[key]
-            ) {
+            ){
 
-                groups[key] =
-                    [];
+                groups[key] = [];
 
             }
 
 
-            groups[key].push(
-                row
-            );
+            groups[key].push(row);
 
         }
     );
@@ -959,14 +1154,12 @@ function groupByDate(
 }
 
 
-
-/* =====================================
+/* =====================================================
    RENDER EMPLOYEE
-===================================== */
+===================================================== */
 
-function renderEmployee(
-    employee
-) {
+
+function renderEmployee(employee){
 
     const rows =
         attendanceData.filter(
@@ -1011,11 +1204,20 @@ function renderEmployee(
 
                     </div>
 
-                    <div>
+                    <div class="employee-info">
 
+                        Email:
                         ${escapeHtml(
-                            employee.email ||
-                            ""
+                            employee.email || "—"
+                        )}
+
+                    </div>
+
+                    <div class="employee-info">
+
+                        Phone:
+                        ${escapeHtml(
+                            employee.phone || "—"
                         )}
 
                     </div>
@@ -1026,9 +1228,7 @@ function renderEmployee(
                 <div class="employee-total">
 
                     Total:
-                    ${formatMinutes(
-                        total
-                    )}
+                    ${formatMinutes(total)}
 
                 </div>
 
@@ -1040,9 +1240,9 @@ function renderEmployee(
     `;
 
 
-    if (
+    if(
         dates.length === 0
-    ) {
+    ){
 
         html += `
 
@@ -1064,49 +1264,14 @@ function renderEmployee(
                 groups[date];
 
 
-            let dayTotal =
-                0;
+            let dayTotal = 0;
 
 
             dayRows.forEach(
                 row => {
 
-                    if (
-                        row.out_time
-                    ) {
-
-                        dayTotal +=
-                            Number(
-                                row.working_minutes
-                            ) || 0;
-
-                    }
-
-                    else if (
-                        row.in_time
-                    ) {
-
-                        const live =
-                            Math.floor(
-
-                                (
-                                    Date.now() -
-                                    new Date(
-                                        row.in_time
-                                    ).getTime()
-
-                                ) / 60000
-
-                            );
-
-
-                        dayTotal +=
-                            Math.max(
-                                0,
-                                live
-                            );
-
-                    }
+                    dayTotal +=
+                        getSessionMinutes(row);
 
                 }
             );
@@ -1120,15 +1285,13 @@ function renderEmployee(
 
                         <div class="day-date">
 
-                            📅 ${date}
+                            📅 ${formatDisplayDate(date)}
 
                         </div>
 
                         <div class="day-total">
 
-                            ${formatMinutes(
-                                dayTotal
-                            )}
+                            ${formatMinutes(dayTotal)}
 
                         </div>
 
@@ -1138,36 +1301,26 @@ function renderEmployee(
 
 
             dayRows.forEach(
-                (row, index) => {
+                (row,index) => {
 
                     const working =
-                        row.out_time
+                        getSessionMinutes(row);
+
+
+                    const openClass =
+                        !row.out_time
                         ?
-                        formatMinutes(
-                            row.working_minutes
-                        )
+                        "session-open"
                         :
-                        formatMinutes(
-                            Math.floor(
-
-                                (
-                                    Date.now() -
-                                    new Date(
-                                        row.in_time
-                                    ).getTime()
-
-                                ) / 60000
-
-                            )
-                        );
+                        "";
 
 
                     html += `
 
-                        <div class="session">
+                        <div class="session ${openClass}">
 
                             <strong>
-                                Session ${index + 1}
+                                Session ${index+1}
                             </strong>
 
                             &nbsp;&nbsp;
@@ -1180,6 +1333,7 @@ function renderEmployee(
                             &nbsp;&nbsp;
 
                             OUT:
+
                             ${
                                 row.out_time
                                 ?
@@ -1193,7 +1347,9 @@ function renderEmployee(
                             &nbsp;&nbsp;
 
                             Working:
-                            ${working}
+                            ${formatMinutes(
+                                working
+                            )}
 
                         </div>
 
@@ -1227,12 +1383,40 @@ function renderEmployee(
 }
 
 
+/* =====================================================
+   DISPLAY DATE
+===================================================== */
 
-/* =====================================
+
+function formatDisplayDate(key){
+
+    const parts =
+        key.split("-");
+
+
+    if(parts.length !== 3){
+
+        return key;
+    }
+
+
+    return (
+        parts[2] +
+        "-" +
+        parts[1] +
+        "-" +
+        parts[0]
+    );
+
+}
+
+
+/* =====================================================
    RENDER REPORT
-===================================== */
+===================================================== */
 
-function renderReport() {
+
+function renderReport(){
 
     const container =
         document.getElementById(
@@ -1240,19 +1424,18 @@ function renderReport() {
         );
 
 
-    let totalDays =
-        0;
+    let totalDays = 0;
 
     let totalSessions =
         attendanceData.length;
 
-    let totalWorking =
-        0;
+    let totalWorking = 0;
 
 
     /*
-       Unique employee attendance days
+       Overall unique attendance days
     */
+
 
     const uniqueDays =
         new Set();
@@ -1261,64 +1444,15 @@ function renderReport() {
     attendanceData.forEach(
         row => {
 
-            const date =
-                new Date(
-                    row.created_at
-                );
-
-
-            const key =
-                date.getFullYear() +
-                "-" +
-                String(
-                    date.getMonth() + 1
-                ).padStart(2, "0") +
-                "-" +
-                String(
-                    date.getDate()
-                ).padStart(2, "0");
-
-
             uniqueDays.add(
-                key
+                getDateKey(
+                    row.created_at
+                )
             );
 
 
-            if (
-                row.out_time
-            ) {
-
-                totalWorking +=
-                    Number(
-                        row.working_minutes
-                    ) || 0;
-
-            }
-
-            else if (
-                row.in_time
-            ) {
-
-                totalWorking +=
-                    Math.max(
-
-                        0,
-
-                        Math.floor(
-
-                            (
-                                Date.now() -
-                                new Date(
-                                    row.in_time
-                                ).getTime()
-
-                            ) / 60000
-
-                        )
-
-                    );
-
-            }
+            totalWorking +=
+                getSessionMinutes(row);
 
         }
     );
@@ -1354,20 +1488,25 @@ function renderReport() {
         );
 
 
-    if (
+    if(
         employees.length === 0
-    ) {
+    ){
 
-        container.innerHTML =
-            "<p>कोई employee नहीं मिला।";
+        container.innerHTML = `
+
+            <p class="no-data">
+
+                कोई employee नहीं मिला।
+
+            </p>
+
+        `;
 
         return;
-
     }
 
 
-    let html =
-        "";
+    let html = "";
 
 
     employees.forEach(
@@ -1386,35 +1525,33 @@ function renderReport() {
         html;
 
 
-    document.getElementById(
-        "message"
-    ).innerText =
-        "Monthly attendance report successfully load हो गई ✅";
+    setMessage(
+        "Monthly attendance report successfully load हो गई ✅",
+        "success"
+    );
 
 }
 
 
-
-/* =====================================
+/* =====================================================
    LOAD REPORT
-===================================== */
+===================================================== */
 
-async function loadReport() {
 
-    document.getElementById(
-        "message"
-    ).innerText =
-        "Report loading...";
+async function loadReport(){
+
+    setMessage(
+        "Report loading..."
+    );
 
 
     const loaded =
         await loadAttendance();
 
 
-    if (!loaded) {
+    if(!loaded){
 
         return;
-
     }
 
 
@@ -1423,14 +1560,12 @@ async function loadReport() {
 }
 
 
-
-/* =====================================
+/* =====================================================
    ESCAPE HTML
-===================================== */
+===================================================== */
 
-function escapeHtml(
-    value
-) {
+
+function escapeHtml(value){
 
     return String(value)
         .replace(
@@ -1457,12 +1592,12 @@ function escapeHtml(
 }
 
 
-
-/* =====================================
+/* =====================================================
    LOGOUT
-===================================== */
+===================================================== */
 
-async function logout() {
+
+async function logout(){
 
     await supabaseClient
         .auth
@@ -1475,49 +1610,67 @@ async function logout() {
 }
 
 
+/* =====================================================
+   START APP
+===================================================== */
 
-/* =====================================
-   START
-===================================== */
 
-async function startApp() {
+async function startApp(){
+
+    setMessage(
+        "Report loading..."
+    );
+
+
+    /*
+       1. Current logged-in user
+    */
+
 
     const user =
         await getCurrentUser();
 
 
-    if (!user) {
+    if(!user){
 
         return;
-
     }
+
+
+    /*
+       2. Owner identify
+    */
 
 
     const ownerLoaded =
         await loadOwner();
 
 
-    if (!ownerLoaded) {
+    if(!ownerLoaded){
 
         return;
-
     }
+
+
+    /*
+       3. Employees load
+    */
 
 
     const employeesLoaded =
         await loadEmployees();
 
 
-    if (!employeesLoaded) {
+    if(!employeesLoaded){
 
         return;
-
     }
 
 
     /*
-       Current month
+       4. Current month select
     */
+
 
     const now =
         new Date();
@@ -1529,7 +1682,7 @@ async function startApp() {
 
     const month =
         String(
-            now.getMonth() + 1
+            now.getMonth()+1
         ).padStart(
             2,
             "0"
@@ -1544,19 +1697,34 @@ async function startApp() {
         month;
 
 
+    /*
+       5. First report
+    */
+
+
     await loadReport();
 
 
     /*
-       Auto refresh every 30 seconds
+       6. Auto refresh every 30 seconds
     */
 
+
     setInterval(
-        loadReport,
+        async function(){
+
+            await loadReport();
+
+        },
         30000
     );
 
 }
+
+
+/* =====================================================
+   RUN
+===================================================== */
 
 
 startApp();
