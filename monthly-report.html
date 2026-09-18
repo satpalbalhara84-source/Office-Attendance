@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Monthly Attendance Report</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    margin:0;
+    background:#f3f6fa;
+    color:#111827;
+}
+
+.header{
+    background:#2563eb;
+    color:white;
+    padding:20px;
+}
+
+.header h2{
+    margin:0;
+}
+
+.header p{
+    margin:6px 0 0;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,.07);
+}
+
+.controls{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+input{
+    padding:11px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+}
+
+button{
+    padding:11px 18px;
+    border:0;
+    border-radius:8px;
+    cursor:pointer;
+    color:white;
+    background:#2563eb;
+    font-size:15px;
+}
+
+.refresh{
+    background:#16a34a;
+}
+
+.back{
+    background:#6b7280;
+}
+
+.logout{
+    background:#dc2626;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:
+    repeat(4,1fr);
+    gap:15px;
+}
+
+.stat{
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,.07);
+}
+
+.stat-title{
+    color:#6b7280;
+    font-size:14px;
+}
+
+.stat-value{
+    font-size:28px;
+    font-weight:bold;
+    margin-top:8px;
+}
+
+.blue{
+    color:#2563eb;
+}
+
+.green{
+    color:#16a34a;
+}
+
+.orange{
+    color:#ea580c;
+}
+
+.purple{
+    color:#7c3aed;
+}
+
+.employee{
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:18px;
+    margin-bottom:20px;
+}
+
+.employee-name{
+    font-size:21px;
+    font-weight:bold;
+}
+
+.employee-email{
+    color:#6b7280;
+    margin-top:5px;
+}
+
+.employee-total{
+    background:#eff6ff;
+    padding:15px;
+    border-radius:10px;
+    margin:15px 0;
+}
+
+.employee-total-title{
+    color:#6b7280;
+    font-size:14px;
+}
+
+.employee-total-time{
+    color:#2563eb;
+    font-size:25px;
+    font-weight:bold;
+    margin-top:5px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:11px;
+    border-bottom:1px solid #e5e7eb;
+    text-align:left;
+}
+
+th{
+    background:#f8fafc;
+}
+
+.no-data{
+    color:#6b7280;
+    padding:10px 0;
+}
+
+.message{
+    background:#eff6ff;
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:20px;
+}
+
+.error{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+@media(max-width:800px){
+
+    .stats{
+        grid-template-columns:
+        repeat(2,1fr);
+    }
+
+    .container{
+        padding:12px;
+    }
+
+}
+
+@media(max-width:500px){
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .stat{
+        padding:15px;
+    }
+
+    .stat-value{
+        font-size:22px;
+    }
+
+    th,
+    td{
+        font-size:12px;
+        padding:7px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="header">
+
+    <h2>
+        Office Attendance
+    </h2>
+
+    <p>
+        Monthly Attendance Report
+    </p>
+
+</div>
+
+
+<div class="container">
+
+
+<!-- OWNER -->
+
+<div class="card">
+
+    <h2>
+        👤 Owner
+    </h2>
+
+    <div id="ownerEmail">
+        Loading...
+    </div>
+
+</div>
+
+
+
+<!-- CONTROLS -->
+
+<div class="card">
+
+    <div class="controls">
+
+        <strong>
+            Select Month:
+        </strong>
+
+        <input
+            type="month"
+            id="reportMonth"
+        >
+
+        <button
+            onclick="loadReport()"
+        >
+            🔎 Search
+        </button>
+
+        <button
+            class="refresh"
+            onclick="loadReport()"
+        >
+            🔄 Refresh
+        </button>
+
+        <button
+            class="back"
+            onclick="goBack()"
+        >
+            ← Dashboard
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- SUMMARY -->
+
+<div class="stats">
+
+    <div class="stat">
+
+        <div class="stat-title">
+            Total Employees
+        </div>
+
+        <div
+            id="totalEmployees"
+            class="stat-value blue"
+        >
+            0
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-title">
+            Attendance Days
+        </div>
+
+        <div
+            id="attendanceDays"
+            class="stat-value green"
+        >
+            0
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-title">
+            Total Sessions
+        </div>
+
+        <div
+            id="totalSessions"
+            class="stat-value purple"
+        >
+            0
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-title">
+            Monthly Working Time
+        </div>
+
+        <div
+            id="totalWorking"
+            class="stat-value orange"
+        >
+            0h 0m
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div
+    id="message"
+    class="message"
+>
+    Report loading...
+</div>
+
+
+
+<!-- REPORT -->
+
+<div class="card">
+
+    <h2>
+        📊 Employee Monthly Report
+    </h2>
+
+    <div id="reportList">
+
+        Loading...
+
+    </div>
+
+</div>
+
+
+
+<button
+    class="logout"
+    onclick="logout()"
+>
+    Logout
+</button>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =====================================
+   SUPABASE
+===================================== */
+
+const SUPABASE_URL =
+"https://mxolpvdaengfpmlkgprc.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_KaXl_tgIR8VZhmWR6vuAgQ_FswcmZes";
+
+const db =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+
+/* =====================================
+   GLOBAL
+===================================== */
+
+let currentUser = null;
+
+let employees = [];
+
+let attendanceData = [];
+
+
+
+/* =====================================
+   SESSION
+===================================== */
+
+async function getUser(){
+
+    const {
+        data,
+        error
+    } =
+    await db.auth.getSession();
+
+
+    if(
+        error ||
+        !data.session
+    ){
+
+        window.location.href =
+            "employee-login.html";
+
+        return null;
+
+    }
+
+
+    currentUser =
+        data.session.user;
+
+
+    document.getElementById(
+        "ownerEmail"
+    ).innerText =
+        currentUser.email;
+
+
+    return currentUser;
+
+}
+
+
+
+/* =====================================
+   EMPLOYEES
+===================================== */
+
+async function loadEmployees(){
+
+    const {
+        data,
+        error
+    } =
+    await db
+        .from("employees")
+        .select("*")
+        .eq(
+            "owner_id",
+            currentUser.id
+        )
+        .order(
+            "name",
+            {
+                ascending:true
+            }
+        );
+
+
+    if(error){
+
+        showError(
+            "Employee load error: " +
+            error.message
+        );
+
+        return false;
+
+    }
+
+
+    employees =
+        data || [];
+
+
+    document.getElementById(
+        "totalEmployees"
+    ).innerText =
+        employees.length;
+
+
+    return true;
+
+}
+
+
+
+/* =====================================
+   MONTH RANGE
+===================================== */
+
+function getMonthRange(){
+
+    const value =
+        document.getElementById(
+            "reportMonth"
+        ).value;
+
+
+    const parts =
+        value.split("-");
+
+
+    const year =
+        Number(parts[0]);
+
+
+    const month =
+        Number(parts[1]);
+
+
+    const start =
+        new Date(
+            year,
+            month - 1,
+            1,
+            0,
+            0,
+            0,
+            0
+        );
+
+
+    const end =
+        new Date(
+            year,
+            month,
+            1,
+            0,
+            0,
+            0,
+            0
+        );
+
+
+    return {
+
+        start:
+            start.toISOString(),
+
+        end:
+            end.toISOString()
+
+    };
+
+}
+
+
+
+/* =====================================
+   ATTENDANCE
+===================================== */
+
+async function loadAttendance(){
+
+    attendanceData = [];
+
+
+    if(
+        employees.length === 0
+    ){
+
+        return true;
+
+    }
+
+
+    const range =
+        getMonthRange();
+
+
+    const ids =
+        employees.map(
+            employee =>
+                employee.id
+        );
+
+
+    const {
+        data,
+        error
+    } =
+    await db
+        .from("attendance")
+        .select("*")
+        .in(
+            "employee_id",
+            ids
+        )
+        .gte(
+            "created_at",
+            range.start
+        )
+        .lt(
+            "created_at",
+            range.end
+        )
+        .order(
+            "created_at",
+            {
+                ascending:true
+            }
+        );
+
+
+    if(error){
+
+        showError(
+            "Attendance load error: " +
+            error.message
+        );
+
+        return false;
+
+    }
+
+
+    attendanceData =
+        data || [];
+
+
+    return true;
+
+}
+
+
+
+/* =====================================
+   FORMAT MINUTES
+===================================== */
+
+function formatMinutes(
+    minutes
+){
+
+    minutes =
+        Number(minutes) || 0;
+
+
+    const hours =
+        Math.floor(
+            minutes / 60
+        );
+
+
+    const mins =
+        minutes % 60;
+
+
+    return (
+        hours +
+        "h " +
+        mins +
+        "m"
+    );
+
+}
+
+
+
+/* =====================================
+   FORMAT TIME
+===================================== */
+
+function formatTime(
+    value
+){
+
+    if(!value){
+
+        return "—";
+
+    }
+
+
+    return new Date(value)
+        .toLocaleTimeString(
+            "en-IN",
+            {
+                hour:"2-digit",
+                minute:"2-digit",
+                second:"2-digit"
+            }
+        );
+
+}
+
+
+
+/* =====================================
+   FORMAT DATE
+===================================== */
+
+function formatDate(
+    value
+){
+
+    if(!value){
+
+        return "—";
+
+    }
+
+
+    return new Date(value)
+        .toLocaleDateString(
+            "en-IN",
+            {
+                day:"2-digit",
+                month:"2-digit",
+                year:"numeric"
+            }
+        );
+
+}
+
+
+
+/* =====================================
+   EMPLOYEE TOTAL
+===================================== */
+
+function employeeTotal(
+    rows
+){
+
+    let total = 0;
+
+
+    rows.forEach(
+        row => {
+
+            if(
+                row.out_time
+            ){
+
+                total +=
+                    Number(
+                        row.working_minutes ||
+                        0
+                    );
+
+            }
+            else if(
+                row.in_time
+            ){
+
+                /*
+                   Current running session
+                */
+
+                const live =
+                    Math.floor(
+                        (
+                            Date.now() -
+                            new Date(
+                                row.in_time
+                            ).getTime()
+                        ) / 60000
+                    );
+
+
+                total +=
+                    Math.max(
+                        0,
+                        live
+                    );
+
+            }
+
+        }
+    );
+
+
+    return total;
+
+}
+
+
+
+/* =====================================
+   DATE KEY
+===================================== */
+
+function dateKey(
+    value
+){
+
+    const d =
+        new Date(value);
+
+
+    const y =
+        d.getFullYear();
+
+
+    const m =
+        String(
+            d.getMonth()+1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const day =
+        String(
+            d.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    return (
+        y +
+        "-" +
+        m +
+        "-" +
+        day
+    );
+
+}
+
+
+
+/* =====================================
+   RENDER EMPLOYEE
+===================================== */
+
+function renderEmployee(
+    employee,
+    rows
+){
+
+    const total =
+        employeeTotal(
+            rows
+        );
+
+
+    /*
+       Group sessions by date
+    */
+
+    const days = {};
+
+
+    rows.forEach(
+        row => {
+
+            const key =
+                dateKey(
+                    row.created_at
+                );
+
+
+            if(
+                !days[key]
+            ){
+
+                days[key] = [];
+
+            }
+
+
+            days[key].push(
+                row
+            );
+
+        }
+    );
+
+
+    let html = `
+
+        <div class="employee">
+
+            <div class="employee-name">
+
+                ${escapeHtml(
+                    employee.name ||
+                    "Employee"
+                )}
+
+            </div>
+
+            <div class="employee-email">
+
+                ${escapeHtml(
+                    employee.email ||
+                    ""
+                )}
+
+            </div>
+
+
+            <div class="employee-total">
+
+                <div class="employee-total-title">
+
+                    Monthly Total Working Time
+
+                </div>
+
+                <div class="employee-total-time">
+
+                    ${formatMinutes(
+                        total
+                    )}
+
+                </div>
+
+            </div>
+
+
+    `;
+
+
+    if(
+        rows.length === 0
+    ){
+
+        html += `
+
+            <div class="no-data">
+
+                इस महीने कोई attendance नहीं।
+
+            </div>
+
+        `;
+
+    }
+    else{
+
+        html += `
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Sessions
+                        </th>
+
+                        <th>
+                            IN / OUT
+                        </th>
+
+                        <th>
+                            Daily Total
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+        `;
+
+
+        const keys =
+            Object.keys(days)
+                .sort();
+
+
+        keys.forEach(
+            key => {
+
+                const dayRows =
+                    days[key];
+
+
+                let dayTotal =
+                    0;
+
+
+                let sessionText =
+                    "";
+
+
+                dayRows.forEach(
+                    (row,index) => {
+
+                        let mins = 0;
+
+
+                        if(
+                            row.out_time
+                        ){
+
+                            mins =
+                                Number(
+                                    row.working_minutes ||
+                                    0
+                                );
+
+                        }
+                        else if(
+                            row.in_time
+                        ){
+
+                            mins =
+                                Math.floor(
+                                    (
+                                        Date.now() -
+                                        new Date(
+                                            row.in_time
+                                        ).getTime()
+                                    ) / 60000
+                                );
+
+                        }
+
+
+                        dayTotal +=
+                            Math.max(
+                                0,
+                                mins
+                            );
+
+
+                        sessionText +=
+
+                            "Session " +
+                            (index + 1) +
+                            ": " +
+                            formatTime(
+                                row.in_time
+                            ) +
+                            " → " +
+                            (
+                                row.out_time
+                                ?
+                                formatTime(
+                                    row.out_time
+                                )
+                                :
+                                "Working"
+                            ) +
+                            "<br>";
+
+                    }
+                );
+
+
+                html += `
+
+                    <tr>
+
+                        <td>
+                            ${formatDate(
+                                key
+                            )}
+                        </td>
+
+                        <td>
+                            ${dayRows.length}
+                        </td>
+
+                        <td>
+                            ${sessionText}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${formatMinutes(
+                                    dayTotal
+                                )}
+                            </strong>
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+
+        html += `
+
+                </tbody>
+
+            </table>
+
+        `;
+
+    }
+
+
+    html += `
+
+        </div>
+
+    `;
+
+
+    return html;
+
+}
+
+
+
+/* =====================================
+   RENDER REPORT
+===================================== */
+
+function renderReport(){
+
+    const box =
+        document.getElementById(
+            "reportList"
+        );
+
+
+    if(
+        employees.length === 0
+    ){
+
+        box.innerHTML =
+            `
+            <div class="no-data">
+                कोई employee नहीं मिला।
+            </div>
+            `;
+
+        return;
+
+    }
+
+
+    let html = "";
+
+    let companyTotal = 0;
+
+    let totalSessions = 0;
+
+    const allDays =
+        new Set();
+
+
+    employees.forEach(
+        employee => {
+
+            const rows =
+                attendanceData.filter(
+                    row =>
+                        row.employee_id ===
+                        employee.id
+                );
+
+
+            companyTotal +=
+                employeeTotal(
+                    rows
+                );
+
+
+            totalSessions +=
+                rows.length;
+
+
+            rows.forEach(
+                row => {
+
+                    allDays.add(
+                        dateKey(
+                            row.created_at
+                        )
+                    );
+
+                }
+            );
+
+
+            html +=
+                renderEmployee(
+                    employee,
+                    rows
+                );
+
+        }
+    );
+
+
+    box.innerHTML =
+        html;
+
+
+    document.getElementById(
+        "attendanceDays"
+    ).innerText =
+        allDays.size;
+
+
+    document.getElementById(
+        "totalSessions"
+    ).innerText =
+        totalSessions;
+
+
+    document.getElementById(
+        "totalWorking"
+    ).innerText =
+        formatMinutes(
+            companyTotal
+        );
+
+
+    document.getElementById(
+        "message"
+    ).innerText =
+        "Monthly report successfully loaded ✅";
+
+}
+
+
+
+/* =====================================
+   LOAD REPORT
+===================================== */
+
+async function loadReport(){
+
+    document.getElementById(
+        "message"
+    ).innerText =
+        "Report loading...";
+
+
+    const ok =
+        await loadAttendance();
+
+
+    if(!ok){
+
+        return;
+
+    }
+
+
+    renderReport();
+
+}
+
+
+
+/* =====================================
+   ESCAPE
+===================================== */
+
+function escapeHtml(
+    value
+){
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+
+/* =====================================
+   ERROR
+===================================== */
+
+function showError(
+    message
+){
+
+    document.getElementById(
+        "message"
+    ).innerText =
+        message;
+
+
+    document.getElementById(
+        "message"
+    ).className =
+        "message error";
+
+}
+
+
+
+/* =====================================
+   BACK
+===================================== */
+
+function goBack(){
+
+    window.location.href =
+        "dashboard.html";
+
+}
+
+
+
+/* =====================================
+   LOGOUT
+===================================== */
+
+async function logout(){
+
+    await db.auth.signOut();
+
+    window.location.href =
+        "employee-login.html";
+
+}
+
+
+
+/* =====================================
+   START
+===================================== */
+
+async function startApp(){
+
+    const user =
+        await getUser();
+
+
+    if(!user){
+
+        return;
+
+    }
+
+
+    const ok =
+        await loadEmployees();
+
+
+    if(!ok){
+
+        return;
+
+    }
+
+
+    /*
+       Current month
+    */
+
+    const now =
+        new Date();
+
+
+    const year =
+        now.getFullYear();
+
+
+    const month =
+        String(
+            now.getMonth()+1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    document.getElementById(
+        "reportMonth"
+    ).value =
+        year +
+        "-" +
+        month;
+
+
+    await loadReport();
+
+
+    /*
+       हर 1 minute refresh
+       ताकि running session
+       का time update होता रहे
+    */
+
+    setInterval(
+        loadReport,
+        60000
+    );
+
+}
+
+
+startApp();
+
+
+</script>
+
+
+</body>
+
+</html>
