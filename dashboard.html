@@ -2,167 +2,253 @@
 <html lang="hi">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Office Attendance - Owner Dashboard</title>
+<meta charset="UTF-8">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
+<title>Owner Attendance Dashboard</title>
 
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        body {
-            margin: 0;
-            background: #f4f6f8;
-        }
+<style>
 
-        .header {
-            background: #2563eb;
-            color: white;
-            padding: 18px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
 
-        .header h2 {
-            margin: 0;
-        }
+body {
+    margin: 0;
+    background: #f3f6fa;
+    color: #111827;
+}
 
-        .logout {
-            background: #dc2626;
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 7px;
-            cursor: pointer;
-        }
+.header {
+    background: #2563eb;
+    color: white;
+    padding: 20px;
+}
 
-        .container {
-            max-width: 1100px;
-            margin: auto;
-            padding: 25px;
-        }
+.header h2 {
+    margin: 0;
+}
 
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
+.header p {
+    margin: 6px 0 0;
+}
 
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-        }
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 20px;
+}
 
-        .card h3 {
-            margin: 0 0 10px;
-            color: #555;
-            font-size: 15px;
-        }
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+}
 
-        .number {
-            font-size: 30px;
-            font-weight: bold;
-            color: #2563eb;
-        }
+.stats {
+    display: grid;
+    grid-template-columns:
+        repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
 
-        .section {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-        }
+.stat {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+}
 
-        .section h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
+.stat-title {
+    color: #6b7280;
+    font-size: 14px;
+}
 
-        .form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
+.stat-value {
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 8px;
+}
 
-        input {
-            width: 100%;
-            padding: 13px;
-            border: 1px solid #ddd;
-            border-radius: 7px;
-            font-size: 15px;
-        }
+.green {
+    color: #16a34a;
+}
 
-        .add-btn {
-            background: #16a34a;
-            color: white;
-            border: none;
-            padding: 13px;
-            border-radius: 7px;
-            cursor: pointer;
-            font-size: 15px;
-        }
+.red {
+    color: #dc2626;
+}
 
-        .add-btn:hover {
-            background: #15803d;
-        }
+.blue {
+    color: #2563eb;
+}
 
-        #message {
-            margin-top: 15px;
-            font-weight: bold;
-        }
+.orange {
+    color: #ea580c;
+}
 
-        .employee {
-            padding: 15px 5px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-        .employee-name {
-            font-weight: bold;
-            font-size: 16px;
-        }
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+}
 
-        .employee-info {
-            color: #666;
-            font-size: 14px;
-            margin-top: 5px;
-        }
+th {
+    background: #f8fafc;
+}
 
-        @media(max-width: 700px) {
+.badge {
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+}
 
-            .cards {
-                grid-template-columns: 1fr 1fr;
-            }
+.badge-in {
+    background: #dcfce7;
+    color: #166534;
+}
 
-            .form {
-                grid-template-columns: 1fr;
-            }
+.badge-out {
+    background: #fee2e2;
+    color: #991b1b;
+}
 
-            .header {
-                flex-direction: column;
-                gap: 12px;
-            }
+.badge-away {
+    background: #ffedd5;
+    color: #9a3412;
+}
 
-            .employee {
-                flex-direction: column;
-            }
-        }
+.date-box {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
 
-    </style>
+.date-box input {
+    padding: 11px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+}
+
+button {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #2563eb;
+    color: white;
+    font-size: 15px;
+}
+
+.logout {
+    background: #dc2626;
+}
+
+.refresh {
+    background: #16a34a;
+}
+
+.employee-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.employee-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.employee-name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.total-time {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+.session-table {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.message {
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+@media (max-width: 800px) {
+
+    .stats {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    table {
+        font-size: 13px;
+    }
+
+    th,
+    td {
+        padding: 8px;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .container {
+        padding: 12px;
+    }
+
+    .stats {
+        grid-template-columns:
+            1fr 1fr;
+        gap: 10px;
+    }
+
+    .stat {
+        padding: 15px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+}
+
+</style>
 
 </head>
+
 
 <body>
 
@@ -171,11 +257,7 @@
 
     <h2>Office Attendance</h2>
 
-    <button
-        class="logout"
-        onclick="logout()">
-        Logout
-    </button>
+    <p>Owner Dashboard</p>
 
 </div>
 
@@ -183,139 +265,182 @@
 <div class="container">
 
 
-    <!-- SUMMARY -->
+<!-- OWNER INFO -->
 
-    <div class="cards">
+<div class="card">
 
-        <div class="card">
-            <h3>Total Employees</h3>
-            <div class="number" id="totalEmployees">0</div>
+    <h2 id="ownerName">
+        Loading...
+    </h2>
+
+    <p id="ownerEmail">
+        —
+    </p>
+
+</div>
+
+
+
+<!-- STATS -->
+
+<div class="stats">
+
+
+    <div class="stat">
+
+        <div class="stat-title">
+            Total Employees
         </div>
 
-        <div class="card">
-            <h3>Present Today</h3>
-            <div class="number" id="presentEmployees">0</div>
-        </div>
-
-        <div class="card">
-            <h3>Absent Today</h3>
-            <div class="number" id="absentEmployees">0</div>
-        </div>
-
-        <div class="card">
-            <h3>Working Hours</h3>
-            <div class="number" id="workingHours">0</div>
+        <div
+            id="totalEmployees"
+            class="stat-value blue"
+        >
+            0
         </div>
 
     </div>
 
 
-  <!-- OFFICE SETUP -->
+    <div class="stat">
 
-<div class="section">
-
-    <h2>🏢 Office Location Setup</h2>
-
-    <input
-        type="text"
-        id="officeName"
-        placeholder="Office Name"
-        style="width:100%; margin-bottom:15px;"
-    >
-
-    <input
-        type="number"
-        id="radius"
-        placeholder="Office Radius (meters)"
-        value="100"
-        style="width:100%; margin-bottom:15px;"
-    >
-
-    <button
-        class="add-btn"
-        onclick="getOfficeLocation()"
-        style="width:100%;"
-    >
-        📍 Get Current Location
-    </button>
-
-    <div
-        id="locationMessage"
-        style="margin-top:15px;">
-    </div>
-
-    <button
-        class="add-btn"
-        onclick="saveOffice()"
-        style="width:100%; margin-top:15px;"
-    >
-        💾 Save Office Location
-    </button>
-
-</div> 
- <!-- CREATE EMPLOYEE -->
-
-    <div class="section">
-
-        <h2>➕ Create Employee Account</h2>
-
-        <div class="form">
-
-            <input
-                type="text"
-                id="employeeName"
-                placeholder="Employee Name">
-
-            <input
-                type="text"
-                id="employeePhone"
-                placeholder="Mobile Number">
-
-            <input
-                type="email"
-                id="employeeEmail"
-                placeholder="Employee Email">
-
-            <input
-                type="password"
-                id="employeePassword"
-                placeholder="Employee Password">
-
-            <button
-                class="add-btn"
-                onclick="createEmployee()">
-
-                Create Employee Account
-
-            </button>
-
+        <div class="stat-title">
+            Currently IN
         </div>
 
-        <div id="message"></div>
+        <div
+            id="totalIn"
+            class="stat-value green"
+        >
+            0
+        </div>
 
     </div>
 
 
-    <!-- EMPLOYEE LIST -->
+    <div class="stat">
 
-    <div class="section">
-
-        <h2>👥 Employees</h2>
-
-        <div id="employeeList">
-            Loading...
+        <div class="stat-title">
+            OUT
         </div>
+
+        <div
+            id="totalOut"
+            class="stat-value red"
+        >
+            0
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-title">
+            Total Working Time
+        </div>
+
+        <div
+            id="totalWorking"
+            class="stat-value orange"
+        >
+            0h 0m
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- DATE -->
+
+<div class="card">
+
+    <div class="date-box">
+
+        <strong>
+            Attendance Date:
+        </strong>
+
+        <input
+            type="date"
+            id="attendanceDate"
+        >
+
+        <button
+            onclick="loadDashboard()"
+        >
+            Search
+        </button>
+
+        <button
+            class="refresh"
+            onclick="loadDashboard()"
+        >
+            🔄 Refresh
+        </button>
 
     </div>
 
 </div>
 
 
+
+<!-- MESSAGE -->
+
+<div
+    id="message"
+    class="message"
+>
+    Attendance loading...
+</div>
+
+
+
+<!-- EMPLOYEE ATTENDANCE -->
+
+<div class="card">
+
+    <h2>
+        👥 Employee Attendance
+    </h2>
+
+    <div id="employeeList">
+
+        Loading...
+
+    </div>
+
+</div>
+
+
+
+<!-- LOGOUT -->
+
+<button
+    class="logout"
+    onclick="logout()"
+>
+    Logout
+</button>
+
+
+</div>
+
+
+
 <script>
 
 
+/* =====================================
+   SUPABASE CONFIG
+===================================== */
+
 const SUPABASE_URL =
 "https://mxolpvdaengfpmlkgprc.supabase.co";
+
 
 const SUPABASE_KEY =
 "sb_publishable_KaXl_tgIR8VZhmWR6vuAgQ_FswcmZes";
@@ -329,230 +454,605 @@ supabase.createClient(
 
 
 
-/* CHECK OWNER LOGIN */
+/* =====================================
+   GLOBAL VARIABLES
+===================================== */
 
-async function checkLogin() {
+let currentUser = null;
+
+let currentOwnerId = null;
+
+let employees = [];
+
+let attendanceData = [];
+
+let office = null;
+
+
+
+/* =====================================
+   GET CURRENT USER
+===================================== */
+
+async function getCurrentUser() {
 
     const {
         data,
         error
-    } = await supabaseClient
+    } =
+    await supabaseClient
         .auth
         .getSession();
 
-    if (error || !data.session) {
+
+    if (
+        error ||
+        !data.session
+    ) {
 
         window.location.href =
-            "index.html";
+            "employee-login.html";
 
-        return false;
+        return null;
+
     }
 
-    return true;
+
+    currentUser =
+        data.session.user;
+
+
+    document.getElementById(
+        "ownerEmail"
+    ).innerText =
+        currentUser.email;
+
+
+    return currentUser;
+
 }
 
 
 
-/* CREATE EMPLOYEE */
+/* =====================================
+   LOAD OWNER
+===================================== */
 
-async function createEmployee() {
-
-    const name =
-        document.getElementById(
-            "employeeName"
-        ).value.trim();
-
-    const phone =
-        document.getElementById(
-            "employeePhone"
-        ).value.trim();
-
-    const email =
-        document.getElementById(
-            "employeeEmail"
-        ).value.trim();
-
-    const password =
-        document.getElementById(
-            "employeePassword"
-        ).value;
-
-
-    const message =
-        document.getElementById(
-            "message"
-        );
-
-
-    if (
-        !name ||
-        !phone ||
-        !email ||
-        !password
-    ) {
-
-        message.innerText =
-            "कृपया सभी जानकारी भरें";
-
-        message.style.color =
-            "red";
-
-        return;
-    }
-
-
-    if (password.length < 6) {
-
-        message.innerText =
-            "Password कम से कम 6 characters का होना चाहिए";
-
-        message.style.color =
-            "red";
-
-        return;
-    }
-
-
-    message.innerText =
-        "Employee account बनाया जा रहा है...";
-
-    message.style.color =
-        "#2563eb";
-
-
-    /*
-       Edge Function को call करें
-    */
+async function loadOwner() {
 
     const {
         data,
         error
-    } = await supabaseClient.functions.invoke(
-        "quick-endpoint",
-        {
-            body: {
-                name: name,
-                phone: phone,
-                email: email,
-                password: password
-            }
-        }
-    );
+    } =
+    await supabaseClient
+        .from("employees")
+        .select("owner_id")
+        .eq(
+            "email",
+            currentUser.email
+        )
+        .limit(1);
 
 
-    if (error) {
+    if (
+        error ||
+        !data ||
+        data.length === 0
+    ) {
 
-        message.innerText =
-            "Error: " + error.message;
+        /*
+           अगर owner table अलग है
+           तो बाद में यहां बदलेंगे
+        */
 
-        message.style.color =
-            "red";
+        document.getElementById(
+            "message"
+        ).innerText =
+            "Owner information नहीं मिली।";
 
-        return;
+
+        return false;
+
     }
 
 
-    if (!data || !data.success) {
+    currentOwnerId =
+        data[0].owner_id;
 
-        message.innerText =
-            "Employee account नहीं बना: " +
-            (data?.error || "Unknown error");
-
-        message.style.color =
-            "red";
-
-        return;
-    }
-
-
-    message.innerText =
-        "Employee Account Successfully Created ✅";
-
-    message.style.color =
-        "green";
-
-
-    /*
-       Form खाली करें
-    */
 
     document.getElementById(
-        "employeeName"
-    ).value = "";
-
-    document.getElementById(
-        "employeePhone"
-    ).value = "";
-
-    document.getElementById(
-        "employeeEmail"
-    ).value = "";
-
-    document.getElementById(
-        "employeePassword"
-    ).value = "";
+        "ownerName"
+    ).innerText =
+        "Owner Dashboard";
 
 
-    loadEmployees();
+    return true;
 
 }
 
 
 
-/* LOAD EMPLOYEES */
+/* =====================================
+   LOAD EMPLOYEES
+===================================== */
 
 async function loadEmployees() {
 
     const {
-        data: sessionData
-    } = await supabaseClient
-        .auth
-        .getSession();
-
-
-    if (!sessionData.session) {
-        return;
-    }
-
-
-    const ownerId =
-        sessionData.session.user.id;
-
-
-    const {
         data,
         error
-    } = await supabaseClient
+    } =
+    await supabaseClient
         .from("employees")
         .select("*")
         .eq(
             "owner_id",
-            ownerId
+            currentOwnerId
+        )
+        .order(
+            "name",
+            {
+                ascending: true
+            }
+        );
+
+
+    if (error) {
+
+        console.log(
+            "EMPLOYEE ERROR:",
+            error
+        );
+
+
+        document.getElementById(
+            "message"
+        ).innerText =
+            "Employees load error: " +
+            error.message;
+
+
+        return false;
+
+    }
+
+
+    employees =
+        data || [];
+
+
+    document.getElementById(
+        "totalEmployees"
+    ).innerText =
+        employees.length;
+
+
+    return true;
+
+}
+
+
+
+/* =====================================
+   LOAD OFFICE
+===================================== */
+
+async function loadOffice() {
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from("offices")
+        .select("*")
+        .eq(
+            "owner_id",
+            currentOwnerId
         )
         .order(
             "created_at",
             {
                 ascending: false
             }
+        )
+        .limit(1);
+
+
+    if (
+        error
+    ) {
+
+        console.log(
+            "OFFICE ERROR:",
+            error
+        );
+
+        return;
+
+    }
+
+
+    if (
+        data &&
+        data.length > 0
+    ) {
+
+        office =
+            data[0];
+
+    }
+
+}
+
+
+
+/* =====================================
+   DATE RANGE
+===================================== */
+
+function getDateRange(
+    dateString
+) {
+
+    const parts =
+        dateString.split("-");
+
+
+    const year =
+        Number(parts[0]);
+
+
+    const month =
+        Number(parts[1]) - 1;
+
+
+    const day =
+        Number(parts[2]);
+
+
+    const start =
+        new Date(
+            year,
+            month,
+            day,
+            0,
+            0,
+            0,
+            0
+        );
+
+
+    const end =
+        new Date(
+            year,
+            month,
+            day + 1,
+            0,
+            0,
+            0,
+            0
+        );
+
+
+    return {
+
+        start:
+            start.toISOString(),
+
+        end:
+            end.toISOString()
+
+    };
+
+}
+
+
+
+/* =====================================
+   LOAD ATTENDANCE
+===================================== */
+
+async function loadAttendance() {
+
+    const date =
+        document.getElementById(
+            "attendanceDate"
+        ).value;
+
+
+    const range =
+        getDateRange(
+            date
+        );
+
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from("attendance")
+        .select("*")
+        .in(
+            "employee_id",
+            employees.map(
+                employee =>
+                    employee.id
+            )
+        )
+        .gte(
+            "created_at",
+            range.start
+        )
+        .lt(
+            "created_at",
+            range.end
+        )
+        .order(
+            "created_at",
+            {
+                ascending: true
+            }
         );
 
 
     if (error) {
 
+        console.log(
+            "ATTENDANCE ERROR:",
+            error
+        );
+
+
         document.getElementById(
-            "employeeList"
+            "message"
         ).innerText =
+            "Attendance load error: " +
             error.message;
 
-        return;
+
+        return false;
+
     }
 
 
-    document.getElementById(
-        "totalEmployees"
-    ).innerText =
-        data.length;
+    attendanceData =
+        data || [];
 
+
+    return true;
+
+}
+
+
+
+/* =====================================
+   FORMAT TIME
+===================================== */
+
+function formatTime(
+    value
+) {
+
+    if (!value) {
+
+        return "—";
+
+    }
+
+
+    return new Date(value)
+        .toLocaleTimeString(
+            "en-IN",
+            {
+
+                hour:
+                    "2-digit",
+
+                minute:
+                    "2-digit",
+
+                second:
+                    "2-digit"
+
+            }
+        );
+
+}
+
+
+
+/* =====================================
+   FORMAT MINUTES
+===================================== */
+
+function formatMinutes(
+    minutes
+) {
+
+    minutes =
+        Number(minutes) || 0;
+
+
+    const hours =
+        Math.floor(
+            minutes / 60
+        );
+
+
+    const mins =
+        minutes % 60;
+
+
+    return (
+        hours +
+        "h " +
+        mins +
+        "m"
+    );
+
+}
+
+
+
+/* =====================================
+   EMPLOYEE STATUS
+===================================== */
+
+function getEmployeeStatus(
+    employeeAttendance
+) {
+
+    /*
+       Latest open session
+    */
+
+    const openSession =
+        [...employeeAttendance]
+            .reverse()
+            .find(
+                row =>
+                    !row.out_time
+            );
+
+
+    if (openSession) {
+
+        /*
+           अगर outside_since है
+           तो employee grace/outside में है
+        */
+
+        if (
+            openSession.outside_since
+        ) {
+
+            return {
+
+                type:
+                    "away",
+
+                text:
+                    "🟠 बाहर / Grace"
+
+            };
+
+        }
+
+
+        return {
+
+            type:
+                "in",
+
+            text:
+                "🟢 IN"
+
+        };
+
+    }
+
+
+    return {
+
+        type:
+            "out",
+
+        text:
+            "🔴 OUT"
+
+    };
+
+}
+
+
+
+/* =====================================
+   EMPLOYEE TOTAL
+===================================== */
+
+function getEmployeeTotal(
+    employeeAttendance
+) {
+
+    let total =
+        0;
+
+
+    employeeAttendance.forEach(
+        row => {
+
+            if (
+                row.out_time &&
+                row.working_minutes !== null &&
+                row.working_minutes !== undefined
+            ) {
+
+                total +=
+                    Number(
+                        row.working_minutes
+                    );
+
+            }
+
+        }
+    );
+
+
+    /*
+       अगर current open session है
+       तो live time जोड़ें
+    */
+
+    const openSession =
+        [...employeeAttendance]
+            .reverse()
+            .find(
+                row =>
+                    !row.out_time
+            );
+
+
+    if (
+        openSession &&
+        openSession.in_time
+    ) {
+
+        const liveMinutes =
+            Math.floor(
+
+                (
+                    Date.now() -
+                    new Date(
+                        openSession.in_time
+                    ).getTime()
+
+                ) / 60000
+
+            );
+
+
+        total +=
+            Math.max(
+                0,
+                liveMinutes
+            );
+
+    }
+
+
+    return total;
+
+}
+
+
+
+/* =====================================
+   RENDER DASHBOARD
+===================================== */
+
+function renderDashboard() {
 
     const list =
         document.getElementById(
@@ -560,60 +1060,511 @@ async function loadEmployees() {
         );
 
 
-    if (data.length === 0) {
+    if (
+        employees.length === 0
+    ) {
 
         list.innerHTML =
-            "<p>अभी कोई employee नहीं है।</p>";
+            "<p>कोई employee नहीं मिला।</p>";
+
+
+        document.getElementById(
+            "totalIn"
+        ).innerText =
+            "0";
+
+
+        document.getElementById(
+            "totalOut"
+        ).innerText =
+            "0";
+
+
+        document.getElementById(
+            "totalWorking"
+        ).innerText =
+            "0h 0m";
+
 
         return;
+
     }
 
 
-    list.innerHTML = "";
+    let totalIn =
+        0;
+
+    let totalOut =
+        0;
+
+    let companyTotal =
+        0;
 
 
-    data.forEach(employee => {
-
-        const div =
-            document.createElement(
-                "div"
-            );
+    let html =
+        "";
 
 
-        div.className =
-            "employee";
+    employees.forEach(
+        employee => {
+
+            const rows =
+                attendanceData.filter(
+                    row =>
+                        row.employee_id ===
+                        employee.id
+                );
 
 
-        div.innerHTML = `
+            const status =
+                getEmployeeStatus(
+                    rows
+                );
 
-            <div>
 
-                <div class="employee-name">
-                    ${employee.name}
+            const employeeTotal =
+                getEmployeeTotal(
+                    rows
+                );
+
+
+            companyTotal +=
+                employeeTotal;
+
+
+            if (
+                status.type ===
+                "in"
+            ) {
+
+                totalIn++;
+
+            }
+
+            else {
+
+                totalOut++;
+
+            }
+
+
+            html += `
+
+            <div class="employee-card">
+
+                <div class="employee-header">
+
+                    <div>
+
+                        <div class="employee-name">
+
+                            ${escapeHtml(
+                                employee.name ||
+                                "Employee"
+                            )}
+
+                        </div>
+
+                        <div>
+
+                            ${escapeHtml(
+                                employee.email ||
+                                ""
+                            )}
+
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <span
+                            class="badge badge-${status.type}"
+                        >
+
+                            ${status.text}
+
+                        </span>
+
+                    </div>
+
                 </div>
 
-                <div class="employee-info">
-                    📱 ${employee.phone}
+
+                <hr>
+
+
+                <div class="total-time">
+
+                    Today's Total:
+                    ${formatMinutes(
+                        employeeTotal
+                    )}
+
+                </div>
+
+
+                <div class="session-table">
+
+                    ${renderEmployeeSessions(
+                        rows
+                    )}
+
                 </div>
 
             </div>
 
-            <div class="employee-info">
-                ✉️ ${employee.email}
-            </div>
+            `;
 
-        `;
+        }
+    );
 
 
-        list.appendChild(div);
+    list.innerHTML =
+        html;
 
-    });
+
+    document.getElementById(
+        "totalIn"
+    ).innerText =
+        totalIn;
+
+
+    document.getElementById(
+        "totalOut"
+    ).innerText =
+        totalOut;
+
+
+    document.getElementById(
+        "totalWorking"
+    ).innerText =
+        formatMinutes(
+            companyTotal
+        );
+
+
+    document.getElementById(
+        "message"
+    ).innerText =
+        "Attendance successfully loaded.";
 
 }
 
 
 
-/* LOGOUT */
+/* =====================================
+   RENDER EMPLOYEE SESSIONS
+===================================== */
+
+function renderEmployeeSessions(
+    rows
+) {
+
+    if (
+        rows.length === 0
+    ) {
+
+        return `
+            <p>
+                आज कोई attendance नहीं।
+            </p>
+        `;
+
+    }
+
+
+    let html = `
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Session
+                    </th>
+
+                    <th>
+                        IN
+                    </th>
+
+                    <th>
+                        OUT
+                    </th>
+
+                    <th>
+                        Working
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+    `;
+
+
+    rows.forEach(
+        (row, index) => {
+
+            let working =
+                "Running...";
+
+
+            if (
+                row.out_time
+            ) {
+
+                working =
+                    formatMinutes(
+                        row.working_minutes
+                    );
+
+            }
+
+            else if (
+                row.in_time
+            ) {
+
+                const liveMinutes =
+                    Math.floor(
+
+                        (
+                            Date.now() -
+                            new Date(
+                                row.in_time
+                            ).getTime()
+
+                        ) / 60000
+
+                    );
+
+
+                working =
+                    formatMinutes(
+                        liveMinutes
+                    );
+
+            }
+
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        ${formatTime(
+                            row.in_time
+                        )}
+                    </td>
+
+                    <td>
+                        ${
+                            row.out_time
+                            ?
+                            formatTime(
+                                row.out_time
+                            )
+                            :
+                            "Working"
+                        }
+                    </td>
+
+                    <td>
+                        ${working}
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
+
+
+    html += `
+
+            </tbody>
+
+        </table>
+
+    `;
+
+
+    return html;
+
+}
+
+
+
+/* =====================================
+   ESCAPE HTML
+===================================== */
+
+function escapeHtml(
+    value
+) {
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+
+/* =====================================
+   LOAD DASHBOARD
+===================================== */
+
+async function loadDashboard() {
+
+    document.getElementById(
+        "message"
+    ).innerText =
+        "Attendance loading...";
+
+
+    const attendanceLoaded =
+        await loadAttendance();
+
+
+    if (
+        !attendanceLoaded
+    ) {
+
+        return;
+
+    }
+
+
+    renderDashboard();
+
+}
+
+
+
+/* =====================================
+   START
+===================================== */
+
+async function startApp() {
+
+    const user =
+        await getCurrentUser();
+
+
+    if (!user) {
+
+        return;
+
+    }
+
+
+    const ownerLoaded =
+        await loadOwner();
+
+
+    if (!ownerLoaded) {
+
+        return;
+
+    }
+
+
+    await loadEmployees();
+
+    await loadOffice();
+
+
+    /*
+       Today's date
+    */
+
+    const today =
+        new Date();
+
+
+    const year =
+        today.getFullYear();
+
+
+    const month =
+        String(
+            today.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const day =
+        String(
+            today.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    document.getElementById(
+        "attendanceDate"
+    ).value =
+        year +
+        "-" +
+        month +
+        "-" +
+        day;
+
+
+    await loadDashboard();
+
+
+    /*
+       हर 30 second refresh
+    */
+
+    setInterval(
+        loadDashboard,
+        30000
+    );
+
+}
+
+
+startApp();
+
+
+
+/* =====================================
+   LOGOUT
+===================================== */
 
 async function logout() {
 
@@ -621,225 +1572,16 @@ async function logout() {
         .auth
         .signOut();
 
+
     window.location.href =
-        "index.html";
-}
-
-
-
-/* START */
-
-(async function() {
-
-    const loggedIn =
-        await checkLogin();
-
-    if (loggedIn) {
-
-        await loadEmployees();
-
-    }
-
-})();
-let officeLatitude = null;
-let officeLongitude = null;
-
-
-/* GET CURRENT OFFICE LOCATION */
-
-function getOfficeLocation() {
-
-    const message =
-        document.getElementById("locationMessage");
-
-    if (!navigator.geolocation) {
-
-        message.innerText =
-            "इस device में GPS/Location support नहीं है";
-
-        message.style.color = "red";
-
-        return;
-    }
-
-    message.innerText =
-        "Location प्राप्त की जा रही है...";
-
-    message.style.color = "#2563eb";
-
-
-    navigator.geolocation.getCurrentPosition(
-
-        function(position) {
-
-            officeLatitude =
-                position.coords.latitude;
-
-            officeLongitude =
-                position.coords.longitude;
-
-
-            message.innerText =
-                "Location मिल गई ✅\n" +
-                "Latitude: " +
-                officeLatitude +
-                "\nLongitude: " +
-                officeLongitude;
-
-            message.style.color = "green";
-
-        },
-
-        function(error) {
-
-            message.innerText =
-                "Location नहीं मिली: " +
-                error.message;
-
-            message.style.color = "red";
-
-        },
-
-        {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0
-        }
-
-    );
+        "employee-login.html";
 
 }
 
-
-/* SAVE OFFICE */
-
-async function saveOffice() {
-
-    const officeName =
-        document
-        .getElementById("officeName")
-        .value
-        .trim();
-
-    const radius =
-        parseInt(
-            document
-            .getElementById("radius")
-            .value
-        );
-
-
-    const message =
-        document.getElementById(
-            "locationMessage"
-        );
-
-
-    if (!officeName) {
-
-        message.innerText =
-            "Office Name डालें";
-
-        message.style.color = "red";
-
-        return;
-    }
-
-
-    if (
-        officeLatitude === null ||
-        officeLongitude === null
-    ) {
-
-        message.innerText =
-            "पहले Get Current Location दबाएँ";
-
-        message.style.color = "red";
-
-        return;
-    }
-
-
-    if (!radius || radius < 20) {
-
-        message.innerText =
-            "Radius कम से कम 20 meters रखें";
-
-        message.style.color = "red";
-
-        return;
-    }
-
-
-    const {
-        data: sessionData
-    } =
-    await supabaseClient
-        .auth
-        .getSession();
-
-
-    if (!sessionData.session) {
-
-        window.location.href =
-            "index.html";
-
-        return;
-    }
-
-
-    const ownerId =
-        sessionData.session.user.id;
-
-
-    message.innerText =
-        "Office location save हो रही है...";
-
-
-    const {
-        error
-    } =
-    await supabaseClient
-        .from("offices")
-        .insert({
-
-            owner_id:
-                ownerId,
-
-            office_name:
-                officeName,
-
-            latitude:
-                officeLatitude,
-
-            longitude:
-                officeLongitude,
-
-            radius_meters:
-                radius
-
-        });
-
-
-    if (error) {
-
-        message.innerText =
-            "Error: " + error.message;
-
-        message.style.color = "red";
-
-        return;
-    }
-
-
-    message.innerText =
-        "Office Location Successfully Saved ✅";
-
-    message.style.color = "green";
-
-}
 
 </script>
 
+
 </body>
+
 </html>
