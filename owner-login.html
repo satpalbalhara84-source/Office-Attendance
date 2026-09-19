@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owner Login - Office Attendance</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f3f6fa;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.card{width:100%;max-width:420px;background:white;padding:28px;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.08);margin:20px}
+h1{margin:0 0 8px;color:#2563eb}
+p{color:#6b7280}
+input{width:100%;padding:13px;margin:8px 0;border:1px solid #d1d5db;border-radius:8px;font-size:16px}
+button{width:100%;padding:13px;margin-top:12px;border:0;border-radius:8px;background:#2563eb;color:white;font-size:16px;cursor:pointer}
+button:disabled{opacity:.6}
+#message{margin-top:15px;padding:12px;border-radius:8px;background:#eff6ff;display:none}
+.error{background:#fee2e2!important;color:#991b1b}
+.success{background:#dcfce7!important;color:#166534}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>Office Attendance</h1>
+<h2>Owner Login</h2>
+<p>Owner account से Dashboard खोलें</p>
+
+<input id="email" type="email" placeholder="Owner Email">
+<input id="password" type="password" placeholder="Password">
+
+<button id="loginBtn" onclick="login()">Login</button>
+<div id="message"></div>
+</div>
+
+<script>
+const SUPABASE_URL="https://mxolpvdaengfpmlkgprc.supabase.co";
+const SUPABASE_KEY="sb_publishable_KaXl_tgIR8VZhmWR6vuAgQ_FswcmZes";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+function showMessage(text,error=false){
+    const box=document.getElementById("message");
+    box.style.display="block";
+    box.className=error?"error":"success";
+    box.innerText=text;
+}
+
+async function login(){
+    const email=document.getElementById("email").value.trim();
+    const password=document.getElementById("password").value;
+    const btn=document.getElementById("loginBtn");
+
+    if(!email || !password){
+        showMessage("Email और Password भरें।",true);
+        return;
+    }
+
+    btn.disabled=true;
+    btn.innerText="Login हो रहा है...";
+
+    try{
+        const {data,error}=await db.auth.signInWithPassword({email,password});
+
+        if(error){
+            showMessage("Login Failed: "+error.message,true);
+            return;
+        }
+
+        const user=data.user;
+
+        if(!user){
+            showMessage("Owner account नहीं मिला।",true);
+            return;
+        }
+
+        /*
+          Owner की पहचान:
+          उसके employees या factories में owner_id
+          current Supabase user ID के बराबर होना चाहिए।
+        */
+
+        const {data:factoryData,error:factoryError}=await db
+            .from("factories")
+            .select("id")
+            .eq("owner_id",user.id)
+            .limit(1);
+
+        if(factoryError){
+            console.error(factoryError);
+        }
+
+        const {data:employeeData,error:employeeError}=await db
+            .from("employees")
+            .select("id")
+            .eq("owner_id",user.id)
+            .limit(1);
+
+        if(employeeError){
+            console.error(employeeError);
+        }
+
+        const isOwner =
+            (factoryData && factoryData.length>0) ||
+            (employeeData && employeeData.length>0);
+
+        if(!isOwner){
+            await db.auth.signOut();
+            showMessage("इस account का Owner record नहीं मिला।",true);
+            return;
+        }
+
+        showMessage("Login सफल ✅ Dashboard खुल रहा है...");
+
+        setTimeout(function(){
+            window.location.href="dashboard.html";
+        },500);
+
+    }catch(err){
+        console.error(err);
+        showMessage("Login में समस्या: "+err.message,true);
+    }finally{
+        btn.disabled=false;
+        btn.innerText="Login";
+    }
+}
+</script>
+</body>
+</html>
