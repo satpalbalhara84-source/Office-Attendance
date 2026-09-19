@@ -102,10 +102,6 @@ button{
     color:white;
 }
 
-.inBtn{
-    background:#16a34a;
-    color:white;
-}
 
 .logout{
     background:#dc2626;
@@ -225,20 +221,7 @@ button:disabled{
         📍 मेरी Location Check करें
 
     </button>
-
-
-    <button
-        id="inButton"
-        class="inBtn"
-        onclick="markIN()"
-        disabled>
-
-        🟢 Mark IN
-
-    </button>
-
-
-    <!-- GRACE -->
+<!-- GRACE -->
 
     <div
         id="graceBox"
@@ -346,9 +329,11 @@ let currentLongitude = null;
 
 let currentAccuracy = null;
 
-let canMarkIN = false;
+let autoInInProgress = false;
 
-let markInInProgress = false;
+let autoReIn = false;
+
+let todayAttendanceCount = 0;
 
 let markOutInProgress = false;
 
@@ -607,14 +592,12 @@ async function loadCurrentAttendance(){
     const todayStart =
         new Date();
 
-
     todayStart.setHours(
         0,
         0,
         0,
         0
     );
-
 
     const {
         data,
@@ -627,10 +610,6 @@ async function loadCurrentAttendance(){
             "employee_id",
             employee.id
         )
-        .is(
-            "out_time",
-            null
-        )
         .gte(
             "in_time",
             todayStart.toISOString()
@@ -640,9 +619,7 @@ async function loadCurrentAttendance(){
             {
                 ascending:false
             }
-        )
-        .limit(1);
-
+        );
 
     if(error){
 
@@ -651,28 +628,45 @@ async function loadCurrentAttendance(){
             error
         );
 
-
         message(
             "Attendance Load Error: " +
             error.message
         );
 
-
         return;
     }
 
+    todayAttendanceCount =
+        data ? data.length : 0;
+
+    currentAttendance = null;
 
     if(
         data &&
         data.length > 0
     ){
 
-        currentAttendance =
-            data[0];
+        for(
+            let i = 0;
+            i < data.length;
+            i++
+        ){
 
+            if(
+                !data[i].out_time
+            ){
+
+                currentAttendance =
+                    data[i];
+
+                break;
+            }
+        }
+    }
+
+    if(currentAttendance){
 
         showCurrentAttendance();
-
 
         if(
             currentAttendance.outside_since
@@ -683,10 +677,6 @@ async function loadCurrentAttendance(){
         }
 
     }else{
-
-        currentAttendance =
-            null;
-
 
         resetAttendanceDisplay();
 
@@ -1051,56 +1041,41 @@ async function gpsSuccess(position){
         distance <= radius
     ){
 
-        canMarkIN =
-            true;
-
-
         document.getElementById(
             "status"
         ).innerText =
             "🟢 Office के अंदर";
-
 
         document.getElementById(
             "status"
         ).className =
             "status inside";
 
+        if(
+            todayAttendanceCount === 0 ||
+            autoReIn === true
+        ){
 
-        document.getElementById(
-            "inButton"
-        ).disabled =
-            false;
+            await automaticIN();
 
+            return;
+        }
 
         message(
-            "आप Office में हैं। अब Mark IN दबाएँ।"
+            "आप Office में हैं। आज की attendance पहले से मौजूद है।"
         );
 
-
     }else{
-
-        canMarkIN =
-            false;
-
 
         document.getElementById(
             "status"
         ).innerText =
             "🔴 Office से बाहर";
 
-
         document.getElementById(
             "status"
         ).className =
             "status outside";
-
-
-        document.getElementById(
-            "inButton"
-        ).disabled =
-            true;
-
 
         message(
             "आप Office Radius से बाहर हैं।"
@@ -1108,7 +1083,7 @@ async function gpsSuccess(position){
 
     }
 
-}
+}}
 
 
 /* =====================================
@@ -1157,54 +1132,30 @@ function gpsError(error){
     message(text);
 
 }
-    /* =====================================
-   MARK IN
+    
+/* =====================================
+   AUTOMATIC IN
 ===================================== */
 
-async function markIN(){
+async function automaticIN(){
 
-    if(!canMarkIN){
-
-        message(
-            "पहले Office के अंदर होना जरूरी है।"
-        );
-
+    if(autoInInProgress)
         return;
-    }
 
-
-    if(currentAttendance){
-
-        message(
-            "आप पहले से IN हैं।"
-        );
-
+    if(currentAttendance)
         return;
-    }
 
-
-    if(markInInProgress){
-
+    if(!employee || !office)
         return;
-    }
 
-
-    markInInProgress = true;
-
-
-    document.getElementById(
-        "inButton"
-    ).disabled = true;
-
+    autoInInProgress = true;
 
     message(
-        "Attendance save की जा रही है..."
+        "📍 आप Office में हैं। Automatic IN हो रहा है..."
     );
-
 
     const now =
         new Date();
-
 
     const {
         data,
@@ -1230,81 +1181,85 @@ async function markIN(){
                 currentLatitude,
 
             last_longitude:
-                currentLongitude
+                currentLongitude,
+
+            outside_since:
+                null
 
         })
         .select()
         .limit(1);
 
-
     if(error){
 
         console.log(
-            "IN ERROR:",
+            "AUTOMATIC IN ERROR:",
             error
         );
 
-
-        document.getElementById(
-            "inButton"
-        ).disabled = false;
-
-
         message(
-            "❌ IN Error: " +
+            "❌ Automatic IN Error: " +
             error.message
         );
 
-
-        markInInProgress = false;
+        autoInInProgress = false;
 
         return;
     }
 
+    if(
+        !data ||
+        data.length === 0
+    ){
+
+        message(
+            "❌ Attendance save नहीं हुई।"
+        );
+
+        autoInInProgress = false;
+
+        return;
+    }
 
     currentAttendance =
         data[0];
 
+    todayAttendanceCount++;
+
+    autoReIn = false;
 
     document.getElementById(
         "inTime"
     ).innerText =
         formatTime(now);
 
-
     document.getElementById(
         "outTime"
     ).innerText =
         "Running";
-
 
     document.getElementById(
         "workingTime"
     ).innerText =
         "0h 0m";
 
-
     document.getElementById(
         "status"
     ).innerText =
         "🟢 IN हो गया";
-
 
     document.getElementById(
         "status"
     ).className =
         "status inside";
 
-
     message(
-        "Attendance successfully लग गई ✅"
+        "Attendance automatically लग गई ✅"
     );
 
-
-    markInInProgress = false;
+    autoInInProgress = false;
 
 }
-
 
 /* =====================================
    START OUTSIDE
@@ -1733,15 +1688,11 @@ async function markOUT(){
     currentAttendance =
         null;
 
-
-    canMarkIN =
-        false;
-
-
-    document.getElementById(
-        "inButton"
-    ).disabled =
-        true;
+    /*
+       OUT के बाद वापस Office में आने पर
+       Automatic IN होगा
+    */
+    autoReIn = true;
 
 
     document.getElementById(
