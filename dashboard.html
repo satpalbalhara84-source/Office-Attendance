@@ -117,6 +117,11 @@ button{
     font-size:15px;
 }
 
+button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
 .refresh{
     background:#16a34a;
 }
@@ -157,6 +162,7 @@ button{
 .employee-info{
     color:#6b7280;
     margin-top:5px;
+    line-height:1.7;
 }
 
 .badge{
@@ -200,6 +206,53 @@ button{
     margin-top:5px;
 }
 
+.view-details{
+    background:#7c3aed;
+    margin-top:12px;
+}
+
+.details-box{
+    display:none;
+    margin-top:15px;
+    padding:18px;
+    background:#f8fafc;
+    border-radius:12px;
+    border:1px solid #e5e7eb;
+}
+
+.details-box.show{
+    display:block;
+}
+
+.details-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.detail-item{
+    background:white;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #e5e7eb;
+}
+
+.detail-label{
+    font-size:12px;
+    color:#6b7280;
+    margin-bottom:5px;
+}
+
+.detail-value{
+    font-weight:bold;
+    word-break:break-word;
+}
+
+.close-details{
+    background:#6b7280;
+    margin-top:15px;
+}
+
 table{
     width:100%;
     border-collapse:collapse;
@@ -236,6 +289,10 @@ th{
         padding:12px;
     }
 
+    .details-grid{
+        grid-template-columns:1fr;
+    }
+
 }
 
 @media(max-width:500px){
@@ -257,6 +314,10 @@ th{
     td{
         font-size:13px;
         padding:8px;
+    }
+
+    .employee-card{
+        padding:14px;
     }
 
 }
@@ -386,7 +447,6 @@ th{
             type="date"
             id="attendanceDate"
         >
-
 
         <button
             onclick="loadDashboard()">
@@ -708,15 +768,6 @@ async function loadAttendance(){
         );
 
 
-    /*
-       IMPORTANT:
-
-       Attendance का दिन
-       IN TIME से निर्धारित होगा।
-
-       created_at से नहीं।
-    */
-
     const {
         data,
         error
@@ -948,6 +999,34 @@ function formatTime(
 
 
 /* =====================================
+   FORMAT DATE
+===================================== */
+
+function formatDate(
+    value
+){
+
+    if(!value){
+
+        return "—";
+
+    }
+
+
+    return new Date(value)
+        .toLocaleDateString(
+            "en-IN",
+            {
+                day:"2-digit",
+                month:"2-digit",
+                year:"numeric"
+            }
+        );
+
+}
+
+
+/* =====================================
    ESCAPE HTML
 ===================================== */
 
@@ -978,7 +1057,9 @@ function escapeHtml(
         );
 
 }
-    /* =====================================
+
+
+/* =====================================
    RENDER SESSIONS
 ===================================== */
 
@@ -1004,16 +1085,23 @@ function renderSessions(rows){
             <thead>
 
                 <tr>
+
                     <th>#</th>
+
                     <th>IN Time</th>
+
                     <th>OUT Time</th>
+
                     <th>Working</th>
+
                     <th>Status</th>
+
                 </tr>
 
             </thead>
 
             <tbody>
+
     `;
 
 
@@ -1106,6 +1194,242 @@ function renderSessions(rows){
 
 
     return html;
+
+}
+
+
+/* =====================================
+   EMPLOYEE DETAILS
+===================================== */
+
+function getEmployeeDetails(
+    employee,
+    rows,
+    status,
+    minutes
+){
+
+    const factoryId =
+        employee.factory_id ||
+        "—";
+
+    const ownerId =
+        employee.owner_id ||
+        "—";
+
+    const employeeId =
+        employee.id ||
+        "—";
+
+
+    return `
+
+        <div
+            id="details-${employee.id}"
+            class="details-box">
+
+            <h3>
+                👤 Employee Details
+            </h3>
+
+            <div class="details-grid">
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Employee Name
+                    </div>
+
+                    <div class="detail-value">
+                        ${escapeHtml(
+                            employee.name || "—"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Employee ID
+                    </div>
+
+                    <div class="detail-value">
+                        ${escapeHtml(
+                            employeeId
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Mobile
+                    </div>
+
+                    <div class="detail-value">
+                        ${escapeHtml(
+                            employee.phone || "—"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Email
+                    </div>
+
+                    <div class="detail-value">
+                        ${escapeHtml(
+                            employee.email || "—"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Factory ID
+                    </div>
+
+                    <div class="detail-value">
+                        ${escapeHtml(
+                            factoryId
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Owner ID
+                    </div>
+
+                    <div class="detail-value">
+                        ${escapeHtml(
+                            ownerId
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Selected Date
+                    </div>
+
+                    <div class="detail-value">
+                        ${escapeHtml(
+                            document.getElementById(
+                                "attendanceDate"
+                            ).value || "—"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Current Status
+                    </div>
+
+                    <div class="detail-value">
+                        ${status.text}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Total Sessions
+                    </div>
+
+                    <div class="detail-value">
+                        ${rows.length}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Total Working Time
+                    </div>
+
+                    <div class="detail-value">
+                        ${formatMinutes(
+                            minutes
+                        )}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <h3>
+                📋 Attendance Sessions
+            </h3>
+
+            ${renderSessions(rows)}
+
+
+            <button
+                class="close-details"
+                onclick="toggleEmployeeDetails('${employee.id}')">
+
+                ▲ Close Details
+
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================
+   TOGGLE EMPLOYEE DETAILS
+===================================== */
+
+function toggleEmployeeDetails(
+    employeeId
+){
+
+    const box =
+        document.getElementById(
+            "details-" + employeeId
+        );
+
+
+    if(!box){
+
+        return;
+
+    }
+
+
+    box.classList.toggle(
+        "show"
+    );
 
 }
 
@@ -1242,7 +1566,9 @@ function renderDashboard(){
 
                 <div class="employee-card">
 
+
                     <div class="employee-header">
+
 
                         <div>
 
@@ -1286,6 +1612,7 @@ function renderDashboard(){
 
                         </div>
 
+
                     </div>
 
 
@@ -1318,6 +1645,26 @@ function renderDashboard(){
                             rows
                         )
                     }
+
+
+                    <button
+                        class="view-details"
+                        onclick="toggleEmployeeDetails('${employee.id}')">
+
+                        👤 View Employee Details
+
+                    </button>
+
+
+                    ${
+                        getEmployeeDetails(
+                            employee,
+                            rows,
+                            status,
+                            minutes
+                        )
+                    }
+
 
                 </div>
 
@@ -1369,13 +1716,15 @@ function renderDashboard(){
 
     message.innerHTML = `
 
-        Employees: <b>
+        Employees:
+        <b>
             ${employees.length}
         </b>
 
         &nbsp; | &nbsp;
 
-        Attendance Sessions: <b>
+        Attendance Sessions:
+        <b>
             ${attendanceData.length}
         </b>
 
