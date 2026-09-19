@@ -58,10 +58,6 @@ body{
     color:#d97706;
 }
 
-.grace{
-    color:#ea580c;
-}
-
 .location{
     background:#f8fafc;
     padding:15px;
@@ -83,13 +79,6 @@ body{
     font-weight:bold;
     color:#ea580c;
     margin-top:8px;
-}
-
-.session{
-    background:#f8fafc;
-    padding:12px;
-    border-radius:8px;
-    margin-top:10px;
 }
 
 button{
@@ -148,8 +137,6 @@ button:disabled{
 <div class="container">
 
 
-<!-- EMPLOYEE -->
-
 <div class="card">
 
     <h2 id="employeeName">
@@ -166,8 +153,6 @@ button:disabled{
 
 </div>
 
-
-<!-- LOCATION -->
 
 <div class="card">
 
@@ -228,8 +213,6 @@ button:disabled{
     </button>
 
 
-    <!-- GRACE -->
-
     <div
         id="graceBox"
         class="graceBox"
@@ -254,8 +237,6 @@ button:disabled{
 </div>
 
 
-<!-- TODAY -->
-
 <div class="card">
 
     <h3>Today's Attendance</h3>
@@ -277,8 +258,6 @@ button:disabled{
 
 </div>
 
-
-<!-- LOGOUT -->
 
 <button
     class="logout"
@@ -382,16 +361,13 @@ function formatMinutes(minutes){
             Math.floor(minutes)
         );
 
-
     const hours =
         Math.floor(
             minutes / 60
         );
 
-
     const mins =
         minutes % 60;
-
 
     return (
         hours +
@@ -404,7 +380,7 @@ function formatMinutes(minutes){
 
 
 /* =====================================
-   LOGIN USER
+   LOAD USER
 ===================================== */
 
 async function loadUser(){
@@ -432,7 +408,6 @@ async function loadUser(){
 
     currentUser =
         data.session.user;
-
 
     return true;
 }
@@ -563,10 +538,22 @@ async function loadOffice(){
 
 
 /* =====================================
-   LOAD OPEN ATTENDANCE
+   LOAD TODAY OPEN ATTENDANCE
 ===================================== */
 
 async function loadCurrentAttendance(){
+
+    const todayStart =
+        new Date();
+
+
+    todayStart.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
 
     const {
         data,
@@ -582,6 +569,10 @@ async function loadCurrentAttendance(){
         .is(
             "out_time",
             null
+        )
+        .gte(
+            "in_time",
+            todayStart.toISOString()
         )
         .order(
             "in_time",
@@ -599,6 +590,11 @@ async function loadCurrentAttendance(){
             error
         );
 
+        message(
+            "Attendance Load Error: " +
+            error.message
+        );
+
         return;
     }
 
@@ -614,11 +610,6 @@ async function loadCurrentAttendance(){
 
         showCurrentAttendance();
 
-
-        /*
-           अगर employee पहले से बाहर था
-           तो grace timer वापस शुरू करें
-        */
 
         if(
             currentAttendance.outside_since
@@ -641,7 +632,7 @@ async function loadCurrentAttendance(){
 
 
 /* =====================================
-   SHOW CURRENT ATTENDANCE
+   SHOW ATTENDANCE
 ===================================== */
 
 function showCurrentAttendance(){
@@ -678,7 +669,7 @@ function showCurrentAttendance(){
 
 
 /* =====================================
-   RESET DISPLAY
+   RESET ATTENDANCE
 ===================================== */
 
 function resetAttendanceDisplay(){
@@ -704,7 +695,7 @@ function resetAttendanceDisplay(){
 
 
 /* =====================================
-   DISTANCE
+   DISTANCE CALCULATION
 ===================================== */
 
 function calculateDistance(
@@ -891,19 +882,15 @@ async function gpsSuccess(position){
         );
 
 
-    /*
-       CURRENT OPEN SESSION
-    */
+    /* =================================
+       ALREADY IN
+    ================================= */
 
     if(currentAttendance){
 
         if(
             distance <= radius
         ){
-
-            /*
-               वापस Office में आ गया
-            */
 
             await cancelGrace();
 
@@ -927,10 +914,6 @@ async function gpsSuccess(position){
 
         }else{
 
-            /*
-               Office से बाहर
-            */
-
             document.getElementById(
                 "status"
             ).innerText =
@@ -952,9 +935,9 @@ async function gpsSuccess(position){
     }
 
 
-    /*
-       NO OPEN SESSION
-    */
+    /* =================================
+       NOT IN
+    ================================= */
 
     if(
         distance <= radius
@@ -1061,17 +1044,13 @@ function gpsError(error){
     message(text);
 
 }
-
-
-/* =====================================
+    /* =====================================
    MARK IN
 ===================================== */
 
 async function markIN(){
 
-    if(
-        !canMarkIN
-    ){
+    if(!canMarkIN){
 
         message(
             "पहले Office के अंदर होना जरूरी है।"
@@ -1081,9 +1060,7 @@ async function markIN(){
     }
 
 
-    if(
-        currentAttendance
-    ){
+    if(currentAttendance){
 
         message(
             "आप पहले से IN हैं।"
@@ -1093,22 +1070,18 @@ async function markIN(){
     }
 
 
-    if(
-        markInInProgress
-    ){
+    if(markInInProgress){
 
         return;
     }
 
 
-    markInInProgress =
-        true;
+    markInInProgress = true;
 
 
     document.getElementById(
         "inButton"
-    ).disabled =
-        true;
+    ).disabled = true;
 
 
     message(
@@ -1116,8 +1089,7 @@ async function markIN(){
     );
 
 
-    const now =
-        new Date();
+    const now = new Date();
 
 
     const {
@@ -1161,8 +1133,7 @@ async function markIN(){
 
         document.getElementById(
             "inButton"
-        ).disabled =
-            false;
+        ).disabled = false;
 
 
         message(
@@ -1171,9 +1142,7 @@ async function markIN(){
         );
 
 
-        markInInProgress =
-            false;
-
+        markInInProgress = false;
 
         return;
     }
@@ -1218,8 +1187,7 @@ async function markIN(){
     );
 
 
-    markInInProgress =
-        false;
+    markInInProgress = false;
 
 }
 
@@ -1235,8 +1203,8 @@ async function startOutside(){
 
 
     /*
-       अगर outside_since पहले से है
-       तो नया समय नहीं बनाएँगे
+       बाहर जाने का समय पहले से है
+       तो उसे दोबारा नहीं बदलेंगे
     */
 
     if(
@@ -1271,6 +1239,12 @@ async function startOutside(){
 
 
         if(error){
+
+            console.log(
+                "Outside update error:",
+                error
+            );
+
 
             message(
                 "Outside update error: " +
@@ -1339,6 +1313,8 @@ function startGraceTimer(){
                 graceTimer
             );
 
+            graceTimer = null;
+
             return;
         }
 
@@ -1375,6 +1351,8 @@ function startGraceTimer(){
                 graceTimer
             );
 
+            graceTimer = null;
+
 
             document.getElementById(
                 "graceTime"
@@ -1403,14 +1381,14 @@ function startGraceTimer(){
         ).innerText =
 
             String(minutes)
-            .padStart(2,"0")
+                .padStart(2,"0")
 
             +
 
             ":" +
 
             String(seconds)
-            .padStart(2,"0");
+                .padStart(2,"0");
 
     }
 
@@ -1456,8 +1434,8 @@ async function cancelGrace(){
             graceTimer
         );
 
-        graceTimer =
-            null;
+        graceTimer = null;
+
     }
 
 
@@ -1531,8 +1509,7 @@ async function markOUT(){
         return;
 
 
-    markOutInProgress =
-        true;
+    markOutInProgress = true;
 
 
     const outTime =
@@ -1606,9 +1583,7 @@ async function markOUT(){
         );
 
 
-        markOutInProgress =
-            false;
-
+        markOutInProgress = false;
 
         return;
     }
@@ -1620,8 +1595,8 @@ async function markOUT(){
             graceTimer
         );
 
-        graceTimer =
-            null;
+        graceTimer = null;
+
     }
 
 
@@ -1645,18 +1620,14 @@ async function markOUT(){
         );
 
 
-    currentAttendance =
-        null;
+    currentAttendance = null;
 
-
-    canMarkIN =
-        false;
+    canMarkIN = false;
 
 
     document.getElementById(
         "inButton"
-    ).disabled =
-        true;
+    ).disabled = true;
 
 
     document.getElementById(
@@ -1672,12 +1643,11 @@ async function markOUT(){
 
 
     message(
-        "आप Office से बाहर रहे। 2 मिनट पूरे होने पर OUT हो गया।"
+        "2 मिनट पूरे होने पर OUT हो गया।"
     );
 
 
-    markOutInProgress =
-        false;
+    markOutInProgress = false;
 
 }
 
@@ -1783,7 +1753,7 @@ startApp();
 
 
 /* =====================================
-   REFRESH WORKING TIME
+   UPDATE WORKING TIME
 ===================================== */
 
 setInterval(
