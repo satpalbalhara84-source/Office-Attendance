@@ -83,6 +83,39 @@ body{
 .red{color:#dc2626;}
 .orange{color:#ea580c;}
 
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+}
+
+.form-group label{
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.form-group input,
+.form-group select{
+    padding:12px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    font-size:15px;
+}
+
+.full{
+    grid-column:1 / -1;
+}
+
+.add-btn{
+    background:#16a34a;
+    margin-top:15px;
+}
+
 .date-box{
     display:flex;
     align-items:center;
@@ -128,9 +161,14 @@ button:disabled{
     margin-bottom:20px;
 }
 
+.success{
+    background:#dcfce7;
+    color:#166534;
+}
+
 .error{
-    color:#991b1b;
     background:#fee2e2;
+    color:#991b1b;
 }
 
 .employee-card{
@@ -208,7 +246,7 @@ button:disabled{
 .details{
     display:none;
     margin-top:15px;
-    padding:18px;
+    padding:15px;
     background:#f8fafc;
     border-radius:10px;
     border:1px solid #e5e7eb;
@@ -218,11 +256,11 @@ button:disabled{
     display:block;
 }
 
-.detail-grid{
+.detail-row{
     display:grid;
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:1fr 1fr;
     gap:10px;
-    margin-bottom:15px;
+    margin-bottom:10px;
 }
 
 .detail{
@@ -243,61 +281,12 @@ button:disabled{
     word-break:break-word;
 }
 
-.history-buttons{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    margin:15px 0;
-}
-
-.history-btn{
-    background:#2563eb;
-}
-
-.history-btn.active{
-    background:#111827;
-}
-
-.history-box{
-    margin-top:15px;
-}
-
-.history-summary{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:10px;
-    margin-bottom:15px;
-}
-
-.history-stat{
-    background:white;
-    border:1px solid #e5e7eb;
-    border-radius:10px;
-    padding:12px;
-}
-
-.history-stat-title{
-    color:#6b7280;
-    font-size:12px;
-}
-
-.history-stat-value{
-    font-size:20px;
-    font-weight:bold;
-    margin-top:5px;
-}
-
-.history-table{
-    overflow-x:auto;
-}
-
 table{
     width:100%;
     border-collapse:collapse;
 }
 
-th,
-td{
+th,td{
     padding:11px;
     border-bottom:1px solid #e5e7eb;
     text-align:left;
@@ -307,32 +296,9 @@ th{
     background:#f8fafc;
 }
 
-.status-present{
-    color:#15803d;
-    font-weight:bold;
-}
-
-.status-absent{
-    color:#dc2626;
-    font-weight:bold;
-}
-
 .no-data{
     color:#6b7280;
     padding:10px 0;
-}
-
-.loading-history{
-    padding:15px;
-    background:#fff;
-    border-radius:8px;
-    text-align:center;
-    color:#6b7280;
-}
-
-.close-btn{
-    background:#6b7280;
-    margin-top:15px;
 }
 
 @media(max-width:800px){
@@ -341,31 +307,25 @@ th{
         grid-template-columns:repeat(2,1fr);
     }
 
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .full{
+        grid-column:auto;
+    }
+
     .container{
         padding:12px;
     }
 
-    .history-summary{
-        grid-template-columns:repeat(2,1fr);
+    .detail-row{
+        grid-template-columns:1fr;
     }
 
 }
 
 @media(max-width:500px){
-
-    .detail-grid{
-        grid-template-columns:1fr;
-    }
-
-    .history-summary{
-        grid-template-columns:1fr 1fr;
-    }
-
-    th,
-    td{
-        font-size:13px;
-        padding:8px;
-    }
 
     .stat{
         padding:15px;
@@ -373,6 +333,11 @@ th{
 
     .stat-value{
         font-size:22px;
+    }
+
+    th,td{
+        font-size:13px;
+        padding:8px;
     }
 
 }
@@ -387,9 +352,9 @@ th{
 
 <div class="header">
 
-<h2>Office Attendance</h2>
+    <h2>Office Attendance</h2>
 
-<p>Owner Dashboard</p>
+    <p>Owner Dashboard</p>
 
 </div>
 
@@ -401,84 +366,197 @@ th{
 
 <div class="card">
 
-<h2>Welcome, Owner</h2>
+    <h2>
+        Welcome, Owner
+    </h2>
 
-<div id="ownerEmail">
-Loading...
+    <div id="ownerEmail">
+        Loading...
+    </div>
+
 </div>
 
+
+<!-- ADD EMPLOYEE -->
+
+<div class="card">
+
+    <h2>
+        ➕ Add New Employee
+    </h2>
+
+    <p style="color:#6b7280;">
+        नए employee का account यहाँ बनाएं।
+    </p>
+
+
+    <div id="addEmployeeMessage"></div>
+
+
+    <div class="form-grid">
+
+
+        <div class="form-group">
+
+            <label>
+                Employee Name *
+            </label>
+
+            <input
+                type="text"
+                id="newEmployeeName"
+                placeholder="Employee Name"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Mobile Number *
+            </label>
+
+            <input
+                type="tel"
+                id="newEmployeePhone"
+                placeholder="Mobile Number"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Email *
+            </label>
+
+            <input
+                type="email"
+                id="newEmployeeEmail"
+                placeholder="Employee Email"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Password *
+            </label>
+
+            <input
+                type="password"
+                id="newEmployeePassword"
+                placeholder="Minimum 6 characters"
+            >
+
+        </div>
+
+
+        <div class="form-group full">
+
+            <label>
+                Factory *
+            </label>
+
+            <select id="newEmployeeFactory">
+
+                <option value="">
+                    Factory select करें
+                </option>
+
+            </select>
+
+        </div>
+
+
+    </div>
+
+
+    <button
+        class="add-btn"
+        id="addEmployeeBtn"
+        onclick="addEmployee()">
+
+        ➕ Add Employee
+
+    </button>
+
 </div>
 
 
-<!-- MAIN STATS -->
+<!-- STATS -->
 
 <div class="stats">
 
 
 <div class="stat">
 
-<div class="stat-title">
-Total Employees
-</div>
+    <div class="stat-title">
+        Total Employees
+    </div>
 
-<div
-id="totalEmployees"
-class="stat-value blue">
+    <div
+        id="totalEmployees"
+        class="stat-value blue">
 
-0
+        0
 
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-Currently IN
-</div>
-
-<div
-id="totalIn"
-class="stat-value green">
-
-0
-
-</div>
+    </div>
 
 </div>
 
 
 <div class="stat">
 
-<div class="stat-title">
-OUT
-</div>
+    <div class="stat-title">
+        Currently IN
+    </div>
 
-<div
-id="totalOut"
-class="stat-value red">
+    <div
+        id="totalIn"
+        class="stat-value green">
 
-0
+        0
 
-</div>
+    </div>
 
 </div>
 
 
 <div class="stat">
 
-<div class="stat-title">
-Total Working Time
+    <div class="stat-title">
+        OUT
+    </div>
+
+    <div
+        id="totalOut"
+        class="stat-value red">
+
+        0
+
+    </div>
+
 </div>
 
-<div
-id="totalWorking"
-class="stat-value orange">
 
-0h 0m
+<div class="stat">
 
-</div>
+    <div class="stat-title">
+        Total Working Time
+    </div>
+
+    <div
+        id="totalWorking"
+        class="stat-value orange">
+
+        0h 0m
+
+    </div>
 
 </div>
 
@@ -490,33 +568,35 @@ class="stat-value orange">
 
 <div class="card">
 
-<div class="date-box">
+    <div class="date-box">
 
-<strong>
-Attendance Date:
-</strong>
+        <strong>
+            Attendance Date:
+        </strong>
 
-<input
-type="date"
-id="attendanceDate"
->
+        <input
+            type="date"
+            id="attendanceDate"
+        >
 
-<button
-onclick="loadDashboard()">
 
-🔎 Search
+        <button
+            onclick="loadDashboard()">
 
-</button>
+            🔎 Search
 
-<button
-class="refresh"
-onclick="loadDashboard()">
+        </button>
 
-🔄 Refresh
 
-</button>
+        <button
+            class="refresh"
+            onclick="loadDashboard()">
 
-</div>
+            🔄 Refresh
+
+        </button>
+
+    </div>
 
 </div>
 
@@ -524,10 +604,10 @@ onclick="loadDashboard()">
 <!-- MESSAGE -->
 
 <div
-id="message"
-class="message">
+    id="message"
+    class="message">
 
-Attendance loading...
+    Attendance loading...
 
 </div>
 
@@ -536,24 +616,24 @@ Attendance loading...
 
 <div class="card">
 
-<h2>
-👥 Employee Attendance
-</h2>
+    <h2>
+        👥 Employee Attendance
+    </h2>
 
-<div id="employeeList">
+    <div id="employeeList">
 
-Loading...
+        Loading...
 
-</div>
+    </div>
 
 </div>
 
 
 <button
-class="logout"
-onclick="logout()">
+    class="logout"
+    onclick="logout()">
 
-Logout
+    Logout
 
 </button>
 
@@ -577,9 +657,9 @@ const SUPABASE_KEY =
 
 
 const db =
-supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
 
 
@@ -593,7 +673,7 @@ let employees = [];
 
 let attendanceData = [];
 
-let historyCache = {};
+let factories = [];
 
 
 /* =====================================
@@ -602,43 +682,119 @@ let historyCache = {};
 
 async function getUser(){
 
-const result =
-await db.auth.getSession();
+    const result =
+        await db.auth.getSession();
 
 
-if(result.error){
+    if(result.error){
 
-showError(
-result.error.message
-);
+        showError(
+            result.error.message
+        );
 
-return null;
+        return null;
+    }
 
+
+    if(!result.data.session){
+
+        window.location.href =
+            "employee-login.html";
+
+        return null;
+    }
+
+
+    currentUser =
+        result.data.session.user;
+
+
+    document.getElementById(
+        "ownerEmail"
+    ).innerText =
+        currentUser.email;
+
+
+    return currentUser;
 }
 
 
-if(!result.data.session){
+/* =====================================
+   LOAD FACTORIES
+===================================== */
 
-window.location.href =
-"employee-login.html";
+async function loadFactories(){
 
-return null;
+    const result =
+        await db
+        .from("factories")
+        .select("*")
+        .eq(
+            "owner_id",
+            currentUser.id
+        )
+        .eq(
+            "status",
+            "active"
+        )
+        .order(
+            "name",
+            {ascending:true}
+        );
 
-}
+
+    if(result.error){
+
+        console.error(
+            result.error
+        );
+
+        return false;
+    }
 
 
-currentUser =
-result.data.session.user;
+    factories =
+        result.data || [];
 
 
-document.getElementById(
-"ownerEmail"
-).innerText =
-currentUser.email;
+    const select =
+        document.getElementById(
+            "newEmployeeFactory"
+        );
 
 
-return currentUser;
+    select.innerHTML = `
 
+        <option value="">
+            Factory select करें
+        </option>
+
+    `;
+
+
+    factories.forEach(
+        factory => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                factory.id;
+
+            option.textContent =
+                factory.name;
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    return true;
 }
 
 
@@ -648,47 +804,405 @@ return currentUser;
 
 async function loadEmployees(){
 
-const result =
-await db
-.from("employees")
-.select("*")
-.eq(
-"owner_id",
-currentUser.id
-)
-.order(
-"name",
-{
-ascending:true
+    const result =
+        await db
+        .from("employees")
+        .select("*")
+        .eq(
+            "owner_id",
+            currentUser.id
+        )
+        .order(
+            "name",
+            {ascending:true}
+        );
+
+
+    if(result.error){
+
+        console.error(
+            result.error
+        );
+
+        showError(
+            "Employees load error: " +
+            result.error.message
+        );
+
+        return false;
+    }
+
+
+    employees =
+        result.data || [];
+
+
+    document.getElementById(
+        "totalEmployees"
+    ).innerText =
+        employees.length;
+
+
+    return true;
 }
-);
 
 
-if(result.error){
+/* =====================================
+   ADD EMPLOYEE
+===================================== */
 
-console.error(result.error);
+async function addEmployee(){
 
-showError(
-"Employees load error: " +
-result.error.message
-);
-
-return false;
-
-}
+    const name =
+        document.getElementById(
+            "newEmployeeName"
+        ).value.trim();
 
 
-employees =
-result.data || [];
+    const phone =
+        document.getElementById(
+            "newEmployeePhone"
+        ).value.trim();
 
 
-document.getElementById(
-"totalEmployees"
-).innerText =
-employees.length;
+    const email =
+        document.getElementById(
+            "newEmployeeEmail"
+        ).value.trim();
 
 
-return true;
+    const password =
+        document.getElementById(
+            "newEmployeePassword"
+        ).value;
+
+
+    const factoryId =
+        document.getElementById(
+            "newEmployeeFactory"
+        ).value;
+
+
+    const message =
+        document.getElementById(
+            "addEmployeeMessage"
+        );
+
+
+    const button =
+        document.getElementById(
+            "addEmployeeBtn"
+        );
+
+
+    if(!name){
+
+        message.className =
+            "message error";
+
+        message.innerText =
+            "Employee Name डालें।";
+
+        return;
+    }
+
+
+    if(!phone){
+
+        message.className =
+            "message error";
+
+        message.innerText =
+            "Mobile Number डालें।";
+
+        return;
+    }
+
+
+    if(!email){
+
+        message.className =
+            "message error";
+
+        message.innerText =
+            "Email डालें।";
+
+        return;
+    }
+
+
+    if(!password){
+
+        message.className =
+            "message error";
+
+        message.innerText =
+            "Password डालें।";
+
+        return;
+    }
+
+
+    if(password.length < 6){
+
+        message.className =
+            "message error";
+
+        message.innerText =
+            "Password कम से कम 6 characters का होना चाहिए।";
+
+        return;
+    }
+
+
+    if(!factoryId){
+
+        message.className =
+            "message error";
+
+        message.innerText =
+            "Factory select करें।";
+
+        return;
+    }
+
+
+    button.disabled = true;
+
+    button.innerText =
+        "⏳ Employee बनाया जा रहा है...";
+
+
+    message.className =
+        "message";
+
+    message.innerText =
+        "Employee account बनाया जा रहा है...";
+
+
+    try{
+
+        /*
+          Existing Edge Function
+          Actual endpoint:
+          quick-endpoint
+        */
+
+        const result =
+            await db.functions.invoke(
+                "quick-endpoint",
+                {
+                    body:{
+                        name:name,
+                        phone:phone,
+                        email:email,
+                        password:password
+                    }
+                }
+            );
+
+
+        if(result.error){
+
+            throw new Error(
+                result.error.message ||
+                "Employee create नहीं हुआ।"
+            );
+        }
+
+
+        const response =
+            result.data;
+
+
+        if(
+            !response ||
+            response.success !== true
+        ){
+
+            throw new Error(
+                response?.message ||
+                "Employee create नहीं हुआ।"
+            );
+        }
+
+
+        /*
+          Employee record बनने के बाद
+          factory_id attach करें
+        */
+
+        let employeeId = null;
+
+
+        if(
+            response.employee &&
+            response.employee.id
+        ){
+
+            employeeId =
+                response.employee.id;
+        }
+
+
+        if(employeeId){
+
+            const updateResult =
+                await db
+                .from("employees")
+                .update({
+                    factory_id:
+                        factoryId
+                })
+                .eq(
+                    "id",
+                    employeeId
+                )
+                .eq(
+                    "owner_id",
+                    currentUser.id
+                );
+
+
+            if(updateResult.error){
+
+                console.error(
+                    "Factory link error:",
+                    updateResult.error
+                );
+
+            }
+
+        }else{
+
+            /*
+              Fallback:
+              email + owner_id से record खोजें
+            */
+
+            const updateResult =
+                await db
+                .from("employees")
+                .update({
+                    factory_id:
+                        factoryId
+                })
+                .eq(
+                    "email",
+                    email
+                )
+                .eq(
+                    "owner_id",
+                    currentUser.id
+                );
+
+
+            if(updateResult.error){
+
+                console.error(
+                    "Factory link error:",
+                    updateResult.error
+                );
+
+            }
+
+        }
+
+
+        message.className =
+            "message success";
+
+
+        message.innerHTML = `
+
+            ✅ Employee successfully बनाया गया।
+
+            <br><br>
+
+            <b>Name:</b>
+            ${escapeHtml(name)}
+
+            <br>
+
+            <b>Email:</b>
+            ${escapeHtml(email)}
+
+            <br>
+
+            <b>Mobile:</b>
+            ${escapeHtml(phone)}
+
+        `;
+
+
+        /*
+          Form clear
+        */
+
+        document.getElementById(
+            "newEmployeeName"
+        ).value = "";
+
+
+        document.getElementById(
+            "newEmployeePhone"
+        ).value = "";
+
+
+        document.getElementById(
+            "newEmployeeEmail"
+        ).value = "";
+
+
+        document.getElementById(
+            "newEmployeePassword"
+        ).value = "";
+
+
+        document.getElementById(
+            "newEmployeeFactory"
+        ).value = "";
+
+
+        /*
+          Employee list reload
+        */
+
+        await loadEmployees();
+
+        await loadDashboard();
+
+    }
+
+    catch(error){
+
+        console.error(
+            "ADD EMPLOYEE ERROR:",
+            error
+        );
+
+
+        message.className =
+            "message error";
+
+
+        message.innerText =
+            "❌ " +
+            (
+                error.message ||
+                "Employee create नहीं हुआ।"
+            );
+
+    }
+
+    finally{
+
+        button.disabled = false;
+
+        button.innerText =
+            "➕ Add Employee";
+
+    }
 
 }
 
@@ -699,177 +1213,168 @@ return true;
 
 function setToday(){
 
-const d =
-new Date();
+    const d =
+        new Date();
 
 
-const year =
-d.getFullYear();
+    const year =
+        d.getFullYear();
 
 
-const month =
-String(
-d.getMonth()+1
-).padStart(
-2,
-"0"
-);
+    const month =
+        String(
+            d.getMonth()+1
+        ).padStart(
+            2,
+            "0"
+        );
 
 
-const day =
-String(
-d.getDate()
-).padStart(
-2,
-"0"
-);
+    const day =
+        String(
+            d.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
 
 
-document.getElementById(
-"attendanceDate"
-).value =
-year + "-" +
-month + "-" +
-day;
+    document.getElementById(
+        "attendanceDate"
+    ).value =
+        year +
+        "-" +
+        month +
+        "-" +
+        day;
 
 }
 
 
 function getDateRange(){
 
-const value =
-document.getElementById(
-"attendanceDate"
-).value;
+    const value =
+        document.getElementById(
+            "attendanceDate"
+        ).value;
 
 
-if(!value){
+    if(!value){
 
-return null;
-
-}
-
-
-const parts =
-value.split("-");
+        return null;
+    }
 
 
-const start =
-new Date(
-Number(parts[0]),
-Number(parts[1])-1,
-Number(parts[2]),
-0,0,0,0
-);
+    const parts =
+        value.split("-");
 
 
-const end =
-new Date(
-Number(parts[0]),
-Number(parts[1])-1,
-Number(parts[2])+1,
-0,0,0,0
-);
+    const start =
+        new Date(
+            Number(parts[0]),
+            Number(parts[1])-1,
+            Number(parts[2]),
+            0,0,0,0
+        );
 
 
-return {
+    const end =
+        new Date(
+            Number(parts[0]),
+            Number(parts[1])-1,
+            Number(parts[2])+1,
+            0,0,0,0
+        );
 
-start:
-start.toISOString(),
 
-end:
-end.toISOString()
+    return {
 
-};
+        start:
+            start.toISOString(),
+
+        end:
+            end.toISOString()
+
+    };
 
 }
 
 
 /* =====================================
-   LOAD TODAY ATTENDANCE
+   LOAD ATTENDANCE
 ===================================== */
 
 async function loadAttendance(){
 
-attendanceData = [];
+    attendanceData = [];
 
 
-if(
-employees.length === 0
-){
+    if(
+        employees.length === 0
+    ){
 
-return true;
-
-}
-
-
-const range =
-getDateRange();
+        return true;
+    }
 
 
-if(!range){
-
-showError(
-"Attendance date select करें।"
-);
-
-return false;
-
-}
+    const range =
+        getDateRange();
 
 
-const ids =
-employees.map(
-e => e.id
-);
+    if(!range){
+
+        showError(
+            "Attendance date select करें।"
+        );
+
+        return false;
+    }
 
 
-const result =
-await db
-.from("attendance")
-.select("*")
-.in(
-"employee_id",
-ids
-)
-.gte(
-"in_time",
-range.start
-)
-.lt(
-"in_time",
-range.end
-)
-.order(
-"in_time",
-{
-ascending:true
-}
-);
+    const ids =
+        employees.map(
+            e => e.id
+        );
 
 
-if(result.error){
+    const result =
+        await db
+        .from("attendance")
+        .select("*")
+        .in(
+            "employee_id",
+            ids
+        )
+        .gte(
+            "in_time",
+            range.start
+        )
+        .lt(
+            "in_time",
+            range.end
+        )
+        .order(
+            "in_time",
+            {ascending:true}
+        );
 
-console.error(
-result.error
-);
 
-showError(
-"Attendance load error: " +
-result.error.message
-);
+    if(result.error){
 
-return false;
+        showError(
+            "Attendance load error: " +
+            result.error.message
+        );
 
-}
+        return false;
+    }
 
 
-attendanceData =
-result.data || [];
+    attendanceData =
+        result.data || [];
 
 
-return true;
-
+    return true;
 }
 
 
@@ -879,186 +1384,128 @@ return true;
 
 function getStatus(rows){
 
-const open =
-[...rows]
-.reverse()
-.find(
-row =>
-!row.out_time
-);
+    const open =
+        [...rows]
+        .reverse()
+        .find(
+            row =>
+                !row.out_time
+        );
 
 
-if(!open){
+    if(!open){
 
-return {
-
-type:"out",
-
-text:"🔴 OUT"
-
-};
-
-}
+        return {
+            type:"out",
+            text:"🔴 OUT"
+        };
+    }
 
 
-if(open.outside_since){
+    if(open.outside_since){
 
-return {
-
-type:"away",
-
-text:"🟠 बाहर / Grace"
-
-};
-
-}
+        return {
+            type:"away",
+            text:"🟠 बाहर / Grace"
+        };
+    }
 
 
-return {
-
-type:"in",
-
-text:"🟢 IN"
-
-};
-
+    return {
+        type:"in",
+        text:"🟢 IN"
+    };
 }
 
 
 /* =====================================
-   TOTAL MINUTES
+   WORKING TIME
 ===================================== */
 
 function getTotalMinutes(rows){
 
-let total = 0;
+    let total = 0;
 
 
-rows.forEach(
-row => {
+    rows.forEach(
+        row => {
 
-if(row.out_time){
+            if(row.out_time){
 
-total +=
-Number(
-row.working_minutes || 0
-);
+                total +=
+                    Number(
+                        row.working_minutes || 0
+                    );
 
-}
+            }else if(row.in_time){
 
-else if(row.in_time){
-
-const start =
-new Date(
-row.in_time
-).getTime();
+                const start =
+                    new Date(
+                        row.in_time
+                    ).getTime();
 
 
-const live =
-Math.floor(
-(
-Date.now() -
-start
-) / 60000
-);
+                const live =
+                    Math.floor(
+                        (
+                            Date.now() -
+                            start
+                        ) / 60000
+                    );
 
 
-total +=
-Math.max(
-0,
-live
-);
+                total +=
+                    Math.max(
+                        0,
+                        live
+                    );
+            }
 
-}
+        }
+    );
 
-});
 
-
-return total;
-
+    return total;
 }
 
 
-/* =====================================
-   FORMAT MINUTES
-===================================== */
+function formatMinutes(minutes){
 
-function formatMinutes(
-minutes
-){
-
-minutes =
-Number(minutes) || 0;
+    minutes =
+        Number(minutes) || 0;
 
 
-const h =
-Math.floor(
-minutes / 60
-);
+    const h =
+        Math.floor(
+            minutes / 60
+        );
 
 
-const m =
-minutes % 60;
+    const m =
+        minutes % 60;
 
 
-return h + "h " + m + "m";
-
+    return h + "h " + m + "m";
 }
 
 
-/* =====================================
-   FORMAT TIME
-===================================== */
+function formatTime(value){
 
-function formatTime(
-value
-){
+    if(!value){
 
-if(!value){
-
-return "—";
-
-}
+        return "—";
+    }
 
 
-return new Date(value)
-.toLocaleTimeString(
-"en-IN",
-{
-hour:"2-digit",
-minute:"2-digit",
-second:"2-digit"
-}
-);
-
-}
-
-
-/* =====================================
-   FORMAT DATE
-===================================== */
-
-function formatDate(
-value
-){
-
-if(!value){
-
-return "—";
-
-}
-
-
-return new Date(value)
-.toLocaleDateString(
-"en-IN",
-{
-day:"2-digit",
-month:"2-digit",
-year:"numeric"
-}
-);
-
+    return new Date(value)
+        .toLocaleTimeString(
+            "en-IN",
+            {
+                hour:"2-digit",
+                minute:"2-digit",
+                second:"2-digit"
+            }
+        );
 }
 
 
@@ -1066,720 +1513,182 @@ year:"numeric"
    ESCAPE HTML
 ===================================== */
 
-function escapeHtml(
-value
-){
+function escapeHtml(value){
 
-return String(value)
-.replace(
-/&/g,
-"&amp;"
-)
-.replace(
-/</g,
-"&lt;"
-)
-.replace(
-/>/g,
-"&gt;"
-)
-.replace(
-/"/g,
-"&quot;"
-)
-.replace(
-/'/g,
-"&#039;"
-);
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
 
 /* =====================================
-   RENDER SESSIONS
+   SESSIONS
 ===================================== */
 
 function renderSessions(rows){
 
-if(!rows.length){
+    if(!rows.length){
 
-return `
-<div class="no-data">
-आज कोई attendance session नहीं मिला।
-</div>
-`;
+        return `
 
-}
+            <div class="no-data">
 
+                आज कोई attendance session नहीं मिला।
 
-let html = `
+            </div>
 
-<div style="overflow-x:auto">
+        `;
+    }
 
-<table>
 
-<thead>
+    let html = `
 
-<tr>
+        <div style="overflow-x:auto">
 
-<th>#</th>
+        <table>
 
-<th>IN Time</th>
+        <thead>
 
-<th>OUT Time</th>
+        <tr>
 
-<th>Working</th>
+            <th>#</th>
 
-<th>Status</th>
+            <th>IN Time</th>
 
-</tr>
+            <th>OUT Time</th>
 
-</thead>
+            <th>Working</th>
 
-<tbody>
+            <th>Status</th>
 
-`;
+        </tr>
 
+        </thead>
 
-rows.forEach(
-(row,index) => {
+        <tbody>
 
-let status =
-"Completed";
+    `;
 
 
-if(!row.out_time){
+    rows.forEach(
+        (row,index) => {
 
-status =
-row.outside_since
-? "🟠 Grace / Outside"
-: "🟢 Running";
+            let status =
+                "Completed";
 
-}
 
+            if(!row.out_time){
 
-let working;
+                status =
+                    row.outside_since
+                    ? "🟠 Grace / Outside"
+                    : "🟢 Running";
 
+            }
 
-if(row.out_time){
 
-working =
-formatMinutes(
-row.working_minutes
-);
+            let working;
 
-}else{
 
-const live =
-Math.floor(
-(
-Date.now() -
-new Date(
-row.in_time
-).getTime()
-) / 60000
-);
+            if(row.out_time){
 
+                working =
+                    formatMinutes(
+                        row.working_minutes
+                    );
 
-working =
-formatMinutes(
-Math.max(
-0,
-live
-)
-) +
-" (running)";
+            }else{
 
-}
+                const live =
+                    Math.floor(
+                        (
+                            Date.now() -
+                            new Date(
+                                row.in_time
+                            ).getTime()
+                        ) / 60000
+                    );
 
 
-html += `
+                working =
+                    formatMinutes(
+                        Math.max(
+                            0,
+                            live
+                        )
+                    ) +
+                    " (running)";
 
-<tr>
+            }
 
-<td>
-${index+1}
-</td>
 
-<td>
-${formatTime(
-row.in_time
-)}
-</td>
+            html += `
 
-<td>
-${formatTime(
-row.out_time
-)}
-</td>
+                <tr>
 
-<td>
-${working}
-</td>
+                    <td>
+                        ${index+1}
+                    </td>
 
-<td>
-${status}
-</td>
+                    <td>
+                        ${formatTime(
+                            row.in_time
+                        )}
+                    </td>
 
-</tr>
+                    <td>
+                        ${formatTime(
+                            row.out_time
+                        )}
+                    </td>
 
-`;
+                    <td>
+                        ${working}
+                    </td>
 
-});
+                    <td>
+                        ${status}
+                    </td>
 
+                </tr>
 
-html += `
+            `;
 
-</tbody>
+        }
+    );
 
-</table>
 
-</div>
+    html += `
 
-`;
+        </tbody>
 
+        </table>
 
-return html;
+        </div>
 
-}
+    `;
 
 
-/* =====================================
-   TOGGLE DETAILS
-===================================== */
-
-function toggleDetails(
-id
-){
-
-const box =
-document.getElementById(
-"details-" + id
-);
-
-
-if(!box){
-
-return;
-
-}
-
-
-if(
-box.style.display ===
-"block"
-){
-
-box.style.display =
-"none";
-
-}else{
-
-box.style.display =
-"block";
-
-}
-
-}
-
-
-/* =====================================
-   LOAD EMPLOYEE HISTORY
-===================================== */
-
-async function loadEmployeeHistory(
-employeeId,
-days
-){
-
-const historyBox =
-document.getElementById(
-"history-" + employeeId
-);
-
-
-if(!historyBox){
-
-return;
-
-}
-
-
-historyBox.innerHTML = `
-
-<div class="loading-history">
-
-⏳ Attendance history loading...
-
-</div>
-
-`;
-
-
-const end =
-new Date();
-
-
-const start =
-new Date();
-
-
-start.setDate(
-start.getDate() -
-(days - 1)
-);
-
-
-start.setHours(
-0,0,0,0
-);
-
-
-end.setHours(
-23,59,59,999
-);
-
-
-const result =
-await db
-.from("attendance")
-.select("*")
-.eq(
-"employee_id",
-employeeId
-)
-.gte(
-"in_time",
-start.toISOString()
-)
-.lte(
-"in_time",
-end.toISOString()
-)
-.order(
-"in_time",
-{
-ascending:true
-}
-);
-
-
-if(result.error){
-
-console.error(
-result.error
-);
-
-historyBox.innerHTML = `
-
-<div class="no-data">
-
-❌ History load error:
-${escapeHtml(
-result.error.message
-)}
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-const rows =
-result.data || [];
-
-
-historyCache[
-employeeId + "_" + days
-] =
-rows;
-
-
-renderHistory(
-employeeId,
-rows,
-days
-);
-
-}
-
-
-/* =====================================
-   RENDER HISTORY
-===================================== */
-
-function renderHistory(
-employeeId,
-rows,
-days
-){
-
-const historyBox =
-document.getElementById(
-"history-" + employeeId
-);
-
-
-if(!historyBox){
-
-return;
-
-}
-
-
-let totalMinutes = 0;
-
-let presentDays = 0;
-
-let absentDays = 0;
-
-
-/*
-Unique dates जिनमें attendance मिली
-*/
-
-const dates = {};
-
-
-rows.forEach(
-row => {
-
-const date =
-new Date(
-row.in_time
-).toLocaleDateString(
-"en-CA"
-);
-
-dates[date] = true;
-
-});
-
-
-presentDays =
-Object.keys(
-dates
-).length;
-
-
-/*
-Absent days
-*/
-
-const today =
-new Date();
-
-
-for(
-let i=0;
-i<days;
-i++
-){
-
-const d =
-new Date();
-
-d.setDate(
-today.getDate() - i
-);
-
-d.setHours(
-0,0,0,0
-);
-
-
-const date =
-d.toLocaleDateString(
-"en-CA"
-);
-
-
-if(!dates[date]){
-
-absentDays++;
-
-}
-
-}
-
-
-/*
-Total working
-*/
-
-rows.forEach(
-row => {
-
-if(row.out_time){
-
-totalMinutes +=
-Number(
-row.working_minutes || 0
-);
-
-}else if(row.in_time){
-
-const live =
-Math.floor(
-(
-Date.now() -
-new Date(
-row.in_time
-).getTime()
-) / 60000
-);
-
-totalMinutes +=
-Math.max(
-0,
-live
-);
-
-}
-
-});
-
-
-let html = `
-
-<div class="history-summary">
-
-
-<div class="history-stat">
-
-<div class="history-stat-title">
-Period
-</div>
-
-<div class="history-stat-value">
-${days} Days
-</div>
-
-</div>
-
-
-<div class="history-stat">
-
-<div class="history-stat-title">
-Present Days
-</div>
-
-<div
-class="history-stat-value"
-style="color:#16a34a">
-
-${presentDays}
-
-</div>
-
-</div>
-
-
-<div class="history-stat">
-
-<div class="history-stat-title">
-Absent Days
-</div>
-
-<div
-class="history-stat-value"
-style="color:#dc2626">
-
-${absentDays}
-
-</div>
-
-</div>
-
-
-<div class="history-stat">
-
-<div class="history-stat-title">
-Total Working
-</div>
-
-<div class="history-stat-value">
-
-${formatMinutes(
-totalMinutes
-)}
-
-</div>
-
-</div>
-
-
-</div>
-
-`;
-
-
-if(!rows.length){
-
-html += `
-
-<div class="no-data">
-
-इस period में कोई attendance record नहीं मिला।
-
-</div>
-
-`;
-
-historyBox.innerHTML =
-html;
-
-return;
-
-}
-
-
-html += `
-
-<div class="history-table">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Date</th>
-
-<th>IN</th>
-
-<th>OUT</th>
-
-<th>Working</th>
-
-<th>Status</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-`;
-
-
-/*
-हर attendance session
-*/
-
-rows.forEach(
-row => {
-
-let date =
-formatDate(
-row.in_time
-);
-
-
-let working;
-
-
-if(row.out_time){
-
-working =
-formatMinutes(
-row.working_minutes
-);
-
-}else{
-
-const live =
-Math.floor(
-(
-Date.now() -
-new Date(
-row.in_time
-).getTime()
-) / 60000
-);
-
-working =
-formatMinutes(
-Math.max(
-0,
-live
-)
-) +
-" (running)";
-
-}
-
-
-let status;
-
-
-if(!row.out_time){
-
-status =
-row.outside_since
-? "🟠 Outside"
-: "🟢 Running";
-
-}else{
-
-status =
-"✅ Present";
-
-}
-
-
-html += `
-
-<tr>
-
-<td>
-${date}
-</td>
-
-<td>
-${formatTime(
-row.in_time
-)}
-</td>
-
-<td>
-${formatTime(
-row.out_time
-)}
-</td>
-
-<td>
-${working}
-</td>
-
-<td>
-${status}
-</td>
-
-</tr>
-
-`;
-
-});
-
-
-html += `
-
-</tbody>
-
-</table>
-
-</div>
-
-`;
-
-
-historyBox.innerHTML =
-html;
-
+    return html;
 }
 
 
@@ -1787,305 +1696,211 @@ html;
    EMPLOYEE DETAILS
 ===================================== */
 
+function toggleDetails(id){
+
+    const box =
+        document.getElementById(
+            "details-" + id
+        );
+
+
+    if(!box){
+
+        return;
+    }
+
+
+    if(
+        box.style.display ===
+        "block"
+    ){
+
+        box.style.display =
+            "none";
+
+    }else{
+
+        box.style.display =
+            "block";
+    }
+
+}
+
+
 function employeeDetails(
-employee,
-rows,
-status,
-minutes
+    employee,
+    rows,
+    status,
+    minutes
 ){
 
-return `
+    return `
 
-<div
-id="details-${employee.id}"
-class="details">
+        <div
+            id="details-${employee.id}"
+            class="details">
 
+            <h3>
+                👤 Employee Details
+            </h3>
 
-<h3>
-👤 Employee Details
-</h3>
 
+            <div class="detail-row">
 
-<div class="detail-grid">
 
+                <div class="detail">
 
-<div class="detail">
+                    <div class="detail-title">
+                        Employee Name
+                    </div>
 
-<div class="detail-title">
-Employee Name
-</div>
+                    <div class="detail-value">
+                        ${escapeHtml(
+                            employee.name ||
+                            "—"
+                        )}
+                    </div>
 
-<div class="detail-value">
+                </div>
 
-${escapeHtml(
-employee.name || "—"
-)}
 
-</div>
+                <div class="detail">
 
-</div>
+                    <div class="detail-title">
+                        Employee ID
+                    </div>
 
+                    <div class="detail-value">
+                        ${escapeHtml(
+                            employee.id ||
+                            "—"
+                        )}
+                    </div>
 
-<div class="detail">
+                </div>
 
-<div class="detail-title">
-Employee ID
-</div>
 
-<div class="detail-value">
+            </div>
 
-${escapeHtml(
-employee.id || "—"
-)}
 
-</div>
+            <div class="detail-row">
 
-</div>
 
+                <div class="detail">
 
-<div class="detail">
+                    <div class="detail-title">
+                        Mobile
+                    </div>
 
-<div class="detail-title">
-Mobile
-</div>
+                    <div class="detail-value">
+                        ${escapeHtml(
+                            employee.phone ||
+                            "—"
+                        )}
+                    </div>
 
-<div class="detail-value">
+                </div>
 
-${escapeHtml(
-employee.phone || "—"
-)}
 
-</div>
+                <div class="detail">
 
-</div>
+                    <div class="detail-title">
+                        Email
+                    </div>
 
+                    <div class="detail-value">
+                        ${escapeHtml(
+                            employee.email ||
+                            "—"
+                        )}
+                    </div>
 
-<div class="detail">
+                </div>
 
-<div class="detail-title">
-Email
-</div>
 
-<div class="detail-value">
+            </div>
 
-${escapeHtml(
-employee.email || "—"
-)}
 
-</div>
+            <div class="detail-row">
 
-</div>
 
+                <div class="detail">
 
-<div class="detail">
+                    <div class="detail-title">
+                        Factory ID
+                    </div>
 
-<div class="detail-title">
-Factory ID
-</div>
+                    <div class="detail-value">
+                        ${escapeHtml(
+                            employee.factory_id ||
+                            "—"
+                        )}
+                    </div>
 
-<div class="detail-value">
+                </div>
 
-${escapeHtml(
-employee.factory_id || "—"
-)}
 
-</div>
+                <div class="detail">
 
-</div>
+                    <div class="detail-title">
+                        Current Status
+                    </div>
 
+                    <div class="detail-value">
+                        ${status.text}
+                    </div>
 
-<div class="detail">
+                </div>
 
-<div class="detail-title">
-Owner ID
-</div>
 
-<div class="detail-value">
+            </div>
 
-${escapeHtml(
-employee.owner_id || "—"
-)}
 
-</div>
+            <div class="detail-row">
 
-</div>
 
+                <div class="detail">
 
-<div class="detail">
+                    <div class="detail-title">
+                        Total Sessions
+                    </div>
 
-<div class="detail-title">
-Current Status
-</div>
+                    <div class="detail-value">
+                        ${rows.length}
+                    </div>
 
-<div class="detail-value">
+                </div>
 
-${status.text}
 
-</div>
+                <div class="detail">
 
-</div>
+                    <div class="detail-title">
+                        Total Working
+                    </div>
 
+                    <div class="detail-value">
+                        ${formatMinutes(
+                            minutes
+                        )}
+                    </div>
 
-<div class="detail">
+                </div>
 
-<div class="detail-title">
-Today's Sessions
-</div>
 
-<div class="detail-value">
+            </div>
 
-${rows.length}
 
-</div>
+            <h3>
+                📋 Attendance Sessions
+            </h3>
 
-</div>
 
+            ${renderSessions(rows)}
 
-<div class="detail">
 
-<div class="detail-title">
-Today's Working
-</div>
+        </div>
 
-<div class="detail-value">
-
-${formatMinutes(
-minutes
-)}
-
-</div>
-
-</div>
-
-
-</div>
-
-
-<h3>
-📊 Attendance History
-</h3>
-
-
-<div class="history-buttons">
-
-
-<button
-class="history-btn"
-onclick="
-setHistoryButton(
-'${employee.id}',
-7
-);
-loadEmployeeHistory(
-'${employee.id}',
-7
-);
-">
-
-7 Days
-
-</button>
-
-
-<button
-class="history-btn"
-onclick="
-setHistoryButton(
-'${employee.id}',
-30
-);
-loadEmployeeHistory(
-'${employee.id}',
-30
-);
-">
-
-30 Days
-
-</button>
-
-
-</div>
-
-
-<div
-id="history-${employee.id}"
-class="history-box">
-
-<div class="no-data">
-
-ऊपर से 7 Days या 30 Days चुनें।
-
-</div>
-
-</div>
-
-
-<button
-class="close-btn"
-onclick="
-toggleDetails(
-'${employee.id}'
-);
-">
-
-▲ Close Details
-
-</button>
-
-
-</div>
-
-`;
-
-}
-
-
-/* =====================================
-   HISTORY BUTTON
-===================================== */
-
-function setHistoryButton(
-employeeId,
-days
-){
-
-const buttons =
-document.querySelectorAll(
-"#details-" +
-employeeId +
-" .history-btn"
-);
-
-
-buttons.forEach(
-button => {
-
-button.classList.remove(
-"active"
-);
-
-});
-
-
-buttons.forEach(
-button => {
-
-if(
-button.innerText
-.includes(
-days + " Days"
-)
-){
-
-button.classList.add(
-"active"
-);
-
-}
-
-});
-
+    `;
 }
 
 
@@ -2095,283 +1910,277 @@ button.classList.add(
 
 function renderDashboard(){
 
-const list =
-document.getElementById(
-"employeeList"
-);
+    const list =
+        document.getElementById(
+            "employeeList"
+        );
 
 
-if(
-employees.length === 0
-){
+    if(!employees.length){
 
-list.innerHTML = `
+        list.innerHTML = `
 
-<div class="no-data">
+            <div class="no-data">
 
-इस Owner के लिए अभी कोई employee नहीं मिला।
+                इस Owner के लिए अभी कोई employee नहीं मिला।
 
-</div>
+            </div>
 
-`;
+        `;
 
-document.getElementById(
-"totalEmployees"
-).innerText = "0";
 
-document.getElementById(
-"totalIn"
-).innerText = "0";
+        document.getElementById(
+            "totalEmployees"
+        ).innerText = "0";
 
-document.getElementById(
-"totalOut"
-).innerText = "0";
 
-document.getElementById(
-"totalWorking"
-).innerText = "0h 0m";
+        document.getElementById(
+            "totalIn"
+        ).innerText = "0";
 
-return;
 
-}
+        document.getElementById(
+            "totalOut"
+        ).innerText = "0";
 
 
-let totalIn = 0;
+        document.getElementById(
+            "totalWorking"
+        ).innerText = "0h 0m";
 
-let totalOut = 0;
 
-let totalWorking = 0;
+        return;
+    }
 
-let html = "";
 
+    let totalIn = 0;
 
-employees.forEach(
-employee => {
+    let totalOut = 0;
 
+    let totalWorking = 0;
 
-const rows =
-attendanceData.filter(
-row =>
-row.employee_id ===
-employee.id
-);
+    let html = "";
 
 
-const status =
-getStatus(rows);
+    employees.forEach(
+        employee => {
 
+            const rows =
+                attendanceData.filter(
+                    row =>
+                        row.employee_id ===
+                        employee.id
+                );
 
-const minutes =
-getTotalMinutes(rows);
 
+            const status =
+                getStatus(rows);
 
-totalWorking +=
-minutes;
 
+            const minutes =
+                getTotalMinutes(rows);
 
-if(
-status.type === "in"
-){
 
-totalIn++;
+            totalWorking +=
+                minutes;
 
-}
 
+            if(
+                status.type === "in"
+            ){
 
-if(
-status.type === "out"
-){
+                totalIn++;
 
-totalOut++;
+            }
 
-}
 
+            if(
+                status.type === "out"
+            ){
 
-let badgeClass =
-"badge-out";
+                totalOut++;
 
+            }
 
-if(
-status.type === "in"
-){
 
-badgeClass =
-"badge-in";
+            let badgeClass =
+                "badge-out";
 
-}
 
+            if(
+                status.type === "in"
+            ){
 
-if(
-status.type === "away"
-){
+                badgeClass =
+                    "badge-in";
 
-badgeClass =
-"badge-away";
+            }
 
-}
 
+            if(
+                status.type === "away"
+            ){
 
-html += `
+                badgeClass =
+                    "badge-away";
 
-<div class="employee-card">
+            }
 
 
-<div class="employee-header">
+            html += `
 
+                <div class="employee-card">
 
-<div>
 
+                    <div class="employee-header">
 
-<div class="employee-name">
 
-${escapeHtml(
-employee.name ||
-"Employee"
-)}
+                        <div>
 
-</div>
+                            <div class="employee-name">
 
+                                ${escapeHtml(
+                                    employee.name ||
+                                    "Employee"
+                                )}
 
-<div class="employee-info">
+                            </div>
 
-📧 ${
-escapeHtml(
-employee.email ||
-"—"
-)
-}
 
-<br>
+                            <div class="employee-info">
 
-📱 ${
-escapeHtml(
-employee.phone ||
-"—"
-)
-}
+                                📧 ${
+                                    escapeHtml(
+                                        employee.email ||
+                                        "—"
+                                    )
+                                }
 
-</div>
+                                <br>
 
+                                📱 ${
+                                    escapeHtml(
+                                        employee.phone ||
+                                        "—"
+                                    )
+                                }
 
-</div>
+                            </div>
 
+                        </div>
 
-<div
-class="badge ${badgeClass}">
 
-${status.text}
+                        <div
+                            class="badge ${badgeClass}">
 
-</div>
+                            ${status.text}
 
+                        </div>
 
-</div>
 
+                    </div>
 
-<div class="total">
 
-<div class="total-title">
+                    <div class="total">
 
-आज का Total Working Time
+                        <div class="total-title">
 
-</div>
+                            आज का Total Working Time
 
+                        </div>
 
-<div class="total-time">
 
-${formatMinutes(
-minutes
-)}
+                        <div class="total-time">
 
-</div>
+                            ${formatMinutes(
+                                minutes
+                            )}
 
-</div>
+                        </div>
 
+                    </div>
 
-<h3>
-Today's Sessions
-</h3>
 
+                    <h3>
+                        Today's Sessions
+                    </h3>
 
-${renderSessions(
-rows
-)}
 
+                    ${renderSessions(rows)}
 
-<button
-class="details-btn"
-onclick="
-toggleDetails(
-'${employee.id}'
-);
-">
 
-👤 View Employee Details
+                    <button
+                        class="details-btn"
+                        onclick="toggleDetails('${employee.id}')">
 
-</button>
+                        👤 View Employee Details
 
+                    </button>
 
-${employeeDetails(
-employee,
-rows,
-status,
-minutes
-)}
 
+                    ${employeeDetails(
+                        employee,
+                        rows,
+                        status,
+                        minutes
+                    )}
 
-</div>
 
-`;
+                </div>
 
-});
+            `;
 
+        }
+    );
 
-list.innerHTML =
-html;
 
+    list.innerHTML =
+        html;
 
-document.getElementById(
-"totalEmployees"
-).innerText =
-employees.length;
 
+    document.getElementById(
+        "totalEmployees"
+    ).innerText =
+        employees.length;
 
-document.getElementById(
-"totalIn"
-).innerText =
-totalIn;
 
+    document.getElementById(
+        "totalIn"
+    ).innerText =
+        totalIn;
 
-document.getElementById(
-"totalOut"
-).innerText =
-totalOut;
 
+    document.getElementById(
+        "totalOut"
+    ).innerText =
+        totalOut;
 
-document.getElementById(
-"totalWorking"
-).innerText =
-formatMinutes(
-totalWorking
-);
 
+    document.getElementById(
+        "totalWorking"
+    ).innerText =
+        formatMinutes(
+            totalWorking
+        );
 
-document.getElementById(
-"message"
-).innerHTML = `
 
-Employees:
-<b>
-${employees.length}
-</b>
+    document.getElementById(
+        "message"
+    ).innerHTML = `
 
-&nbsp; | &nbsp;
+        Employees:
+        <b>
+            ${employees.length}
+        </b>
 
-Attendance Sessions:
-<b>
-${attendanceData.length}
-</b>
+        &nbsp; | &nbsp;
 
-`;
+        Attendance Sessions:
+        <b>
+            ${attendanceData.length}
+        </b>
+
+    `;
 
 }
 
@@ -2380,22 +2189,20 @@ ${attendanceData.length}
    ERROR
 ===================================== */
 
-function showError(
-message
-){
+function showError(message){
 
-const box =
-document.getElementById(
-"message"
-);
+    const box =
+        document.getElementById(
+            "message"
+        );
 
 
-box.className =
-"message error";
+    box.className =
+        "message error";
 
 
-box.innerText =
-"❌ " + message;
+    box.innerText =
+        "❌ " + message;
 
 }
 
@@ -2406,26 +2213,23 @@ box.innerText =
 
 async function loadDashboard(){
 
-if(!currentUser){
+    if(!currentUser){
 
-return;
-
-}
-
-
-const success =
-await loadAttendance();
+        return;
+    }
 
 
-if(!success){
-
-return;
-
-}
+    const success =
+        await loadAttendance();
 
 
-renderDashboard();
+    if(!success){
 
+        return;
+    }
+
+
+    renderDashboard();
 }
 
 
@@ -2435,10 +2239,11 @@ renderDashboard();
 
 async function logout(){
 
-await db.auth.signOut();
+    await db.auth.signOut();
 
-window.location.href =
-"employee-login.html";
+
+    window.location.href =
+        "employee-login.html";
 
 }
 
@@ -2449,32 +2254,41 @@ window.location.href =
 
 async function startApp(){
 
-setToday();
+    setToday();
 
 
-const user =
-await getUser();
+    const user =
+        await getUser();
 
 
-if(!user){
+    if(!user){
 
-return;
-
-}
-
-
-const ok =
-await loadEmployees();
+        return;
+    }
 
 
-if(!ok){
+    /*
+      Factories पहले load करें
+    */
 
-return;
-
-}
+    await loadFactories();
 
 
-await loadDashboard();
+    /*
+      Employees load करें
+    */
+
+    const employeeSuccess =
+        await loadEmployees();
+
+
+    if(!employeeSuccess){
+
+        return;
+    }
+
+
+    await loadDashboard();
 
 }
 
@@ -2484,22 +2298,20 @@ await loadDashboard();
 ===================================== */
 
 setInterval(
-async function(){
+    async function(){
 
-if(currentUser){
+        if(currentUser){
 
-await loadDashboard();
+            await loadDashboard();
 
-}
+        }
 
-},
-30000
+    },
+    30000
 );
 
 
-/* =====================================
-   START
-===================================== */
+/* START */
 
 startApp();
 
