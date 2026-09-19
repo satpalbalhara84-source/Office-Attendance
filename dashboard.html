@@ -78,42 +78,20 @@ body{
     margin-top:8px;
 }
 
-.blue{color:#2563eb;}
-.green{color:#16a34a;}
-.red{color:#dc2626;}
-.orange{color:#ea580c;}
-
-.form-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:15px;
+.blue{
+    color:#2563eb;
 }
 
-.form-group{
-    display:flex;
-    flex-direction:column;
+.green{
+    color:#16a34a;
 }
 
-.form-group label{
-    font-weight:bold;
-    margin-bottom:6px;
+.red{
+    color:#dc2626;
 }
 
-.form-group input,
-.form-group select{
-    padding:12px;
-    border:1px solid #d1d5db;
-    border-radius:8px;
-    font-size:15px;
-}
-
-.full{
-    grid-column:1 / -1;
-}
-
-.add-btn{
-    background:#16a34a;
-    margin-top:15px;
+.orange{
+    color:#ea580c;
 }
 
 .date-box{
@@ -139,11 +117,6 @@ button{
     font-size:15px;
 }
 
-button:disabled{
-    opacity:.6;
-    cursor:not-allowed;
-}
-
 .refresh{
     background:#16a34a;
 }
@@ -159,16 +132,6 @@ button:disabled{
     background:#eff6ff;
     border-radius:8px;
     margin-bottom:20px;
-}
-
-.success{
-    background:#dcfce7;
-    color:#166534;
-}
-
-.error{
-    background:#fee2e2;
-    color:#991b1b;
 }
 
 .employee-card{
@@ -194,7 +157,6 @@ button:disabled{
 .employee-info{
     color:#6b7280;
     margin-top:5px;
-    line-height:1.7;
 }
 
 .badge{
@@ -238,55 +200,13 @@ button:disabled{
     margin-top:5px;
 }
 
-.details-btn{
-    background:#7c3aed;
-    margin-top:15px;
-}
-
-.details{
-    display:none;
-    margin-top:15px;
-    padding:15px;
-    background:#f8fafc;
-    border-radius:10px;
-    border:1px solid #e5e7eb;
-}
-
-.details.show{
-    display:block;
-}
-
-.detail-row{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin-bottom:10px;
-}
-
-.detail{
-    background:white;
-    padding:12px;
-    border-radius:8px;
-    border:1px solid #e5e7eb;
-}
-
-.detail-title{
-    font-size:12px;
-    color:#6b7280;
-}
-
-.detail-value{
-    font-weight:bold;
-    margin-top:4px;
-    word-break:break-word;
-}
-
 table{
     width:100%;
     border-collapse:collapse;
 }
 
-th,td{
+th,
+td{
     padding:11px;
     border-bottom:1px solid #e5e7eb;
     text-align:left;
@@ -301,31 +221,29 @@ th{
     padding:10px 0;
 }
 
+.error{
+    color:#b91c1c;
+    background:#fee2e2;
+}
+
 @media(max-width:800px){
 
     .stats{
         grid-template-columns:repeat(2,1fr);
     }
 
-    .form-grid{
-        grid-template-columns:1fr;
-    }
-
-    .full{
-        grid-column:auto;
-    }
-
     .container{
         padding:12px;
-    }
-
-    .detail-row{
-        grid-template-columns:1fr;
     }
 
 }
 
 @media(max-width:500px){
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+    }
 
     .stat{
         padding:15px;
@@ -335,7 +253,8 @@ th{
         font-size:22px;
     }
 
-    th,td{
+    th,
+    td{
         font-size:13px;
         padding:8px;
     }
@@ -377,188 +296,77 @@ th{
 </div>
 
 
-<!-- ADD EMPLOYEE -->
-
-<div class="card">
-
-    <h2>
-        ➕ Add New Employee
-    </h2>
-
-    <p style="color:#6b7280;">
-        नए employee का account यहाँ बनाएं।
-    </p>
-
-
-    <div id="addEmployeeMessage"></div>
-
-
-    <div class="form-grid">
-
-
-        <div class="form-group">
-
-            <label>
-                Employee Name *
-            </label>
-
-            <input
-                type="text"
-                id="newEmployeeName"
-                placeholder="Employee Name"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Mobile Number *
-            </label>
-
-            <input
-                type="tel"
-                id="newEmployeePhone"
-                placeholder="Mobile Number"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Email *
-            </label>
-
-            <input
-                type="email"
-                id="newEmployeeEmail"
-                placeholder="Employee Email"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Password *
-            </label>
-
-            <input
-                type="password"
-                id="newEmployeePassword"
-                placeholder="Minimum 6 characters"
-            >
-
-        </div>
-
-
-        <div class="form-group full">
-
-            <label>
-                Factory *
-            </label>
-
-            <select id="newEmployeeFactory">
-
-                <option value="">
-                    Factory select करें
-                </option>
-
-            </select>
-
-        </div>
-
-
-    </div>
-
-
-    <button
-        class="add-btn"
-        id="addEmployeeBtn"
-        onclick="addEmployee()">
-
-        ➕ Add Employee
-
-    </button>
-
-</div>
-
-
 <!-- STATS -->
 
 <div class="stats">
 
 
-<div class="stat">
+    <div class="stat">
 
-    <div class="stat-title">
-        Total Employees
-    </div>
+        <div class="stat-title">
+            Total Employees
+        </div>
 
-    <div
-        id="totalEmployees"
-        class="stat-value blue">
+        <div
+            id="totalEmployees"
+            class="stat-value blue">
 
-        0
+            0
 
-    </div>
-
-</div>
-
-
-<div class="stat">
-
-    <div class="stat-title">
-        Currently IN
-    </div>
-
-    <div
-        id="totalIn"
-        class="stat-value green">
-
-        0
+        </div>
 
     </div>
 
-</div>
 
+    <div class="stat">
 
-<div class="stat">
+        <div class="stat-title">
+            Currently IN
+        </div>
 
-    <div class="stat-title">
-        OUT
-    </div>
+        <div
+            id="totalIn"
+            class="stat-value green">
 
-    <div
-        id="totalOut"
-        class="stat-value red">
+            0
 
-        0
-
-    </div>
-
-</div>
-
-
-<div class="stat">
-
-    <div class="stat-title">
-        Total Working Time
-    </div>
-
-    <div
-        id="totalWorking"
-        class="stat-value orange">
-
-        0h 0m
+        </div>
 
     </div>
 
-</div>
+
+    <div class="stat">
+
+        <div class="stat-title">
+            OUT
+        </div>
+
+        <div
+            id="totalOut"
+            class="stat-value red">
+
+            0
+
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-title">
+            Total Working Time
+        </div>
+
+        <div
+            id="totalWorking"
+            class="stat-value orange">
+
+            0h 0m
+
+        </div>
+
+    </div>
 
 
 </div>
@@ -673,40 +481,34 @@ let employees = [];
 
 let attendanceData = [];
 
-let factories = [];
-
 
 /* =====================================
-   GET USER
+   GET SESSION
 ===================================== */
 
 async function getUser(){
 
-    const result =
-        await db.auth.getSession();
+    const {
+        data,
+        error
+    } =
+    await db.auth.getSession();
 
 
-    if(result.error){
-
-        showError(
-            result.error.message
-        );
-
-        return null;
-    }
-
-
-    if(!result.data.session){
+    if(
+        error ||
+        !data.session
+    ){
 
         window.location.href =
-            "employee-login.html";
+            "owner-login.html";
 
         return null;
     }
 
 
     currentUser =
-        result.data.session.user;
+        data.session.user;
 
 
     document.getElementById(
@@ -716,85 +518,7 @@ async function getUser(){
 
 
     return currentUser;
-}
 
-
-/* =====================================
-   LOAD FACTORIES
-===================================== */
-
-async function loadFactories(){
-
-    const result =
-        await db
-        .from("factories")
-        .select("*")
-        .eq(
-            "owner_id",
-            currentUser.id
-        )
-        .eq(
-            "status",
-            "active"
-        )
-        .order(
-            "name",
-            {ascending:true}
-        );
-
-
-    if(result.error){
-
-        console.error(
-            result.error
-        );
-
-        return false;
-    }
-
-
-    factories =
-        result.data || [];
-
-
-    const select =
-        document.getElementById(
-            "newEmployeeFactory"
-        );
-
-
-    select.innerHTML = `
-
-        <option value="">
-            Factory select करें
-        </option>
-
-    `;
-
-
-    factories.forEach(
-        factory => {
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-            option.value =
-                factory.id;
-
-            option.textContent =
-                factory.name;
-
-            select.appendChild(
-                option
-            );
-
-        }
-    );
-
-
-    return true;
 }
 
 
@@ -804,8 +528,11 @@ async function loadFactories(){
 
 async function loadEmployees(){
 
-    const result =
-        await db
+    const {
+        data,
+        error
+    } =
+    await db
         .from("employees")
         .select("*")
         .eq(
@@ -814,19 +541,19 @@ async function loadEmployees(){
         )
         .order(
             "name",
-            {ascending:true}
+            {
+                ascending:true
+            }
         );
 
 
-    if(result.error){
+    if(error){
 
-        console.error(
-            result.error
-        );
+        console.error(error);
 
         showError(
             "Employees load error: " +
-            result.error.message
+            error.message
         );
 
         return false;
@@ -834,7 +561,7 @@ async function loadEmployees(){
 
 
     employees =
-        result.data || [];
+        data || [];
 
 
     document.getElementById(
@@ -844,414 +571,15 @@ async function loadEmployees(){
 
 
     return true;
-}
-
-
-/* =====================================
-   ADD EMPLOYEE
-===================================== */
-
-async function addEmployee(){
-
-    const name =
-        document.getElementById(
-            "newEmployeeName"
-        ).value.trim();
-
-
-    const phone =
-        document.getElementById(
-            "newEmployeePhone"
-        ).value.trim();
-
-
-    const email =
-        document.getElementById(
-            "newEmployeeEmail"
-        ).value.trim();
-
-
-    const password =
-        document.getElementById(
-            "newEmployeePassword"
-        ).value;
-
-
-    const factoryId =
-        document.getElementById(
-            "newEmployeeFactory"
-        ).value;
-
-
-    const message =
-        document.getElementById(
-            "addEmployeeMessage"
-        );
-
-
-    const button =
-        document.getElementById(
-            "addEmployeeBtn"
-        );
-
-
-    if(!name){
-
-        message.className =
-            "message error";
-
-        message.innerText =
-            "Employee Name डालें।";
-
-        return;
-    }
-
-
-    if(!phone){
-
-        message.className =
-            "message error";
-
-        message.innerText =
-            "Mobile Number डालें।";
-
-        return;
-    }
-
-
-    if(!email){
-
-        message.className =
-            "message error";
-
-        message.innerText =
-            "Email डालें।";
-
-        return;
-    }
-
-
-    if(!password){
-
-        message.className =
-            "message error";
-
-        message.innerText =
-            "Password डालें।";
-
-        return;
-    }
-
-
-    if(password.length < 6){
-
-        message.className =
-            "message error";
-
-        message.innerText =
-            "Password कम से कम 6 characters का होना चाहिए।";
-
-        return;
-    }
-
-
-    if(!factoryId){
-
-        message.className =
-            "message error";
-
-        message.innerText =
-            "Factory select करें।";
-
-        return;
-    }
-
-
-    button.disabled = true;
-
-    button.innerText =
-        "⏳ Employee बनाया जा रहा है...";
-
-
-    message.className =
-        "message";
-
-    message.innerText =
-        "Employee account बनाया जा रहा है...";
-
-
-    try{
-
-        /*
-          Existing Edge Function
-          Actual endpoint:
-          quick-endpoint
-        */
-
-        const result =
-            await db.functions.invoke(
-                "quick-endpoint",
-                {
-                    body:{
-                        name:name,
-                        phone:phone,
-                        email:email,
-                        password:password
-                    }
-                }
-            );
-
-
-        if(result.error){
-
-            throw new Error(
-                result.error.message ||
-                "Employee create नहीं हुआ।"
-            );
-        }
-
-
-        const response =
-            result.data;
-
-
-        if(
-            !response ||
-            response.success !== true
-        ){
-
-            throw new Error(
-                response?.message ||
-                "Employee create नहीं हुआ।"
-            );
-        }
-
-
-        /*
-          Employee record बनने के बाद
-          factory_id attach करें
-        */
-
-        let employeeId = null;
-
-
-        if(
-            response.employee &&
-            response.employee.id
-        ){
-
-            employeeId =
-                response.employee.id;
-        }
-
-
-        if(employeeId){
-
-            const updateResult =
-                await db
-                .from("employees")
-                .update({
-                    factory_id:
-                        factoryId
-                })
-                .eq(
-                    "id",
-                    employeeId
-                )
-                .eq(
-                    "owner_id",
-                    currentUser.id
-                );
-
-
-            if(updateResult.error){
-
-                console.error(
-                    "Factory link error:",
-                    updateResult.error
-                );
-
-            }
-
-        }else{
-
-            /*
-              Fallback:
-              email + owner_id से record खोजें
-            */
-
-            const updateResult =
-                await db
-                .from("employees")
-                .update({
-                    factory_id:
-                        factoryId
-                })
-                .eq(
-                    "email",
-                    email
-                )
-                .eq(
-                    "owner_id",
-                    currentUser.id
-                );
-
-
-            if(updateResult.error){
-
-                console.error(
-                    "Factory link error:",
-                    updateResult.error
-                );
-
-            }
-
-        }
-
-
-        message.className =
-            "message success";
-
-
-        message.innerHTML = `
-
-            ✅ Employee successfully बनाया गया।
-
-            <br><br>
-
-            <b>Name:</b>
-            ${escapeHtml(name)}
-
-            <br>
-
-            <b>Email:</b>
-            ${escapeHtml(email)}
-
-            <br>
-
-            <b>Mobile:</b>
-            ${escapeHtml(phone)}
-
-        `;
-
-
-        /*
-          Form clear
-        */
-
-        document.getElementById(
-            "newEmployeeName"
-        ).value = "";
-
-
-        document.getElementById(
-            "newEmployeePhone"
-        ).value = "";
-
-
-        document.getElementById(
-            "newEmployeeEmail"
-        ).value = "";
-
-
-        document.getElementById(
-            "newEmployeePassword"
-        ).value = "";
-
-
-        document.getElementById(
-            "newEmployeeFactory"
-        ).value = "";
-
-
-        /*
-          Employee list reload
-        */
-
-        await loadEmployees();
-
-        await loadDashboard();
-
-    }
-
-    catch(error){
-
-        console.error(
-            "ADD EMPLOYEE ERROR:",
-            error
-        );
-
-
-        message.className =
-            "message error";
-
-
-        message.innerText =
-            "❌ " +
-            (
-                error.message ||
-                "Employee create नहीं हुआ।"
-            );
-
-    }
-
-    finally{
-
-        button.disabled = false;
-
-        button.innerText =
-            "➕ Add Employee";
-
-    }
 
 }
 
 
 /* =====================================
-   DATE
+   GET SELECTED DATE
 ===================================== */
 
-function setToday(){
-
-    const d =
-        new Date();
-
-
-    const year =
-        d.getFullYear();
-
-
-    const month =
-        String(
-            d.getMonth()+1
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    const day =
-        String(
-            d.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    document.getElementById(
-        "attendanceDate"
-    ).value =
-        year +
-        "-" +
-        month +
-        "-" +
-        day;
-
-}
-
-
-function getDateRange(){
+function getSelectedDate(){
 
     const value =
         document.getElementById(
@@ -1262,6 +590,7 @@ function getDateRange(){
     if(!value){
 
         return null;
+
     }
 
 
@@ -1269,21 +598,60 @@ function getDateRange(){
         value.split("-");
 
 
+    return {
+
+        year:
+            Number(parts[0]),
+
+        month:
+            Number(parts[1]) - 1,
+
+        day:
+            Number(parts[2])
+
+    };
+
+}
+
+
+/* =====================================
+   DATE RANGE
+===================================== */
+
+function getDateRange(){
+
+    const selected =
+        getSelectedDate();
+
+
+    if(!selected){
+
+        return null;
+
+    }
+
+
     const start =
         new Date(
-            Number(parts[0]),
-            Number(parts[1])-1,
-            Number(parts[2]),
-            0,0,0,0
+            selected.year,
+            selected.month,
+            selected.day,
+            0,
+            0,
+            0,
+            0
         );
 
 
     const end =
         new Date(
-            Number(parts[0]),
-            Number(parts[1])-1,
-            Number(parts[2])+1,
-            0,0,0,0
+            selected.year,
+            selected.month,
+            selected.day + 1,
+            0,
+            0,
+            0,
+            0
         );
 
 
@@ -1314,6 +682,7 @@ async function loadAttendance(){
     ){
 
         return true;
+
     }
 
 
@@ -1328,22 +697,36 @@ async function loadAttendance(){
         );
 
         return false;
+
     }
 
 
-    const ids =
+    const employeeIds =
         employees.map(
-            e => e.id
+            employee =>
+                employee.id
         );
 
 
-    const result =
-        await db
+    /*
+       IMPORTANT:
+
+       Attendance का दिन
+       IN TIME से निर्धारित होगा।
+
+       created_at से नहीं।
+    */
+
+    const {
+        data,
+        error
+    } =
+    await db
         .from("attendance")
         .select("*")
         .in(
             "employee_id",
-            ids
+            employeeIds
         )
         .gte(
             "in_time",
@@ -1355,71 +738,96 @@ async function loadAttendance(){
         )
         .order(
             "in_time",
-            {ascending:true}
+            {
+                ascending:true
+            }
         );
 
 
-    if(result.error){
+    if(error){
+
+        console.error(
+            "ATTENDANCE ERROR",
+            error
+        );
+
 
         showError(
             "Attendance load error: " +
-            result.error.message
+            error.message
         );
 
+
         return false;
+
     }
 
 
     attendanceData =
-        result.data || [];
+        data || [];
 
 
     return true;
+
 }
 
 
 /* =====================================
-   STATUS
+   EMPLOYEE STATUS
 ===================================== */
 
 function getStatus(rows){
 
     const open =
         [...rows]
-        .reverse()
-        .find(
-            row =>
-                !row.out_time
-        );
+            .reverse()
+            .find(
+                row =>
+                    !row.out_time
+            );
 
 
     if(!open){
 
         return {
+
             type:"out",
+
             text:"🔴 OUT"
+
         };
+
     }
 
 
-    if(open.outside_since){
+    if(
+        open.outside_since
+    ){
 
         return {
+
             type:"away",
+
             text:"🟠 बाहर / Grace"
+
         };
+
     }
 
 
     return {
+
         type:"in",
+
         text:"🟢 IN"
+
     };
+
 }
 
 
 /* =====================================
-   WORKING TIME
+   TOTAL MINUTES
 ===================================== */
 
 function getTotalMinutes(rows){
@@ -1430,14 +838,22 @@ function getTotalMinutes(rows){
     rows.forEach(
         row => {
 
-            if(row.out_time){
+
+            if(
+                row.out_time
+            ){
 
                 total +=
                     Number(
                         row.working_minutes || 0
                     );
 
-            }else if(row.in_time){
+            }
+
+
+            else if(
+                row.in_time
+            ){
 
                 const start =
                     new Date(
@@ -1459,6 +875,7 @@ function getTotalMinutes(rows){
                         0,
                         live
                     );
+
             }
 
         }
@@ -1466,34 +883,54 @@ function getTotalMinutes(rows){
 
 
     return total;
+
 }
 
 
-function formatMinutes(minutes){
+/* =====================================
+   FORMAT MINUTES
+===================================== */
+
+function formatMinutes(
+    minutes
+){
 
     minutes =
         Number(minutes) || 0;
 
 
-    const h =
+    const hours =
         Math.floor(
             minutes / 60
         );
 
 
-    const m =
+    const mins =
         minutes % 60;
 
 
-    return h + "h " + m + "m";
+    return (
+        hours +
+        "h " +
+        mins +
+        "m"
+    );
+
 }
 
 
-function formatTime(value){
+/* =====================================
+   FORMAT TIME
+===================================== */
+
+function formatTime(
+    value
+){
 
     if(!value){
 
         return "—";
+
     }
 
 
@@ -1506,6 +943,7 @@ function formatTime(value){
                 second:"2-digit"
             }
         );
+
 }
 
 
@@ -1513,7 +951,9 @@ function formatTime(value){
    ESCAPE HTML
 ===================================== */
 
-function escapeHtml(value){
+function escapeHtml(
+    value
+){
 
     return String(value)
         .replace(
@@ -1538,25 +978,20 @@ function escapeHtml(value){
         );
 
 }
-
-
-/* =====================================
-   SESSIONS
+    /* =====================================
+   RENDER SESSIONS
 ===================================== */
 
 function renderSessions(rows){
 
-    if(!rows.length){
+    if(!rows || rows.length === 0){
 
         return `
-
             <div class="no-data">
-
                 आज कोई attendance session नहीं मिला।
-
             </div>
-
         `;
+
     }
 
 
@@ -1566,77 +1001,41 @@ function renderSessions(rows){
 
         <table>
 
-        <thead>
+            <thead>
 
-        <tr>
+                <tr>
+                    <th>#</th>
+                    <th>IN Time</th>
+                    <th>OUT Time</th>
+                    <th>Working</th>
+                    <th>Status</th>
+                </tr>
 
-            <th>#</th>
+            </thead>
 
-            <th>IN Time</th>
-
-            <th>OUT Time</th>
-
-            <th>Working</th>
-
-            <th>Status</th>
-
-        </tr>
-
-        </thead>
-
-        <tbody>
-
+            <tbody>
     `;
 
 
     rows.forEach(
         (row,index) => {
 
-            let status =
-                "Completed";
+            let status = "Completed";
 
 
             if(!row.out_time){
 
-                status =
-                    row.outside_since
-                    ? "🟠 Grace / Outside"
-                    : "🟢 Running";
+                if(row.outside_since){
 
-            }
+                    status =
+                        "🟠 Grace / Outside";
 
+                }else{
 
-            let working;
+                    status =
+                        "🟢 Running";
 
-
-            if(row.out_time){
-
-                working =
-                    formatMinutes(
-                        row.working_minutes
-                    );
-
-            }else{
-
-                const live =
-                    Math.floor(
-                        (
-                            Date.now() -
-                            new Date(
-                                row.in_time
-                            ).getTime()
-                        ) / 60000
-                    );
-
-
-                working =
-                    formatMinutes(
-                        Math.max(
-                            0,
-                            live
-                        )
-                    ) +
-                    " (running)";
+                }
 
             }
 
@@ -1646,7 +1045,7 @@ function renderSessions(rows){
                 <tr>
 
                     <td>
-                        ${index+1}
+                        ${index + 1}
                     </td>
 
                     <td>
@@ -1662,7 +1061,25 @@ function renderSessions(rows){
                     </td>
 
                     <td>
-                        ${working}
+                        ${
+                            row.out_time
+                            ? formatMinutes(
+                                row.working_minutes
+                              )
+                            : formatMinutes(
+                                Math.max(
+                                    0,
+                                    Math.floor(
+                                        (
+                                            Date.now() -
+                                            new Date(
+                                                row.in_time
+                                            ).getTime()
+                                        ) / 60000
+                                    )
+                                )
+                              ) + " (running)"
+                        }
                     </td>
 
                     <td>
@@ -1679,7 +1096,7 @@ function renderSessions(rows){
 
     html += `
 
-        </tbody>
+            </tbody>
 
         </table>
 
@@ -1689,218 +1106,7 @@ function renderSessions(rows){
 
 
     return html;
-}
 
-
-/* =====================================
-   EMPLOYEE DETAILS
-===================================== */
-
-function toggleDetails(id){
-
-    const box =
-        document.getElementById(
-            "details-" + id
-        );
-
-
-    if(!box){
-
-        return;
-    }
-
-
-    if(
-        box.style.display ===
-        "block"
-    ){
-
-        box.style.display =
-            "none";
-
-    }else{
-
-        box.style.display =
-            "block";
-    }
-
-}
-
-
-function employeeDetails(
-    employee,
-    rows,
-    status,
-    minutes
-){
-
-    return `
-
-        <div
-            id="details-${employee.id}"
-            class="details">
-
-            <h3>
-                👤 Employee Details
-            </h3>
-
-
-            <div class="detail-row">
-
-
-                <div class="detail">
-
-                    <div class="detail-title">
-                        Employee Name
-                    </div>
-
-                    <div class="detail-value">
-                        ${escapeHtml(
-                            employee.name ||
-                            "—"
-                        )}
-                    </div>
-
-                </div>
-
-
-                <div class="detail">
-
-                    <div class="detail-title">
-                        Employee ID
-                    </div>
-
-                    <div class="detail-value">
-                        ${escapeHtml(
-                            employee.id ||
-                            "—"
-                        )}
-                    </div>
-
-                </div>
-
-
-            </div>
-
-
-            <div class="detail-row">
-
-
-                <div class="detail">
-
-                    <div class="detail-title">
-                        Mobile
-                    </div>
-
-                    <div class="detail-value">
-                        ${escapeHtml(
-                            employee.phone ||
-                            "—"
-                        )}
-                    </div>
-
-                </div>
-
-
-                <div class="detail">
-
-                    <div class="detail-title">
-                        Email
-                    </div>
-
-                    <div class="detail-value">
-                        ${escapeHtml(
-                            employee.email ||
-                            "—"
-                        )}
-                    </div>
-
-                </div>
-
-
-            </div>
-
-
-            <div class="detail-row">
-
-
-                <div class="detail">
-
-                    <div class="detail-title">
-                        Factory ID
-                    </div>
-
-                    <div class="detail-value">
-                        ${escapeHtml(
-                            employee.factory_id ||
-                            "—"
-                        )}
-                    </div>
-
-                </div>
-
-
-                <div class="detail">
-
-                    <div class="detail-title">
-                        Current Status
-                    </div>
-
-                    <div class="detail-value">
-                        ${status.text}
-                    </div>
-
-                </div>
-
-
-            </div>
-
-
-            <div class="detail-row">
-
-
-                <div class="detail">
-
-                    <div class="detail-title">
-                        Total Sessions
-                    </div>
-
-                    <div class="detail-value">
-                        ${rows.length}
-                    </div>
-
-                </div>
-
-
-                <div class="detail">
-
-                    <div class="detail-title">
-                        Total Working
-                    </div>
-
-                    <div class="detail-value">
-                        ${formatMinutes(
-                            minutes
-                        )}
-                    </div>
-
-                </div>
-
-
-            </div>
-
-
-            <h3>
-                📋 Attendance Sessions
-            </h3>
-
-
-            ${renderSessions(rows)}
-
-
-        </div>
-
-    `;
 }
 
 
@@ -1916,7 +1122,9 @@ function renderDashboard(){
         );
 
 
-    if(!employees.length){
+    if(
+        employees.length === 0
+    ){
 
         list.innerHTML = `
 
@@ -1950,6 +1158,7 @@ function renderDashboard(){
 
 
         return;
+
     }
 
 
@@ -1959,11 +1168,13 @@ function renderDashboard(){
 
     let totalWorking = 0;
 
+
     let html = "";
 
 
     employees.forEach(
         employee => {
+
 
             const rows =
                 attendanceData.filter(
@@ -1994,7 +1205,7 @@ function renderDashboard(){
             }
 
 
-            if(
+            else if(
                 status.type === "out"
             ){
 
@@ -2031,9 +1242,7 @@ function renderDashboard(){
 
                 <div class="employee-card">
 
-
                     <div class="employee-header">
-
 
                         <div>
 
@@ -2077,7 +1286,6 @@ function renderDashboard(){
 
                         </div>
 
-
                     </div>
 
 
@@ -2088,7 +1296,6 @@ function renderDashboard(){
                             आज का Total Working Time
 
                         </div>
-
 
                         <div class="total-time">
 
@@ -2106,25 +1313,11 @@ function renderDashboard(){
                     </h3>
 
 
-                    ${renderSessions(rows)}
-
-
-                    <button
-                        class="details-btn"
-                        onclick="toggleDetails('${employee.id}')">
-
-                        👤 View Employee Details
-
-                    </button>
-
-
-                    ${employeeDetails(
-                        employee,
-                        rows,
-                        status,
-                        minutes
-                    )}
-
+                    ${
+                        renderSessions(
+                            rows
+                        )
+                    }
 
                 </div>
 
@@ -2164,19 +1357,25 @@ function renderDashboard(){
         );
 
 
-    document.getElementById(
-        "message"
-    ).innerHTML = `
+    const message =
+        document.getElementById(
+            "message"
+        );
 
-        Employees:
-        <b>
+
+    message.className =
+        "message";
+
+
+    message.innerHTML = `
+
+        Employees: <b>
             ${employees.length}
         </b>
 
         &nbsp; | &nbsp;
 
-        Attendance Sessions:
-        <b>
+        Attendance Sessions: <b>
             ${attendanceData.length}
         </b>
 
@@ -2186,10 +1385,12 @@ function renderDashboard(){
 
 
 /* =====================================
-   ERROR
+   ERROR MESSAGE
 ===================================== */
 
-function showError(message){
+function showError(
+    message
+){
 
     const box =
         document.getElementById(
@@ -2201,8 +1402,11 @@ function showError(message){
         "message error";
 
 
-    box.innerText =
-        "❌ " + message;
+    box.innerHTML =
+        "❌ " +
+        escapeHtml(
+            message
+        );
 
 }
 
@@ -2216,20 +1420,102 @@ async function loadDashboard(){
     if(!currentUser){
 
         return;
+
     }
 
 
-    const success =
-        await loadAttendance();
+    const button =
+        document.querySelector(
+            'button[onclick="loadDashboard()"]'
+        );
 
 
-    if(!success){
+    try{
 
-        return;
+        if(button){
+
+            button.disabled = true;
+
+        }
+
+
+        const success =
+            await loadAttendance();
+
+
+        if(!success){
+
+            return;
+
+        }
+
+
+        renderDashboard();
+
     }
 
+    catch(error){
 
-    renderDashboard();
+        console.error(error);
+
+
+        showError(
+            error.message ||
+            "Dashboard load नहीं हो पाया।"
+        );
+
+    }
+
+    finally{
+
+        if(button){
+
+            button.disabled = false;
+
+        }
+
+    }
+
+}
+
+
+/* =====================================
+   SET TODAY DATE
+===================================== */
+
+function setToday(){
+
+    const now =
+        new Date();
+
+
+    const year =
+        now.getFullYear();
+
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    document.getElementById(
+        "attendanceDate"
+    ).value =
+        `${year}-${month}-${day}`;
+
 }
 
 
@@ -2264,19 +1550,9 @@ async function startApp(){
     if(!user){
 
         return;
+
     }
 
-
-    /*
-      Factories पहले load करें
-    */
-
-    await loadFactories();
-
-
-    /*
-      Employees load करें
-    */
 
     const employeeSuccess =
         await loadEmployees();
@@ -2285,6 +1561,7 @@ async function startApp(){
     if(!employeeSuccess){
 
         return;
+
     }
 
 
@@ -2311,7 +1588,9 @@ setInterval(
 );
 
 
-/* START */
+/* =====================================
+   START
+===================================== */
 
 startApp();
 
