@@ -1,19 +1,14 @@
 <!DOCTYPE html>
 <html lang="hi">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Owner Attendance Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
 *{
     box-sizing:border-box;
     font-family:Arial,sans-serif;
@@ -78,21 +73,10 @@ body{
     margin-top:8px;
 }
 
-.blue{
-    color:#2563eb;
-}
-
-.green{
-    color:#16a34a;
-}
-
-.red{
-    color:#dc2626;
-}
-
-.orange{
-    color:#ea580c;
-}
+.blue{color:#2563eb;}
+.green{color:#16a34a;}
+.red{color:#dc2626;}
+.orange{color:#ea580c;}
 
 .date-box{
     display:flex;
@@ -119,7 +103,6 @@ button{
 
 button:disabled{
     opacity:.6;
-    cursor:not-allowed;
 }
 
 .refresh{
@@ -137,6 +120,11 @@ button:disabled{
     background:#eff6ff;
     border-radius:8px;
     margin-bottom:20px;
+}
+
+.error{
+    color:#991b1b;
+    background:#fee2e2;
 }
 
 .employee-card{
@@ -206,51 +194,47 @@ button:disabled{
     margin-top:5px;
 }
 
-.view-details{
+.details-btn{
     background:#7c3aed;
-    margin-top:12px;
+    margin-top:15px;
 }
 
-.details-box{
+.details{
     display:none;
     margin-top:15px;
-    padding:18px;
+    padding:15px;
     background:#f8fafc;
-    border-radius:12px;
+    border-radius:10px;
     border:1px solid #e5e7eb;
 }
 
-.details-box.show{
+.details.show{
     display:block;
 }
 
-.details-grid{
+.detail-row{
     display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:10px;
 }
 
-.detail-item{
+.detail{
     background:white;
     padding:12px;
     border-radius:8px;
     border:1px solid #e5e7eb;
 }
 
-.detail-label{
+.detail-title{
     font-size:12px;
     color:#6b7280;
-    margin-bottom:5px;
 }
 
 .detail-value{
     font-weight:bold;
+    margin-top:4px;
     word-break:break-word;
-}
-
-.close-details{
-    background:#6b7280;
-    margin-top:15px;
 }
 
 table{
@@ -258,8 +242,7 @@ table{
     border-collapse:collapse;
 }
 
-th,
-td{
+th,td{
     padding:11px;
     border-bottom:1px solid #e5e7eb;
     text-align:left;
@@ -274,11 +257,6 @@ th{
     padding:10px 0;
 }
 
-.error{
-    color:#b91c1c;
-    background:#fee2e2;
-}
-
 @media(max-width:800px){
 
     .stats{
@@ -288,18 +266,17 @@ th{
     .container{
         padding:12px;
     }
-
-    .details-grid{
-        grid-template-columns:1fr;
-    }
-
 }
 
 @media(max-width:500px){
 
-    .stats{
-        grid-template-columns:1fr 1fr;
-        gap:10px;
+    .detail-row{
+        grid-template-columns:1fr;
+    }
+
+    th,td{
+        font-size:13px;
+        padding:8px;
     }
 
     .stat{
@@ -309,220 +286,99 @@ th{
     .stat-value{
         font-size:22px;
     }
-
-    th,
-    td{
-        font-size:13px;
-        padding:8px;
-    }
-
-    .employee-card{
-        padding:14px;
-    }
-
 }
-
 </style>
-
 </head>
-
 
 <body>
 
-
 <div class="header">
-
     <h2>Office Attendance</h2>
-
     <p>Owner Dashboard</p>
-
 </div>
-
 
 <div class="container">
 
-
-<!-- OWNER -->
-
 <div class="card">
-
-    <h2>
-        Welcome, Owner
-    </h2>
-
-    <div id="ownerEmail">
-        Loading...
-    </div>
-
+    <h2>Welcome, Owner</h2>
+    <div id="ownerEmail">Loading...</div>
 </div>
-
-
-<!-- STATS -->
 
 <div class="stats">
 
-
-    <div class="stat">
-
-        <div class="stat-title">
-            Total Employees
-        </div>
-
-        <div
-            id="totalEmployees"
-            class="stat-value blue">
-
-            0
-
-        </div>
-
-    </div>
-
-
-    <div class="stat">
-
-        <div class="stat-title">
-            Currently IN
-        </div>
-
-        <div
-            id="totalIn"
-            class="stat-value green">
-
-            0
-
-        </div>
-
-    </div>
-
-
-    <div class="stat">
-
-        <div class="stat-title">
-            OUT
-        </div>
-
-        <div
-            id="totalOut"
-            class="stat-value red">
-
-            0
-
-        </div>
-
-    </div>
-
-
-    <div class="stat">
-
-        <div class="stat-title">
-            Total Working Time
-        </div>
-
-        <div
-            id="totalWorking"
-            class="stat-value orange">
-
-            0h 0m
-
-        </div>
-
-    </div>
-
-
+<div class="stat">
+    <div class="stat-title">Total Employees</div>
+    <div id="totalEmployees" class="stat-value blue">0</div>
 </div>
 
+<div class="stat">
+    <div class="stat-title">Currently IN</div>
+    <div id="totalIn" class="stat-value green">0</div>
+</div>
 
-<!-- DATE -->
+<div class="stat">
+    <div class="stat-title">OUT</div>
+    <div id="totalOut" class="stat-value red">0</div>
+</div>
+
+<div class="stat">
+    <div class="stat-title">Total Working Time</div>
+    <div id="totalWorking" class="stat-value orange">0h 0m</div>
+</div>
+
+</div>
 
 <div class="card">
 
-    <div class="date-box">
+<div class="date-box">
 
-        <strong>
-            Attendance Date:
-        </strong>
+<strong>Attendance Date:</strong>
 
-        <input
-            type="date"
-            id="attendanceDate"
-        >
+<input type="date" id="attendanceDate">
 
-        <button
-            onclick="loadDashboard()">
-
-            🔎 Search
-
-        </button>
-
-
-        <button
-            class="refresh"
-            onclick="loadDashboard()">
-
-            🔄 Refresh
-
-        </button>
-
-    </div>
-
-</div>
-
-
-<!-- MESSAGE -->
-
-<div
-    id="message"
-    class="message">
-
-    Attendance loading...
-
-</div>
-
-
-<!-- EMPLOYEES -->
-
-<div class="card">
-
-    <h2>
-        👥 Employee Attendance
-    </h2>
-
-    <div id="employeeList">
-
-        Loading...
-
-    </div>
-
-</div>
-
-
-<button
-    class="logout"
-    onclick="logout()">
-
-    Logout
-
+<button onclick="loadDashboard()">
+🔎 Search
 </button>
 
+<button class="refresh" onclick="loadDashboard()">
+🔄 Refresh
+</button>
 
 </div>
 
+</div>
+
+<div id="message" class="message">
+Attendance loading...
+</div>
+
+<div class="card">
+
+<h2>👥 Employee Attendance</h2>
+
+<div id="employeeList">
+Loading...
+</div>
+
+</div>
+
+<button class="logout" onclick="logout()">
+Logout
+</button>
+
+</div>
 
 <script>
 
-
-/* =====================================
+/* ===============================
    SUPABASE
-===================================== */
+================================ */
 
 const SUPABASE_URL =
 "https://mxolpvdaengfpmlkgprc.supabase.co";
 
-
 const SUPABASE_KEY =
 "sb_publishable_KaXl_tgIR8VZhmWR6vuAgQ_FswcmZes";
-
 
 const db =
 window.supabase.createClient(
@@ -531,34 +387,31 @@ window.supabase.createClient(
 );
 
 
-/* =====================================
+/* ===============================
    GLOBAL
-===================================== */
+================================ */
 
 let currentUser = null;
-
 let employees = [];
-
 let attendanceData = [];
 
 
-/* =====================================
-   GET SESSION
-===================================== */
+/* ===============================
+   USER
+================================ */
 
 async function getUser(){
 
-    const {
-        data,
-        error
-    } =
-    await db.auth.getSession();
+    const result =
+        await db.auth.getSession();
 
+    if(result.error){
+        console.error(result.error);
+        showError(result.error.message);
+        return null;
+    }
 
-    if(
-        error ||
-        !data.session
-    ){
+    if(!result.data.session){
 
         window.location.href =
             "employee-login.html";
@@ -566,33 +419,26 @@ async function getUser(){
         return null;
     }
 
-
     currentUser =
-        data.session.user;
-
+        result.data.session.user;
 
     document.getElementById(
         "ownerEmail"
     ).innerText =
         currentUser.email;
 
-
     return currentUser;
-
 }
 
 
-/* =====================================
-   LOAD EMPLOYEES
-===================================== */
+/* ===============================
+   EMPLOYEES
+================================ */
 
 async function loadEmployees(){
 
-    const {
-        data,
-        error
-    } =
-    await db
+    const result =
+        await db
         .from("employees")
         .select("*")
         .eq(
@@ -601,154 +447,114 @@ async function loadEmployees(){
         )
         .order(
             "name",
-            {
-                ascending:true
-            }
+            {ascending:true}
         );
 
+    if(result.error){
 
-    if(error){
-
-        console.error(error);
+        console.error(result.error);
 
         showError(
             "Employees load error: " +
-            error.message
+            result.error.message
         );
 
         return false;
     }
 
-
     employees =
-        data || [];
-
+        result.data || [];
 
     document.getElementById(
         "totalEmployees"
     ).innerText =
         employees.length;
 
-
     return true;
-
 }
 
 
-/* =====================================
-   GET SELECTED DATE
-===================================== */
+/* ===============================
+   DATE
+================================ */
 
-function getSelectedDate(){
+function setToday(){
+
+    const d = new Date();
+
+    const year =
+        d.getFullYear();
+
+    const month =
+        String(
+            d.getMonth()+1
+        ).padStart(2,"0");
+
+    const day =
+        String(
+            d.getDate()
+        ).padStart(2,"0");
+
+    document.getElementById(
+        "attendanceDate"
+    ).value =
+        year + "-" +
+        month + "-" +
+        day;
+}
+
+
+function getDateRange(){
 
     const value =
         document.getElementById(
             "attendanceDate"
         ).value;
 
-
     if(!value){
-
         return null;
-
     }
-
 
     const parts =
         value.split("-");
 
-
-    return {
-
-        year:
-            Number(parts[0]),
-
-        month:
-            Number(parts[1]) - 1,
-
-        day:
-            Number(parts[2])
-
-    };
-
-}
-
-
-/* =====================================
-   DATE RANGE
-===================================== */
-
-function getDateRange(){
-
-    const selected =
-        getSelectedDate();
-
-
-    if(!selected){
-
-        return null;
-
-    }
-
-
     const start =
         new Date(
-            selected.year,
-            selected.month,
-            selected.day,
-            0,
-            0,
-            0,
-            0
+            Number(parts[0]),
+            Number(parts[1])-1,
+            Number(parts[2]),
+            0,0,0,0
         );
-
 
     const end =
         new Date(
-            selected.year,
-            selected.month,
-            selected.day + 1,
-            0,
-            0,
-            0,
-            0
+            Number(parts[0]),
+            Number(parts[1])-1,
+            Number(parts[2])+1,
+            0,0,0,0
         );
 
-
     return {
-
-        start:
-            start.toISOString(),
-
-        end:
-            end.toISOString()
-
+        start:start.toISOString(),
+        end:end.toISOString()
     };
-
 }
 
 
-/* =====================================
-   LOAD ATTENDANCE
-===================================== */
+/* ===============================
+   ATTENDANCE
+================================ */
 
 async function loadAttendance(){
 
     attendanceData = [];
 
-
-    if(
-        employees.length === 0
-    ){
-
+    if(employees.length === 0){
         return true;
-
     }
-
 
     const range =
         getDateRange();
-
 
     if(!range){
 
@@ -757,27 +563,20 @@ async function loadAttendance(){
         );
 
         return false;
-
     }
 
-
-    const employeeIds =
+    const ids =
         employees.map(
-            employee =>
-                employee.id
+            e => e.id
         );
 
-
-    const {
-        data,
-        error
-    } =
-    await db
+    const result =
+        await db
         .from("attendance")
         .select("*")
         .in(
             "employee_id",
-            employeeIds
+            ids
         )
         .gte(
             "in_time",
@@ -789,201 +588,134 @@ async function loadAttendance(){
         )
         .order(
             "in_time",
-            {
-                ascending:true
-            }
+            {ascending:true}
         );
 
-
-    if(error){
+    if(result.error){
 
         console.error(
-            "ATTENDANCE ERROR",
-            error
+            result.error
         );
-
 
         showError(
             "Attendance load error: " +
-            error.message
+            result.error.message
         );
 
-
         return false;
-
     }
 
-
     attendanceData =
-        data || [];
-
+        result.data || [];
 
     return true;
-
 }
 
 
-/* =====================================
-   EMPLOYEE STATUS
-===================================== */
+/* ===============================
+   STATUS
+================================ */
 
 function getStatus(rows){
 
     const open =
         [...rows]
-            .reverse()
-            .find(
-                row =>
-                    !row.out_time
-            );
-
+        .reverse()
+        .find(
+            row =>
+                !row.out_time
+        );
 
     if(!open){
 
         return {
-
             type:"out",
-
             text:"🔴 OUT"
-
         };
-
     }
 
-
-    if(
-        open.outside_since
-    ){
+    if(open.outside_since){
 
         return {
-
             type:"away",
-
             text:"🟠 बाहर / Grace"
-
         };
-
     }
 
-
     return {
-
         type:"in",
-
         text:"🟢 IN"
-
     };
-
 }
 
 
-/* =====================================
-   TOTAL MINUTES
-===================================== */
+/* ===============================
+   WORKING TIME
+================================ */
 
 function getTotalMinutes(rows){
 
     let total = 0;
 
+    rows.forEach(row => {
 
-    rows.forEach(
-        row => {
+        if(row.out_time){
 
+            total +=
+                Number(
+                    row.working_minutes || 0
+                );
 
-            if(
-                row.out_time
-            ){
+        }else if(row.in_time){
 
-                total +=
-                    Number(
-                        row.working_minutes || 0
-                    );
+            const start =
+                new Date(
+                    row.in_time
+                ).getTime();
 
-            }
+            const live =
+                Math.floor(
+                    (
+                        Date.now() -
+                        start
+                    ) / 60000
+                );
 
-
-            else if(
-                row.in_time
-            ){
-
-                const start =
-                    new Date(
-                        row.in_time
-                    ).getTime();
-
-
-                const live =
-                    Math.floor(
-                        (
-                            Date.now() -
-                            start
-                        ) / 60000
-                    );
-
-
-                total +=
-                    Math.max(
-                        0,
-                        live
-                    );
-
-            }
-
+            total +=
+                Math.max(
+                    0,
+                    live
+                );
         }
-    );
 
+    });
 
     return total;
-
 }
 
 
-/* =====================================
-   FORMAT MINUTES
-===================================== */
-
-function formatMinutes(
-    minutes
-){
+function formatMinutes(minutes){
 
     minutes =
         Number(minutes) || 0;
 
-
-    const hours =
+    const h =
         Math.floor(
             minutes / 60
         );
 
-
-    const mins =
+    const m =
         minutes % 60;
 
-
-    return (
-        hours +
-        "h " +
-        mins +
-        "m"
-    );
-
+    return h + "h " + m + "m";
 }
 
 
-/* =====================================
-   FORMAT TIME
-===================================== */
-
-function formatTime(
-    value
-){
+function formatTime(value){
 
     if(!value){
-
         return "—";
-
     }
-
 
     return new Date(value)
         .toLocaleTimeString(
@@ -994,449 +726,342 @@ function formatTime(
                 second:"2-digit"
             }
         );
-
 }
 
 
-/* =====================================
-   FORMAT DATE
-===================================== */
+/* ===============================
+   SECURITY
+================================ */
 
-function formatDate(
-    value
-){
-
-    if(!value){
-
-        return "—";
-
-    }
-
-
-    return new Date(value)
-        .toLocaleDateString(
-            "en-IN",
-            {
-                day:"2-digit",
-                month:"2-digit",
-                year:"numeric"
-            }
-        );
-
-}
-
-
-/* =====================================
-   ESCAPE HTML
-===================================== */
-
-function escapeHtml(
-    value
-){
+function escapeHtml(value){
 
     return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 }
 
 
-/* =====================================
-   RENDER SESSIONS
-===================================== */
+/* ===============================
+   SESSIONS
+================================ */
 
 function renderSessions(rows){
 
-    if(!rows || rows.length === 0){
+    if(!rows.length){
 
         return `
-            <div class="no-data">
-                आज कोई attendance session नहीं मिला।
-            </div>
+        <div class="no-data">
+            आज कोई attendance session नहीं मिला।
+        </div>
         `;
-
     }
 
-
     let html = `
+    <div style="overflow-x:auto">
+    <table>
 
-        <div style="overflow-x:auto">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>IN Time</th>
+        <th>OUT Time</th>
+        <th>Working</th>
+        <th>Status</th>
+    </tr>
+    </thead>
 
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>#</th>
-
-                    <th>IN Time</th>
-
-                    <th>OUT Time</th>
-
-                    <th>Working</th>
-
-                    <th>Status</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
+    <tbody>
     `;
-
 
     rows.forEach(
         (row,index) => {
 
-            let status = "Completed";
+        let status =
+            "Completed";
 
+        if(!row.out_time){
 
-            if(!row.out_time){
-
-                if(row.outside_since){
-
-                    status =
-                        "🟠 Grace / Outside";
-
-                }else{
-
-                    status =
-                        "🟢 Running";
-
-                }
-
-            }
-
-
-            html += `
-
-                <tr>
-
-                    <td>
-                        ${index + 1}
-                    </td>
-
-                    <td>
-                        ${formatTime(
-                            row.in_time
-                        )}
-                    </td>
-
-                    <td>
-                        ${formatTime(
-                            row.out_time
-                        )}
-                    </td>
-
-                    <td>
-                        ${
-                            row.out_time
-                            ? formatMinutes(
-                                row.working_minutes
-                              )
-                            : formatMinutes(
-                                Math.max(
-                                    0,
-                                    Math.floor(
-                                        (
-                                            Date.now() -
-                                            new Date(
-                                                row.in_time
-                                            ).getTime()
-                                        ) / 60000
-                                    )
-                                )
-                              ) + " (running)"
-                        }
-                    </td>
-
-                    <td>
-                        ${status}
-                    </td>
-
-                </tr>
-
-            `;
-
+            status =
+                row.outside_since
+                ? "🟠 Grace / Outside"
+                : "🟢 Running";
         }
-    );
 
+        let working;
+
+        if(row.out_time){
+
+            working =
+                formatMinutes(
+                    row.working_minutes
+                );
+
+        }else{
+
+            const live =
+                Math.floor(
+                    (
+                        Date.now() -
+                        new Date(
+                            row.in_time
+                        ).getTime()
+                    ) / 60000
+                );
+
+            working =
+                formatMinutes(
+                    Math.max(0,live)
+                ) +
+                " (running)";
+        }
+
+        html += `
+        <tr>
+
+            <td>${index+1}</td>
+
+            <td>
+                ${formatTime(row.in_time)}
+            </td>
+
+            <td>
+                ${formatTime(row.out_time)}
+            </td>
+
+            <td>
+                ${working}
+            </td>
+
+            <td>
+                ${status}
+            </td>
+
+        </tr>
+        `;
+    });
 
     html += `
-
-            </tbody>
-
-        </table>
-
-        </div>
-
+    </tbody>
+    </table>
+    </div>
     `;
 
-
     return html;
-
 }
 
 
-/* =====================================
+/* ===============================
    EMPLOYEE DETAILS
-===================================== */
+================================ */
 
-function getEmployeeDetails(
+function toggleDetails(id){
+
+    const box =
+        document.getElementById(
+            "details-" + id
+        );
+
+    if(!box){
+        return;
+    }
+
+    if(box.style.display === "block"){
+
+        box.style.display =
+            "none";
+
+    }else{
+
+        box.style.display =
+            "block";
+    }
+}
+
+
+function employeeDetails(
     employee,
     rows,
     status,
     minutes
 ){
 
-    const factoryId =
-        employee.factory_id ||
-        "—";
-
-    const ownerId =
-        employee.owner_id ||
-        "—";
-
-    const employeeId =
-        employee.id ||
-        "—";
-
-
     return `
 
-        <div
-            id="details-${employee.id}"
-            class="details-box">
+    <div
+        id="details-${employee.id}"
+        class="details">
 
-            <h3>
-                👤 Employee Details
-            </h3>
+        <h3>
+            👤 Employee Details
+        </h3>
 
-            <div class="details-grid">
+        <div class="detail-row">
 
-                <div class="detail-item">
+            <div class="detail">
 
-                    <div class="detail-label">
-                        Employee Name
-                    </div>
-
-                    <div class="detail-value">
-                        ${escapeHtml(
-                            employee.name || "—"
-                        )}
-                    </div>
-
+                <div class="detail-title">
+                    Employee Name
                 </div>
 
-
-                <div class="detail-item">
-
-                    <div class="detail-label">
-                        Employee ID
-                    </div>
-
-                    <div class="detail-value">
-                        ${escapeHtml(
-                            employeeId
-                        )}
-                    </div>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <div class="detail-label">
-                        Mobile
-                    </div>
-
-                    <div class="detail-value">
-                        ${escapeHtml(
-                            employee.phone || "—"
-                        )}
-                    </div>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <div class="detail-label">
-                        Email
-                    </div>
-
-                    <div class="detail-value">
-                        ${escapeHtml(
-                            employee.email || "—"
-                        )}
-                    </div>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <div class="detail-label">
-                        Factory ID
-                    </div>
-
-                    <div class="detail-value">
-                        ${escapeHtml(
-                            factoryId
-                        )}
-                    </div>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <div class="detail-label">
-                        Owner ID
-                    </div>
-
-                    <div class="detail-value">
-                        ${escapeHtml(
-                            ownerId
-                        )}
-                    </div>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <div class="detail-label">
-                        Selected Date
-                    </div>
-
-                    <div class="detail-value">
-                        ${escapeHtml(
-                            document.getElementById(
-                                "attendanceDate"
-                            ).value || "—"
-                        )}
-                    </div>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <div class="detail-label">
-                        Current Status
-                    </div>
-
-                    <div class="detail-value">
-                        ${status.text}
-                    </div>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <div class="detail-label">
-                        Total Sessions
-                    </div>
-
-                    <div class="detail-value">
-                        ${rows.length}
-                    </div>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <div class="detail-label">
-                        Total Working Time
-                    </div>
-
-                    <div class="detail-value">
-                        ${formatMinutes(
-                            minutes
-                        )}
-                    </div>
-
+                <div class="detail-value">
+                    ${escapeHtml(
+                        employee.name || "—"
+                    )}
                 </div>
 
             </div>
 
 
-            <h3>
-                📋 Attendance Sessions
-            </h3>
+            <div class="detail">
 
-            ${renderSessions(rows)}
+                <div class="detail-title">
+                    Employee ID
+                </div>
 
+                <div class="detail-value">
+                    ${escapeHtml(
+                        employee.id || "—"
+                    )}
+                </div>
 
-            <button
-                class="close-details"
-                onclick="toggleEmployeeDetails('${employee.id}')">
-
-                ▲ Close Details
-
-            </button>
+            </div>
 
         </div>
 
+
+        <div class="detail-row">
+
+            <div class="detail">
+
+                <div class="detail-title">
+                    Mobile
+                </div>
+
+                <div class="detail-value">
+                    ${escapeHtml(
+                        employee.phone || "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <div class="detail-title">
+                    Email
+                </div>
+
+                <div class="detail-value">
+                    ${escapeHtml(
+                        employee.email || "—"
+                    )}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="detail-row">
+
+            <div class="detail">
+
+                <div class="detail-title">
+                    Factory ID
+                </div>
+
+                <div class="detail-value">
+                    ${escapeHtml(
+                        employee.factory_id || "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <div class="detail-title">
+                    Owner ID
+                </div>
+
+                <div class="detail-value">
+                    ${escapeHtml(
+                        employee.owner_id || "—"
+                    )}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="detail-row">
+
+            <div class="detail">
+
+                <div class="detail-title">
+                    Current Status
+                </div>
+
+                <div class="detail-value">
+                    ${status.text}
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <div class="detail-title">
+                    Total Sessions
+                </div>
+
+                <div class="detail-value">
+                    ${rows.length}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="detail-row">
+
+            <div class="detail">
+
+                <div class="detail-title">
+                    Total Working
+                </div>
+
+                <div class="detail-value">
+                    ${formatMinutes(minutes)}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <h3>
+            📋 Attendance Sessions
+        </h3>
+
+        ${renderSessions(rows)}
+
+    </div>
+
     `;
-
 }
 
 
-/* =====================================
-   TOGGLE EMPLOYEE DETAILS
-===================================== */
-
-function toggleEmployeeDetails(
-    employeeId
-){
-
-    const box =
-        document.getElementById(
-            "details-" + employeeId
-        );
-
-
-    if(!box){
-
-        return;
-
-    }
-
-
-    box.classList.toggle(
-        "show"
-    );
-
-}
-
-
-/* =====================================
-   RENDER DASHBOARD
-===================================== */
+/* ===============================
+   RENDER
+================================ */
 
 function renderDashboard(){
 
@@ -1445,53 +1070,37 @@ function renderDashboard(){
             "employeeList"
         );
 
-
-    if(
-        employees.length === 0
-    ){
+    if(!employees.length){
 
         list.innerHTML = `
-
-            <div class="no-data">
-
-                इस Owner के लिए अभी कोई employee नहीं मिला।
-
-            </div>
-
+        <div class="no-data">
+            इस Owner के लिए अभी कोई employee नहीं मिला।
+        </div>
         `;
-
 
         document.getElementById(
             "totalEmployees"
         ).innerText = "0";
 
-
         document.getElementById(
             "totalIn"
         ).innerText = "0";
-
 
         document.getElementById(
             "totalOut"
         ).innerText = "0";
 
-
         document.getElementById(
             "totalWorking"
         ).innerText = "0h 0m";
 
-
         return;
-
     }
 
 
     let totalIn = 0;
-
     let totalOut = 0;
-
     let totalWorking = 0;
-
 
     let html = "";
 
@@ -1499,179 +1108,134 @@ function renderDashboard(){
     employees.forEach(
         employee => {
 
+        const rows =
+            attendanceData.filter(
+                row =>
+                    row.employee_id ===
+                    employee.id
+            );
 
-            const rows =
-                attendanceData.filter(
-                    row =>
-                        row.employee_id ===
-                        employee.id
-                );
+        const status =
+            getStatus(rows);
 
+        const minutes =
+            getTotalMinutes(rows);
 
-            const status =
-                getStatus(rows);
-
-
-            const minutes =
-                getTotalMinutes(rows);
-
-
-            totalWorking +=
-                minutes;
+        totalWorking +=
+            minutes;
 
 
-            if(
-                status.type === "in"
-            ){
+        if(status.type === "in"){
+            totalIn++;
+        }
 
-                totalIn++;
-
-            }
-
-
-            else if(
-                status.type === "out"
-            ){
-
-                totalOut++;
-
-            }
+        if(status.type === "out"){
+            totalOut++;
+        }
 
 
-            let badgeClass =
-                "badge-out";
+        let badgeClass =
+            "badge-out";
+
+        if(status.type === "in"){
+            badgeClass =
+                "badge-in";
+        }
+
+        if(status.type === "away"){
+            badgeClass =
+                "badge-away";
+        }
 
 
-            if(
-                status.type === "in"
-            ){
+        html += `
 
-                badgeClass =
-                    "badge-in";
+        <div class="employee-card">
 
-            }
+            <div class="employee-header">
 
+                <div>
 
-            if(
-                status.type === "away"
-            ){
-
-                badgeClass =
-                    "badge-away";
-
-            }
-
-
-            html += `
-
-                <div class="employee-card">
-
-
-                    <div class="employee-header">
-
-
-                        <div>
-
-                            <div class="employee-name">
-
-                                ${escapeHtml(
-                                    employee.name ||
-                                    "Employee"
-                                )}
-
-                            </div>
-
-
-                            <div class="employee-info">
-
-                                📧 ${
-                                    escapeHtml(
-                                        employee.email ||
-                                        "—"
-                                    )
-                                }
-
-                                <br>
-
-                                📱 ${
-                                    escapeHtml(
-                                        employee.phone ||
-                                        "—"
-                                    )
-                                }
-
-                            </div>
-
-                        </div>
-
-
-                        <div
-                            class="badge ${badgeClass}">
-
-                            ${status.text}
-
-                        </div>
-
-
+                    <div class="employee-name">
+                        ${escapeHtml(
+                            employee.name ||
+                            "Employee"
+                        )}
                     </div>
 
+                    <div class="employee-info">
 
-                    <div class="total">
+                        📧 ${
+                            escapeHtml(
+                                employee.email ||
+                                "—"
+                            )
+                        }
 
-                        <div class="total-title">
+                        <br>
 
-                            आज का Total Working Time
-
-                        </div>
-
-                        <div class="total-time">
-
-                            ${formatMinutes(
-                                minutes
-                            )}
-
-                        </div>
+                        📱 ${
+                            escapeHtml(
+                                employee.phone ||
+                                "—"
+                            )
+                        }
 
                     </div>
-
-
-                    <h3>
-                        Today's Sessions
-                    </h3>
-
-
-                    ${
-                        renderSessions(
-                            rows
-                        )
-                    }
-
-
-                    <button
-                        class="view-details"
-                        onclick="toggleEmployeeDetails('${employee.id}')">
-
-                        👤 View Employee Details
-
-                    </button>
-
-
-                    ${
-                        getEmployeeDetails(
-                            employee,
-                            rows,
-                            status,
-                            minutes
-                        )
-                    }
-
 
                 </div>
 
-            `;
 
-        }
-    );
+                <div
+                    class="badge ${badgeClass}">
+
+                    ${status.text}
+
+                </div>
+
+            </div>
+
+
+            <div class="total">
+
+                <div class="total-title">
+                    आज का Total Working Time
+                </div>
+
+                <div class="total-time">
+                    ${formatMinutes(minutes)}
+                </div>
+
+            </div>
+
+
+            <h3>
+                Today's Sessions
+            </h3>
+
+            ${renderSessions(rows)}
+
+
+            <button
+                class="details-btn"
+                onclick="toggleDetails('${employee.id}')">
+
+                👤 View Employee Details
+
+            </button>
+
+
+            ${employeeDetails(
+                employee,
+                rows,
+                status,
+                minutes
+            )}
+
+        </div>
+
+        `;
+    });
 
 
     list.innerHTML =
@@ -1683,18 +1247,15 @@ function renderDashboard(){
     ).innerText =
         employees.length;
 
-
     document.getElementById(
         "totalIn"
     ).innerText =
         totalIn;
 
-
     document.getElementById(
         "totalOut"
     ).innerText =
         totalOut;
-
 
     document.getElementById(
         "totalWorking"
@@ -1704,232 +1265,110 @@ function renderDashboard(){
         );
 
 
-    const message =
-        document.getElementById(
-            "message"
-        );
-
-
-    message.className =
-        "message";
-
-
-    message.innerHTML = `
+    document.getElementById(
+        "message"
+    ).innerHTML = `
 
         Employees:
-        <b>
-            ${employees.length}
-        </b>
+        <b>${employees.length}</b>
 
         &nbsp; | &nbsp;
 
         Attendance Sessions:
-        <b>
-            ${attendanceData.length}
-        </b>
+        <b>${attendanceData.length}</b>
 
     `;
-
 }
 
 
-/* =====================================
-   ERROR MESSAGE
-===================================== */
+/* ===============================
+   ERROR
+================================ */
 
-function showError(
-    message
-){
+function showError(message){
 
     const box =
         document.getElementById(
             "message"
         );
 
-
     box.className =
         "message error";
 
-
-    box.innerHTML =
-        "❌ " +
-        escapeHtml(
-            message
-        );
-
+    box.innerText =
+        "❌ " + message;
 }
 
 
-/* =====================================
+/* ===============================
    LOAD DASHBOARD
-===================================== */
+================================ */
 
 async function loadDashboard(){
 
     if(!currentUser){
-
         return;
-
     }
 
+    const success =
+        await loadAttendance();
 
-    const button =
-        document.querySelector(
-            'button[onclick="loadDashboard()"]'
-        );
-
-
-    try{
-
-        if(button){
-
-            button.disabled = true;
-
-        }
-
-
-        const success =
-            await loadAttendance();
-
-
-        if(!success){
-
-            return;
-
-        }
-
-
-        renderDashboard();
-
+    if(!success){
+        return;
     }
 
-    catch(error){
-
-        console.error(error);
-
-
-        showError(
-            error.message ||
-            "Dashboard load नहीं हो पाया।"
-        );
-
-    }
-
-    finally{
-
-        if(button){
-
-            button.disabled = false;
-
-        }
-
-    }
-
+    renderDashboard();
 }
 
 
-/* =====================================
-   SET TODAY DATE
-===================================== */
-
-function setToday(){
-
-    const now =
-        new Date();
-
-
-    const year =
-        now.getFullYear();
-
-
-    const month =
-        String(
-            now.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    const day =
-        String(
-            now.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    document.getElementById(
-        "attendanceDate"
-    ).value =
-        `${year}-${month}-${day}`;
-
-}
-
-
-/* =====================================
+/* ===============================
    LOGOUT
-===================================== */
+================================ */
 
 async function logout(){
 
     await db.auth.signOut();
 
-
     window.location.href =
         "employee-login.html";
-
 }
 
 
-/* =====================================
-   START APP
-===================================== */
+/* ===============================
+   START
+================================ */
 
 async function startApp(){
 
     setToday();
 
-
     const user =
         await getUser();
 
-
     if(!user){
-
         return;
-
     }
 
-
-    const employeeSuccess =
+    const ok =
         await loadEmployees();
 
-
-    if(!employeeSuccess){
-
+    if(!ok){
         return;
-
     }
 
-
     await loadDashboard();
-
 }
 
 
-/* =====================================
+/* ===============================
    AUTO REFRESH
-===================================== */
+================================ */
 
 setInterval(
     async function(){
 
         if(currentUser){
-
             await loadDashboard();
-
         }
 
     },
@@ -1937,14 +1376,11 @@ setInterval(
 );
 
 
-/* =====================================
-   START
-===================================== */
+/* START */
 
 startApp();
 
 </script>
 
 </body>
-
 </html>
