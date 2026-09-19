@@ -1273,8 +1273,9 @@ async function startOutside(){
 
 
     /*
-       बाहर जाने का समय पहले से है
-       तो उसे दोबारा नहीं बदलेंगे
+       बाहर जाने का समय पहले से नहीं है
+       तो अभी इसी browser में time शुरू करें।
+       Database update बाद में करें।
     */
 
     if(
@@ -1284,6 +1285,34 @@ async function startOutside(){
         const outsideTime =
             new Date();
 
+
+        /*
+           सबसे पहले local attendance में time रखें
+           ताकि timer database response पर depend न करे।
+        */
+
+        currentAttendance.outside_since =
+            outsideTime.toISOString();
+
+
+        currentAttendance.last_latitude =
+            currentLatitude;
+
+
+        currentAttendance.last_longitude =
+            currentLongitude;
+
+
+        /*
+           तुरंत 2 minute timer शुरू
+        */
+
+        startGraceTimer();
+
+
+        /*
+           Database में भी save करें
+        */
 
         const {
             error
@@ -1316,28 +1345,30 @@ async function startOutside(){
             );
 
 
+            /*
+               Timer फिर भी चलता रहेगा।
+            */
+
             message(
-                "Outside update error: " +
-                error.message
+                "⚠️ Office से बाहर हैं। 2 मिनट का timer चल रहा है।"
             );
 
             return;
         }
 
 
-        currentAttendance.outside_since =
-            outsideTime.toISOString();
+        message(
+            "🔴 Office से बाहर हैं। 2 मिनट का समय शुरू हो गया है।"
+        );
 
-
-        currentAttendance.last_latitude =
-            currentLatitude;
-
-
-        currentAttendance.last_longitude =
-            currentLongitude;
-
+        return;
     }
 
+
+    /*
+       Page refresh होने पर existing
+       outside_since से timer resume करें।
+    */
 
     startGraceTimer();
 
@@ -1408,9 +1439,14 @@ function startGraceTimer(){
             );
 
 
+        const totalSeconds = 120;
+
         const remaining =
-            120 -
-            elapsed;
+            Math.max(
+                0,
+                totalSeconds -
+                elapsed
+            );
 
 
         if(
