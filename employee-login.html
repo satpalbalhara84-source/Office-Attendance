@@ -122,6 +122,10 @@ button:disabled{
 <script>
 
 
+/* =================================
+   SUPABASE
+================================= */
+
 const SUPABASE_URL =
 "https://mxolpvdaengfpmlkgprc.supabase.co";
 
@@ -191,6 +195,10 @@ async function loginUser(){
 
     try{
 
+        /* ==============================
+           SUPABASE LOGIN
+        ============================== */
+
         const result =
             await db.auth.signInWithPassword({
 
@@ -208,7 +216,11 @@ async function loginUser(){
         }
 
 
-        if(!result.data.user){
+        const user =
+            result.data.user;
+
+
+        if(!user){
 
             throw new Error(
                 "User नहीं मिला"
@@ -224,18 +236,81 @@ async function loginUser(){
             "green";
 
 
-        /*
-        =================================
-        OWNER CHECK
-        =================================
+        /* ==============================
+           1. SUPER ADMIN CHECK
+        ============================== */
 
-        अभी आपके system में
-        यह Owner account है।
-        */
+        const adminResult =
+            await db
+            .from("admin_users")
+            .select("user_id")
+            .eq(
+                "user_id",
+                user.id
+            )
+            .maybeSingle();
+
+
+        if(adminResult.error){
+
+            console.log(
+                "Admin check:",
+                adminResult.error.message
+            );
+
+        }
+
 
         if(
-            email ===
-            "satpalbalhara84@gmail.com"
+            adminResult.data &&
+            adminResult.data.user_id
+        ){
+
+            message.innerText =
+                "Super Admin Login Successful ✅";
+
+
+            setTimeout(function(){
+
+                window.location.replace(
+                    "admin.html"
+                );
+
+            },500);
+
+
+            return;
+        }
+
+
+        /* ==============================
+           2. OWNER CHECK
+        ============================== */
+
+        const factoryResult =
+            await db
+            .from("factories")
+            .select("id")
+            .eq(
+                "owner_id",
+                user.id
+            )
+            .limit(1);
+
+
+        if(factoryResult.error){
+
+            console.log(
+                "Owner check:",
+                factoryResult.error.message
+            );
+
+        }
+
+
+        if(
+            factoryResult.data &&
+            factoryResult.data.length > 0
         ){
 
             message.innerText =
@@ -255,29 +330,73 @@ async function loginUser(){
         }
 
 
-        /*
-        =================================
-        EMPLOYEE
-        =================================
-        */
+        /* ==============================
+           3. EMPLOYEE CHECK
+        ============================== */
 
-        message.innerText =
-            "Employee Login Successful ✅";
+        const employeeResult =
+            await db
+            .from("employees")
+            .select("id")
+            .eq(
+                "email",
+                email
+            )
+            .limit(1);
 
 
-        setTimeout(function(){
+        if(employeeResult.error){
 
-            window.location.replace(
-                "employee-dashboard.html"
+            console.log(
+                "Employee check:",
+                employeeResult.error.message
             );
 
-        },500);
+        }
+
+
+        if(
+            employeeResult.data &&
+            employeeResult.data.length > 0
+        ){
+
+            message.innerText =
+                "Employee Login Successful ✅";
+
+
+            setTimeout(function(){
+
+                window.location.replace(
+                    "employee-dashboard.html"
+                );
+
+            },500);
+
+
+            return;
+        }
+
+
+        /* ==============================
+           UNKNOWN USER
+        ============================== */
+
+        await db.auth.signOut();
+
+
+        throw new Error(
+            "इस account का Owner या Employee record नहीं मिला।"
+        );
 
     }
 
     catch(error){
 
-        console.error(error);
+        console.error(
+            "LOGIN ERROR:",
+            error
+        );
+
 
         message.innerText =
             "Login Failed: " +
@@ -285,6 +404,7 @@ async function loginUser(){
 
         message.style.color =
             "red";
+
 
         button.disabled = false;
 
