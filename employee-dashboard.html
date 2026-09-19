@@ -102,6 +102,10 @@ button{
     color:white;
 }
 
+.inBtn{
+    background:#16a34a;
+    color:white;
+}
 
 .logout{
     background:#dc2626;
@@ -221,7 +225,9 @@ button:disabled{
         📍 मेरी Location Check करें
 
     </button>
-<!-- GRACE -->
+
+
+    <!-- GRACE -->
 
     <div
         id="graceBox"
@@ -329,13 +335,13 @@ let currentLongitude = null;
 
 let currentAccuracy = null;
 
+let markOutInProgress = false;
+
 let autoInInProgress = false;
 
 let autoReIn = false;
 
 let todayAttendanceCount = 0;
-
-let markOutInProgress = false;
 
 let graceTimer = null;
 
@@ -639,7 +645,8 @@ async function loadCurrentAttendance(){
     todayAttendanceCount =
         data ? data.length : 0;
 
-    currentAttendance = null;
+    currentAttendance =
+        null;
 
     if(
         data &&
@@ -1083,8 +1090,7 @@ async function gpsSuccess(position){
 
     }
 
-}}
-
+}
 
 /* =====================================
    GPS ERROR
@@ -1132,8 +1138,7 @@ function gpsError(error){
     message(text);
 
 }
-    
-/* =====================================
+    /* =====================================
    AUTOMATIC IN
 ===================================== */
 
@@ -1151,7 +1156,7 @@ async function automaticIN(){
     autoInInProgress = true;
 
     message(
-        "📍 आप Office में हैं। Automatic IN हो रहा है..."
+        "Attendance अपने आप लगाई जा रही है..."
     );
 
     const now =
@@ -1213,7 +1218,7 @@ async function automaticIN(){
     ){
 
         message(
-            "❌ Attendance save नहीं हुई।"
+            "❌ Attendance save हुई लेकिन record नहीं मिला।"
         );
 
         autoInInProgress = false;
@@ -1226,7 +1231,8 @@ async function automaticIN(){
 
     todayAttendanceCount++;
 
-    autoReIn = false;
+    autoReIn =
+        false;
 
     document.getElementById(
         "inTime"
@@ -1254,7 +1260,7 @@ async function automaticIN(){
         "status inside";
 
     message(
-        "Attendance automatically लग गई ✅"
+        "Attendance successfully लग गई ✅"
     );
 
     autoInInProgress = false;
@@ -1688,11 +1694,8 @@ async function markOUT(){
     currentAttendance =
         null;
 
-    /*
-       OUT के बाद वापस Office में आने पर
-       Automatic IN होगा
-    */
-    autoReIn = true;
+    autoReIn =
+        true;
 
 
     document.getElementById(
