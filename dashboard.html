@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="hi">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Owner Attendance Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 *{
     box-sizing:border-box;
     font-family:Arial,sans-serif;
@@ -103,6 +108,7 @@ button{
 
 button:disabled{
     opacity:.6;
+    cursor:not-allowed;
 }
 
 .refresh{
@@ -202,7 +208,7 @@ button:disabled{
 .details{
     display:none;
     margin-top:15px;
-    padding:15px;
+    padding:18px;
     background:#f8fafc;
     border-radius:10px;
     border:1px solid #e5e7eb;
@@ -212,11 +218,11 @@ button:disabled{
     display:block;
 }
 
-.detail-row{
+.detail-grid{
     display:grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:repeat(2,1fr);
     gap:10px;
-    margin-bottom:10px;
+    margin-bottom:15px;
 }
 
 .detail{
@@ -237,12 +243,61 @@ button:disabled{
     word-break:break-word;
 }
 
+.history-buttons{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin:15px 0;
+}
+
+.history-btn{
+    background:#2563eb;
+}
+
+.history-btn.active{
+    background:#111827;
+}
+
+.history-box{
+    margin-top:15px;
+}
+
+.history-summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.history-stat{
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    padding:12px;
+}
+
+.history-stat-title{
+    color:#6b7280;
+    font-size:12px;
+}
+
+.history-stat-value{
+    font-size:20px;
+    font-weight:bold;
+    margin-top:5px;
+}
+
+.history-table{
+    overflow-x:auto;
+}
+
 table{
     width:100%;
     border-collapse:collapse;
 }
 
-th,td{
+th,
+td{
     padding:11px;
     border-bottom:1px solid #e5e7eb;
     text-align:left;
@@ -252,9 +307,32 @@ th{
     background:#f8fafc;
 }
 
+.status-present{
+    color:#15803d;
+    font-weight:bold;
+}
+
+.status-absent{
+    color:#dc2626;
+    font-weight:bold;
+}
+
 .no-data{
     color:#6b7280;
     padding:10px 0;
+}
+
+.loading-history{
+    padding:15px;
+    background:#fff;
+    border-radius:8px;
+    text-align:center;
+    color:#6b7280;
+}
+
+.close-btn{
+    background:#6b7280;
+    margin-top:15px;
 }
 
 @media(max-width:800px){
@@ -266,15 +344,25 @@ th{
     .container{
         padding:12px;
     }
+
+    .history-summary{
+        grid-template-columns:repeat(2,1fr);
+    }
+
 }
 
 @media(max-width:500px){
 
-    .detail-row{
+    .detail-grid{
         grid-template-columns:1fr;
     }
 
-    th,td{
+    .history-summary{
+        grid-template-columns:1fr 1fr;
+    }
+
+    th,
+    td{
         font-size:13px;
         padding:8px;
     }
@@ -286,1101 +374,2137 @@ th{
     .stat-value{
         font-size:22px;
     }
+
 }
+
 </style>
+
 </head>
+
 
 <body>
 
+
 <div class="header">
-    <h2>Office Attendance</h2>
-    <p>Owner Dashboard</p>
+
+<h2>Office Attendance</h2>
+
+<p>Owner Dashboard</p>
+
 </div>
+
 
 <div class="container">
 
-<div class="card">
-    <h2>Welcome, Owner</h2>
-    <div id="ownerEmail">Loading...</div>
-</div>
 
-<div class="stats">
-
-<div class="stat">
-    <div class="stat-title">Total Employees</div>
-    <div id="totalEmployees" class="stat-value blue">0</div>
-</div>
-
-<div class="stat">
-    <div class="stat-title">Currently IN</div>
-    <div id="totalIn" class="stat-value green">0</div>
-</div>
-
-<div class="stat">
-    <div class="stat-title">OUT</div>
-    <div id="totalOut" class="stat-value red">0</div>
-</div>
-
-<div class="stat">
-    <div class="stat-title">Total Working Time</div>
-    <div id="totalWorking" class="stat-value orange">0h 0m</div>
-</div>
-
-</div>
+<!-- OWNER -->
 
 <div class="card">
 
-<div class="date-box">
+<h2>Welcome, Owner</h2>
 
-<strong>Attendance Date:</strong>
-
-<input type="date" id="attendanceDate">
-
-<button onclick="loadDashboard()">
-🔎 Search
-</button>
-
-<button class="refresh" onclick="loadDashboard()">
-🔄 Refresh
-</button>
-
-</div>
-
-</div>
-
-<div id="message" class="message">
-Attendance loading...
-</div>
-
-<div class="card">
-
-<h2>👥 Employee Attendance</h2>
-
-<div id="employeeList">
+<div id="ownerEmail">
 Loading...
 </div>
 
 </div>
 
-<button class="logout" onclick="logout()">
-Logout
+
+<!-- MAIN STATS -->
+
+<div class="stats">
+
+
+<div class="stat">
+
+<div class="stat-title">
+Total Employees
+</div>
+
+<div
+id="totalEmployees"
+class="stat-value blue">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+Currently IN
+</div>
+
+<div
+id="totalIn"
+class="stat-value green">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+OUT
+</div>
+
+<div
+id="totalOut"
+class="stat-value red">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+Total Working Time
+</div>
+
+<div
+id="totalWorking"
+class="stat-value orange">
+
+0h 0m
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<!-- DATE -->
+
+<div class="card">
+
+<div class="date-box">
+
+<strong>
+Attendance Date:
+</strong>
+
+<input
+type="date"
+id="attendanceDate"
+>
+
+<button
+onclick="loadDashboard()">
+
+🔎 Search
+
+</button>
+
+<button
+class="refresh"
+onclick="loadDashboard()">
+
+🔄 Refresh
+
 </button>
 
 </div>
 
+</div>
+
+
+<!-- MESSAGE -->
+
+<div
+id="message"
+class="message">
+
+Attendance loading...
+
+</div>
+
+
+<!-- EMPLOYEES -->
+
+<div class="card">
+
+<h2>
+👥 Employee Attendance
+</h2>
+
+<div id="employeeList">
+
+Loading...
+
+</div>
+
+</div>
+
+
+<button
+class="logout"
+onclick="logout()">
+
+Logout
+
+</button>
+
+
+</div>
+
+
 <script>
 
-/* ===============================
+
+/* =====================================
    SUPABASE
-================================ */
+===================================== */
 
 const SUPABASE_URL =
 "https://mxolpvdaengfpmlkgprc.supabase.co";
 
+
 const SUPABASE_KEY =
 "sb_publishable_KaXl_tgIR8VZhmWR6vuAgQ_FswcmZes";
 
+
 const db =
-window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
 );
 
 
-/* ===============================
+/* =====================================
    GLOBAL
-================================ */
+===================================== */
 
 let currentUser = null;
+
 let employees = [];
+
 let attendanceData = [];
 
+let historyCache = {};
 
-/* ===============================
-   USER
-================================ */
+
+/* =====================================
+   GET USER
+===================================== */
 
 async function getUser(){
 
-    const result =
-        await db.auth.getSession();
+const result =
+await db.auth.getSession();
 
-    if(result.error){
-        console.error(result.error);
-        showError(result.error.message);
-        return null;
-    }
 
-    if(!result.data.session){
+if(result.error){
 
-        window.location.href =
-            "employee-login.html";
+showError(
+result.error.message
+);
 
-        return null;
-    }
+return null;
 
-    currentUser =
-        result.data.session.user;
-
-    document.getElementById(
-        "ownerEmail"
-    ).innerText =
-        currentUser.email;
-
-    return currentUser;
 }
 
 
-/* ===============================
-   EMPLOYEES
-================================ */
+if(!result.data.session){
+
+window.location.href =
+"employee-login.html";
+
+return null;
+
+}
+
+
+currentUser =
+result.data.session.user;
+
+
+document.getElementById(
+"ownerEmail"
+).innerText =
+currentUser.email;
+
+
+return currentUser;
+
+}
+
+
+/* =====================================
+   LOAD EMPLOYEES
+===================================== */
 
 async function loadEmployees(){
 
-    const result =
-        await db
-        .from("employees")
-        .select("*")
-        .eq(
-            "owner_id",
-            currentUser.id
-        )
-        .order(
-            "name",
-            {ascending:true}
-        );
+const result =
+await db
+.from("employees")
+.select("*")
+.eq(
+"owner_id",
+currentUser.id
+)
+.order(
+"name",
+{
+ascending:true
+}
+);
 
-    if(result.error){
 
-        console.error(result.error);
+if(result.error){
 
-        showError(
-            "Employees load error: " +
-            result.error.message
-        );
+console.error(result.error);
 
-        return false;
-    }
+showError(
+"Employees load error: " +
+result.error.message
+);
 
-    employees =
-        result.data || [];
+return false;
 
-    document.getElementById(
-        "totalEmployees"
-    ).innerText =
-        employees.length;
-
-    return true;
 }
 
 
-/* ===============================
+employees =
+result.data || [];
+
+
+document.getElementById(
+"totalEmployees"
+).innerText =
+employees.length;
+
+
+return true;
+
+}
+
+
+/* =====================================
    DATE
-================================ */
+===================================== */
 
 function setToday(){
 
-    const d = new Date();
+const d =
+new Date();
 
-    const year =
-        d.getFullYear();
 
-    const month =
-        String(
-            d.getMonth()+1
-        ).padStart(2,"0");
+const year =
+d.getFullYear();
 
-    const day =
-        String(
-            d.getDate()
-        ).padStart(2,"0");
 
-    document.getElementById(
-        "attendanceDate"
-    ).value =
-        year + "-" +
-        month + "-" +
-        day;
+const month =
+String(
+d.getMonth()+1
+).padStart(
+2,
+"0"
+);
+
+
+const day =
+String(
+d.getDate()
+).padStart(
+2,
+"0"
+);
+
+
+document.getElementById(
+"attendanceDate"
+).value =
+year + "-" +
+month + "-" +
+day;
+
 }
 
 
 function getDateRange(){
 
-    const value =
-        document.getElementById(
-            "attendanceDate"
-        ).value;
+const value =
+document.getElementById(
+"attendanceDate"
+).value;
 
-    if(!value){
-        return null;
-    }
 
-    const parts =
-        value.split("-");
+if(!value){
 
-    const start =
-        new Date(
-            Number(parts[0]),
-            Number(parts[1])-1,
-            Number(parts[2]),
-            0,0,0,0
-        );
+return null;
 
-    const end =
-        new Date(
-            Number(parts[0]),
-            Number(parts[1])-1,
-            Number(parts[2])+1,
-            0,0,0,0
-        );
-
-    return {
-        start:start.toISOString(),
-        end:end.toISOString()
-    };
 }
 
 
-/* ===============================
-   ATTENDANCE
-================================ */
-
-async function loadAttendance(){
-
-    attendanceData = [];
-
-    if(employees.length === 0){
-        return true;
-    }
-
-    const range =
-        getDateRange();
-
-    if(!range){
-
-        showError(
-            "Attendance date select करें।"
-        );
-
-        return false;
-    }
-
-    const ids =
-        employees.map(
-            e => e.id
-        );
-
-    const result =
-        await db
-        .from("attendance")
-        .select("*")
-        .in(
-            "employee_id",
-            ids
-        )
-        .gte(
-            "in_time",
-            range.start
-        )
-        .lt(
-            "in_time",
-            range.end
-        )
-        .order(
-            "in_time",
-            {ascending:true}
-        );
-
-    if(result.error){
-
-        console.error(
-            result.error
-        );
-
-        showError(
-            "Attendance load error: " +
-            result.error.message
-        );
-
-        return false;
-    }
-
-    attendanceData =
-        result.data || [];
-
-    return true;
-}
-
-
-/* ===============================
-   STATUS
-================================ */
-
-function getStatus(rows){
-
-    const open =
-        [...rows]
-        .reverse()
-        .find(
-            row =>
-                !row.out_time
-        );
-
-    if(!open){
-
-        return {
-            type:"out",
-            text:"🔴 OUT"
-        };
-    }
-
-    if(open.outside_since){
-
-        return {
-            type:"away",
-            text:"🟠 बाहर / Grace"
-        };
-    }
-
-    return {
-        type:"in",
-        text:"🟢 IN"
-    };
-}
-
-
-/* ===============================
-   WORKING TIME
-================================ */
-
-function getTotalMinutes(rows){
-
-    let total = 0;
-
-    rows.forEach(row => {
-
-        if(row.out_time){
-
-            total +=
-                Number(
-                    row.working_minutes || 0
-                );
-
-        }else if(row.in_time){
-
-            const start =
-                new Date(
-                    row.in_time
-                ).getTime();
-
-            const live =
-                Math.floor(
-                    (
-                        Date.now() -
-                        start
-                    ) / 60000
-                );
-
-            total +=
-                Math.max(
-                    0,
-                    live
-                );
-        }
-
-    });
-
-    return total;
-}
-
-
-function formatMinutes(minutes){
-
-    minutes =
-        Number(minutes) || 0;
-
-    const h =
-        Math.floor(
-            minutes / 60
-        );
-
-    const m =
-        minutes % 60;
-
-    return h + "h " + m + "m";
-}
-
-
-function formatTime(value){
-
-    if(!value){
-        return "—";
-    }
-
-    return new Date(value)
-        .toLocaleTimeString(
-            "en-IN",
-            {
-                hour:"2-digit",
-                minute:"2-digit",
-                second:"2-digit"
-            }
-        );
-}
-
-
-/* ===============================
-   SECURITY
-================================ */
-
-function escapeHtml(value){
-
-    return String(value)
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-}
-
-
-/* ===============================
-   SESSIONS
-================================ */
-
-function renderSessions(rows){
-
-    if(!rows.length){
-
-        return `
-        <div class="no-data">
-            आज कोई attendance session नहीं मिला।
-        </div>
-        `;
-    }
-
-    let html = `
-    <div style="overflow-x:auto">
-    <table>
-
-    <thead>
-    <tr>
-        <th>#</th>
-        <th>IN Time</th>
-        <th>OUT Time</th>
-        <th>Working</th>
-        <th>Status</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    `;
-
-    rows.forEach(
-        (row,index) => {
-
-        let status =
-            "Completed";
-
-        if(!row.out_time){
-
-            status =
-                row.outside_since
-                ? "🟠 Grace / Outside"
-                : "🟢 Running";
-        }
-
-        let working;
-
-        if(row.out_time){
-
-            working =
-                formatMinutes(
-                    row.working_minutes
-                );
-
-        }else{
-
-            const live =
-                Math.floor(
-                    (
-                        Date.now() -
-                        new Date(
-                            row.in_time
-                        ).getTime()
-                    ) / 60000
-                );
-
-            working =
-                formatMinutes(
-                    Math.max(0,live)
-                ) +
-                " (running)";
-        }
-
-        html += `
-        <tr>
-
-            <td>${index+1}</td>
-
-            <td>
-                ${formatTime(row.in_time)}
-            </td>
-
-            <td>
-                ${formatTime(row.out_time)}
-            </td>
-
-            <td>
-                ${working}
-            </td>
-
-            <td>
-                ${status}
-            </td>
-
-        </tr>
-        `;
-    });
-
-    html += `
-    </tbody>
-    </table>
-    </div>
-    `;
-
-    return html;
-}
-
-
-/* ===============================
-   EMPLOYEE DETAILS
-================================ */
-
-function toggleDetails(id){
-
-    const box =
-        document.getElementById(
-            "details-" + id
-        );
-
-    if(!box){
-        return;
-    }
-
-    if(box.style.display === "block"){
-
-        box.style.display =
-            "none";
-
-    }else{
-
-        box.style.display =
-            "block";
-    }
-}
-
-
-function employeeDetails(
-    employee,
-    rows,
-    status,
-    minutes
-){
-
-    return `
-
-    <div
-        id="details-${employee.id}"
-        class="details">
-
-        <h3>
-            👤 Employee Details
-        </h3>
-
-        <div class="detail-row">
-
-            <div class="detail">
-
-                <div class="detail-title">
-                    Employee Name
-                </div>
-
-                <div class="detail-value">
-                    ${escapeHtml(
-                        employee.name || "—"
-                    )}
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <div class="detail-title">
-                    Employee ID
-                </div>
-
-                <div class="detail-value">
-                    ${escapeHtml(
-                        employee.id || "—"
-                    )}
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="detail-row">
-
-            <div class="detail">
-
-                <div class="detail-title">
-                    Mobile
-                </div>
-
-                <div class="detail-value">
-                    ${escapeHtml(
-                        employee.phone || "—"
-                    )}
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <div class="detail-title">
-                    Email
-                </div>
-
-                <div class="detail-value">
-                    ${escapeHtml(
-                        employee.email || "—"
-                    )}
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="detail-row">
-
-            <div class="detail">
-
-                <div class="detail-title">
-                    Factory ID
-                </div>
-
-                <div class="detail-value">
-                    ${escapeHtml(
-                        employee.factory_id || "—"
-                    )}
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <div class="detail-title">
-                    Owner ID
-                </div>
-
-                <div class="detail-value">
-                    ${escapeHtml(
-                        employee.owner_id || "—"
-                    )}
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="detail-row">
-
-            <div class="detail">
-
-                <div class="detail-title">
-                    Current Status
-                </div>
-
-                <div class="detail-value">
-                    ${status.text}
-                </div>
-
-            </div>
-
-
-            <div class="detail">
-
-                <div class="detail-title">
-                    Total Sessions
-                </div>
-
-                <div class="detail-value">
-                    ${rows.length}
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="detail-row">
-
-            <div class="detail">
-
-                <div class="detail-title">
-                    Total Working
-                </div>
-
-                <div class="detail-value">
-                    ${formatMinutes(minutes)}
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <h3>
-            📋 Attendance Sessions
-        </h3>
-
-        ${renderSessions(rows)}
-
-    </div>
-
-    `;
-}
-
-
-/* ===============================
-   RENDER
-================================ */
-
-function renderDashboard(){
-
-    const list =
-        document.getElementById(
-            "employeeList"
-        );
-
-    if(!employees.length){
-
-        list.innerHTML = `
-        <div class="no-data">
-            इस Owner के लिए अभी कोई employee नहीं मिला।
-        </div>
-        `;
-
-        document.getElementById(
-            "totalEmployees"
-        ).innerText = "0";
-
-        document.getElementById(
-            "totalIn"
-        ).innerText = "0";
-
-        document.getElementById(
-            "totalOut"
-        ).innerText = "0";
-
-        document.getElementById(
-            "totalWorking"
-        ).innerText = "0h 0m";
-
-        return;
-    }
-
-
-    let totalIn = 0;
-    let totalOut = 0;
-    let totalWorking = 0;
-
-    let html = "";
-
-
-    employees.forEach(
-        employee => {
-
-        const rows =
-            attendanceData.filter(
-                row =>
-                    row.employee_id ===
-                    employee.id
-            );
-
-        const status =
-            getStatus(rows);
-
-        const minutes =
-            getTotalMinutes(rows);
-
-        totalWorking +=
-            minutes;
-
-
-        if(status.type === "in"){
-            totalIn++;
-        }
-
-        if(status.type === "out"){
-            totalOut++;
-        }
-
-
-        let badgeClass =
-            "badge-out";
-
-        if(status.type === "in"){
-            badgeClass =
-                "badge-in";
-        }
-
-        if(status.type === "away"){
-            badgeClass =
-                "badge-away";
-        }
-
-
-        html += `
-
-        <div class="employee-card">
-
-            <div class="employee-header">
-
-                <div>
-
-                    <div class="employee-name">
-                        ${escapeHtml(
-                            employee.name ||
-                            "Employee"
-                        )}
-                    </div>
-
-                    <div class="employee-info">
-
-                        📧 ${
-                            escapeHtml(
-                                employee.email ||
-                                "—"
-                            )
-                        }
-
-                        <br>
-
-                        📱 ${
-                            escapeHtml(
-                                employee.phone ||
-                                "—"
-                            )
-                        }
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    class="badge ${badgeClass}">
-
-                    ${status.text}
-
-                </div>
-
-            </div>
-
-
-            <div class="total">
-
-                <div class="total-title">
-                    आज का Total Working Time
-                </div>
-
-                <div class="total-time">
-                    ${formatMinutes(minutes)}
-                </div>
-
-            </div>
-
-
-            <h3>
-                Today's Sessions
-            </h3>
-
-            ${renderSessions(rows)}
-
-
-            <button
-                class="details-btn"
-                onclick="toggleDetails('${employee.id}')">
-
-                👤 View Employee Details
-
-            </button>
-
-
-            ${employeeDetails(
-                employee,
-                rows,
-                status,
-                minutes
-            )}
-
-        </div>
-
-        `;
-    });
-
-
-    list.innerHTML =
-        html;
-
-
-    document.getElementById(
-        "totalEmployees"
-    ).innerText =
-        employees.length;
-
-    document.getElementById(
-        "totalIn"
-    ).innerText =
-        totalIn;
-
-    document.getElementById(
-        "totalOut"
-    ).innerText =
-        totalOut;
-
-    document.getElementById(
-        "totalWorking"
-    ).innerText =
-        formatMinutes(
-            totalWorking
-        );
-
-
-    document.getElementById(
-        "message"
-    ).innerHTML = `
-
-        Employees:
-        <b>${employees.length}</b>
-
-        &nbsp; | &nbsp;
-
-        Attendance Sessions:
-        <b>${attendanceData.length}</b>
-
-    `;
-}
-
-
-/* ===============================
-   ERROR
-================================ */
-
-function showError(message){
-
-    const box =
-        document.getElementById(
-            "message"
-        );
-
-    box.className =
-        "message error";
-
-    box.innerText =
-        "❌ " + message;
-}
-
-
-/* ===============================
-   LOAD DASHBOARD
-================================ */
-
-async function loadDashboard(){
-
-    if(!currentUser){
-        return;
-    }
-
-    const success =
-        await loadAttendance();
-
-    if(!success){
-        return;
-    }
-
-    renderDashboard();
-}
-
-
-/* ===============================
-   LOGOUT
-================================ */
-
-async function logout(){
-
-    await db.auth.signOut();
-
-    window.location.href =
-        "employee-login.html";
-}
-
-
-/* ===============================
-   START
-================================ */
-
-async function startApp(){
-
-    setToday();
-
-    const user =
-        await getUser();
-
-    if(!user){
-        return;
-    }
-
-    const ok =
-        await loadEmployees();
-
-    if(!ok){
-        return;
-    }
-
-    await loadDashboard();
-}
-
-
-/* ===============================
-   AUTO REFRESH
-================================ */
-
-setInterval(
-    async function(){
-
-        if(currentUser){
-            await loadDashboard();
-        }
-
-    },
-    30000
+const parts =
+value.split("-");
+
+
+const start =
+new Date(
+Number(parts[0]),
+Number(parts[1])-1,
+Number(parts[2]),
+0,0,0,0
 );
 
 
-/* START */
+const end =
+new Date(
+Number(parts[0]),
+Number(parts[1])-1,
+Number(parts[2])+1,
+0,0,0,0
+);
+
+
+return {
+
+start:
+start.toISOString(),
+
+end:
+end.toISOString()
+
+};
+
+}
+
+
+/* =====================================
+   LOAD TODAY ATTENDANCE
+===================================== */
+
+async function loadAttendance(){
+
+attendanceData = [];
+
+
+if(
+employees.length === 0
+){
+
+return true;
+
+}
+
+
+const range =
+getDateRange();
+
+
+if(!range){
+
+showError(
+"Attendance date select करें।"
+);
+
+return false;
+
+}
+
+
+const ids =
+employees.map(
+e => e.id
+);
+
+
+const result =
+await db
+.from("attendance")
+.select("*")
+.in(
+"employee_id",
+ids
+)
+.gte(
+"in_time",
+range.start
+)
+.lt(
+"in_time",
+range.end
+)
+.order(
+"in_time",
+{
+ascending:true
+}
+);
+
+
+if(result.error){
+
+console.error(
+result.error
+);
+
+showError(
+"Attendance load error: " +
+result.error.message
+);
+
+return false;
+
+}
+
+
+attendanceData =
+result.data || [];
+
+
+return true;
+
+}
+
+
+/* =====================================
+   STATUS
+===================================== */
+
+function getStatus(rows){
+
+const open =
+[...rows]
+.reverse()
+.find(
+row =>
+!row.out_time
+);
+
+
+if(!open){
+
+return {
+
+type:"out",
+
+text:"🔴 OUT"
+
+};
+
+}
+
+
+if(open.outside_since){
+
+return {
+
+type:"away",
+
+text:"🟠 बाहर / Grace"
+
+};
+
+}
+
+
+return {
+
+type:"in",
+
+text:"🟢 IN"
+
+};
+
+}
+
+
+/* =====================================
+   TOTAL MINUTES
+===================================== */
+
+function getTotalMinutes(rows){
+
+let total = 0;
+
+
+rows.forEach(
+row => {
+
+if(row.out_time){
+
+total +=
+Number(
+row.working_minutes || 0
+);
+
+}
+
+else if(row.in_time){
+
+const start =
+new Date(
+row.in_time
+).getTime();
+
+
+const live =
+Math.floor(
+(
+Date.now() -
+start
+) / 60000
+);
+
+
+total +=
+Math.max(
+0,
+live
+);
+
+}
+
+});
+
+
+return total;
+
+}
+
+
+/* =====================================
+   FORMAT MINUTES
+===================================== */
+
+function formatMinutes(
+minutes
+){
+
+minutes =
+Number(minutes) || 0;
+
+
+const h =
+Math.floor(
+minutes / 60
+);
+
+
+const m =
+minutes % 60;
+
+
+return h + "h " + m + "m";
+
+}
+
+
+/* =====================================
+   FORMAT TIME
+===================================== */
+
+function formatTime(
+value
+){
+
+if(!value){
+
+return "—";
+
+}
+
+
+return new Date(value)
+.toLocaleTimeString(
+"en-IN",
+{
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit"
+}
+);
+
+}
+
+
+/* =====================================
+   FORMAT DATE
+===================================== */
+
+function formatDate(
+value
+){
+
+if(!value){
+
+return "—";
+
+}
+
+
+return new Date(value)
+.toLocaleDateString(
+"en-IN",
+{
+day:"2-digit",
+month:"2-digit",
+year:"numeric"
+}
+);
+
+}
+
+
+/* =====================================
+   ESCAPE HTML
+===================================== */
+
+function escapeHtml(
+value
+){
+
+return String(value)
+.replace(
+/&/g,
+"&amp;"
+)
+.replace(
+/</g,
+"&lt;"
+)
+.replace(
+/>/g,
+"&gt;"
+)
+.replace(
+/"/g,
+"&quot;"
+)
+.replace(
+/'/g,
+"&#039;"
+);
+
+}
+
+
+/* =====================================
+   RENDER SESSIONS
+===================================== */
+
+function renderSessions(rows){
+
+if(!rows.length){
+
+return `
+<div class="no-data">
+आज कोई attendance session नहीं मिला।
+</div>
+`;
+
+}
+
+
+let html = `
+
+<div style="overflow-x:auto">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>#</th>
+
+<th>IN Time</th>
+
+<th>OUT Time</th>
+
+<th>Working</th>
+
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+`;
+
+
+rows.forEach(
+(row,index) => {
+
+let status =
+"Completed";
+
+
+if(!row.out_time){
+
+status =
+row.outside_since
+? "🟠 Grace / Outside"
+: "🟢 Running";
+
+}
+
+
+let working;
+
+
+if(row.out_time){
+
+working =
+formatMinutes(
+row.working_minutes
+);
+
+}else{
+
+const live =
+Math.floor(
+(
+Date.now() -
+new Date(
+row.in_time
+).getTime()
+) / 60000
+);
+
+
+working =
+formatMinutes(
+Math.max(
+0,
+live
+)
+) +
+" (running)";
+
+}
+
+
+html += `
+
+<tr>
+
+<td>
+${index+1}
+</td>
+
+<td>
+${formatTime(
+row.in_time
+)}
+</td>
+
+<td>
+${formatTime(
+row.out_time
+)}
+</td>
+
+<td>
+${working}
+</td>
+
+<td>
+${status}
+</td>
+
+</tr>
+
+`;
+
+});
+
+
+html += `
+
+</tbody>
+
+</table>
+
+</div>
+
+`;
+
+
+return html;
+
+}
+
+
+/* =====================================
+   TOGGLE DETAILS
+===================================== */
+
+function toggleDetails(
+id
+){
+
+const box =
+document.getElementById(
+"details-" + id
+);
+
+
+if(!box){
+
+return;
+
+}
+
+
+if(
+box.style.display ===
+"block"
+){
+
+box.style.display =
+"none";
+
+}else{
+
+box.style.display =
+"block";
+
+}
+
+}
+
+
+/* =====================================
+   LOAD EMPLOYEE HISTORY
+===================================== */
+
+async function loadEmployeeHistory(
+employeeId,
+days
+){
+
+const historyBox =
+document.getElementById(
+"history-" + employeeId
+);
+
+
+if(!historyBox){
+
+return;
+
+}
+
+
+historyBox.innerHTML = `
+
+<div class="loading-history">
+
+⏳ Attendance history loading...
+
+</div>
+
+`;
+
+
+const end =
+new Date();
+
+
+const start =
+new Date();
+
+
+start.setDate(
+start.getDate() -
+(days - 1)
+);
+
+
+start.setHours(
+0,0,0,0
+);
+
+
+end.setHours(
+23,59,59,999
+);
+
+
+const result =
+await db
+.from("attendance")
+.select("*")
+.eq(
+"employee_id",
+employeeId
+)
+.gte(
+"in_time",
+start.toISOString()
+)
+.lte(
+"in_time",
+end.toISOString()
+)
+.order(
+"in_time",
+{
+ascending:true
+}
+);
+
+
+if(result.error){
+
+console.error(
+result.error
+);
+
+historyBox.innerHTML = `
+
+<div class="no-data">
+
+❌ History load error:
+${escapeHtml(
+result.error.message
+)}
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+const rows =
+result.data || [];
+
+
+historyCache[
+employeeId + "_" + days
+] =
+rows;
+
+
+renderHistory(
+employeeId,
+rows,
+days
+);
+
+}
+
+
+/* =====================================
+   RENDER HISTORY
+===================================== */
+
+function renderHistory(
+employeeId,
+rows,
+days
+){
+
+const historyBox =
+document.getElementById(
+"history-" + employeeId
+);
+
+
+if(!historyBox){
+
+return;
+
+}
+
+
+let totalMinutes = 0;
+
+let presentDays = 0;
+
+let absentDays = 0;
+
+
+/*
+Unique dates जिनमें attendance मिली
+*/
+
+const dates = {};
+
+
+rows.forEach(
+row => {
+
+const date =
+new Date(
+row.in_time
+).toLocaleDateString(
+"en-CA"
+);
+
+dates[date] = true;
+
+});
+
+
+presentDays =
+Object.keys(
+dates
+).length;
+
+
+/*
+Absent days
+*/
+
+const today =
+new Date();
+
+
+for(
+let i=0;
+i<days;
+i++
+){
+
+const d =
+new Date();
+
+d.setDate(
+today.getDate() - i
+);
+
+d.setHours(
+0,0,0,0
+);
+
+
+const date =
+d.toLocaleDateString(
+"en-CA"
+);
+
+
+if(!dates[date]){
+
+absentDays++;
+
+}
+
+}
+
+
+/*
+Total working
+*/
+
+rows.forEach(
+row => {
+
+if(row.out_time){
+
+totalMinutes +=
+Number(
+row.working_minutes || 0
+);
+
+}else if(row.in_time){
+
+const live =
+Math.floor(
+(
+Date.now() -
+new Date(
+row.in_time
+).getTime()
+) / 60000
+);
+
+totalMinutes +=
+Math.max(
+0,
+live
+);
+
+}
+
+});
+
+
+let html = `
+
+<div class="history-summary">
+
+
+<div class="history-stat">
+
+<div class="history-stat-title">
+Period
+</div>
+
+<div class="history-stat-value">
+${days} Days
+</div>
+
+</div>
+
+
+<div class="history-stat">
+
+<div class="history-stat-title">
+Present Days
+</div>
+
+<div
+class="history-stat-value"
+style="color:#16a34a">
+
+${presentDays}
+
+</div>
+
+</div>
+
+
+<div class="history-stat">
+
+<div class="history-stat-title">
+Absent Days
+</div>
+
+<div
+class="history-stat-value"
+style="color:#dc2626">
+
+${absentDays}
+
+</div>
+
+</div>
+
+
+<div class="history-stat">
+
+<div class="history-stat-title">
+Total Working
+</div>
+
+<div class="history-stat-value">
+
+${formatMinutes(
+totalMinutes
+)}
+
+</div>
+
+</div>
+
+
+</div>
+
+`;
+
+
+if(!rows.length){
+
+html += `
+
+<div class="no-data">
+
+इस period में कोई attendance record नहीं मिला।
+
+</div>
+
+`;
+
+historyBox.innerHTML =
+html;
+
+return;
+
+}
+
+
+html += `
+
+<div class="history-table">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Date</th>
+
+<th>IN</th>
+
+<th>OUT</th>
+
+<th>Working</th>
+
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+`;
+
+
+/*
+हर attendance session
+*/
+
+rows.forEach(
+row => {
+
+let date =
+formatDate(
+row.in_time
+);
+
+
+let working;
+
+
+if(row.out_time){
+
+working =
+formatMinutes(
+row.working_minutes
+);
+
+}else{
+
+const live =
+Math.floor(
+(
+Date.now() -
+new Date(
+row.in_time
+).getTime()
+) / 60000
+);
+
+working =
+formatMinutes(
+Math.max(
+0,
+live
+)
+) +
+" (running)";
+
+}
+
+
+let status;
+
+
+if(!row.out_time){
+
+status =
+row.outside_since
+? "🟠 Outside"
+: "🟢 Running";
+
+}else{
+
+status =
+"✅ Present";
+
+}
+
+
+html += `
+
+<tr>
+
+<td>
+${date}
+</td>
+
+<td>
+${formatTime(
+row.in_time
+)}
+</td>
+
+<td>
+${formatTime(
+row.out_time
+)}
+</td>
+
+<td>
+${working}
+</td>
+
+<td>
+${status}
+</td>
+
+</tr>
+
+`;
+
+});
+
+
+html += `
+
+</tbody>
+
+</table>
+
+</div>
+
+`;
+
+
+historyBox.innerHTML =
+html;
+
+}
+
+
+/* =====================================
+   EMPLOYEE DETAILS
+===================================== */
+
+function employeeDetails(
+employee,
+rows,
+status,
+minutes
+){
+
+return `
+
+<div
+id="details-${employee.id}"
+class="details">
+
+
+<h3>
+👤 Employee Details
+</h3>
+
+
+<div class="detail-grid">
+
+
+<div class="detail">
+
+<div class="detail-title">
+Employee Name
+</div>
+
+<div class="detail-value">
+
+${escapeHtml(
+employee.name || "—"
+)}
+
+</div>
+
+</div>
+
+
+<div class="detail">
+
+<div class="detail-title">
+Employee ID
+</div>
+
+<div class="detail-value">
+
+${escapeHtml(
+employee.id || "—"
+)}
+
+</div>
+
+</div>
+
+
+<div class="detail">
+
+<div class="detail-title">
+Mobile
+</div>
+
+<div class="detail-value">
+
+${escapeHtml(
+employee.phone || "—"
+)}
+
+</div>
+
+</div>
+
+
+<div class="detail">
+
+<div class="detail-title">
+Email
+</div>
+
+<div class="detail-value">
+
+${escapeHtml(
+employee.email || "—"
+)}
+
+</div>
+
+</div>
+
+
+<div class="detail">
+
+<div class="detail-title">
+Factory ID
+</div>
+
+<div class="detail-value">
+
+${escapeHtml(
+employee.factory_id || "—"
+)}
+
+</div>
+
+</div>
+
+
+<div class="detail">
+
+<div class="detail-title">
+Owner ID
+</div>
+
+<div class="detail-value">
+
+${escapeHtml(
+employee.owner_id || "—"
+)}
+
+</div>
+
+</div>
+
+
+<div class="detail">
+
+<div class="detail-title">
+Current Status
+</div>
+
+<div class="detail-value">
+
+${status.text}
+
+</div>
+
+</div>
+
+
+<div class="detail">
+
+<div class="detail-title">
+Today's Sessions
+</div>
+
+<div class="detail-value">
+
+${rows.length}
+
+</div>
+
+</div>
+
+
+<div class="detail">
+
+<div class="detail-title">
+Today's Working
+</div>
+
+<div class="detail-value">
+
+${formatMinutes(
+minutes
+)}
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<h3>
+📊 Attendance History
+</h3>
+
+
+<div class="history-buttons">
+
+
+<button
+class="history-btn"
+onclick="
+setHistoryButton(
+'${employee.id}',
+7
+);
+loadEmployeeHistory(
+'${employee.id}',
+7
+);
+">
+
+7 Days
+
+</button>
+
+
+<button
+class="history-btn"
+onclick="
+setHistoryButton(
+'${employee.id}',
+30
+);
+loadEmployeeHistory(
+'${employee.id}',
+30
+);
+">
+
+30 Days
+
+</button>
+
+
+</div>
+
+
+<div
+id="history-${employee.id}"
+class="history-box">
+
+<div class="no-data">
+
+ऊपर से 7 Days या 30 Days चुनें।
+
+</div>
+
+</div>
+
+
+<button
+class="close-btn"
+onclick="
+toggleDetails(
+'${employee.id}'
+);
+">
+
+▲ Close Details
+
+</button>
+
+
+</div>
+
+`;
+
+}
+
+
+/* =====================================
+   HISTORY BUTTON
+===================================== */
+
+function setHistoryButton(
+employeeId,
+days
+){
+
+const buttons =
+document.querySelectorAll(
+"#details-" +
+employeeId +
+" .history-btn"
+);
+
+
+buttons.forEach(
+button => {
+
+button.classList.remove(
+"active"
+);
+
+});
+
+
+buttons.forEach(
+button => {
+
+if(
+button.innerText
+.includes(
+days + " Days"
+)
+){
+
+button.classList.add(
+"active"
+);
+
+}
+
+});
+
+}
+
+
+/* =====================================
+   RENDER DASHBOARD
+===================================== */
+
+function renderDashboard(){
+
+const list =
+document.getElementById(
+"employeeList"
+);
+
+
+if(
+employees.length === 0
+){
+
+list.innerHTML = `
+
+<div class="no-data">
+
+इस Owner के लिए अभी कोई employee नहीं मिला।
+
+</div>
+
+`;
+
+document.getElementById(
+"totalEmployees"
+).innerText = "0";
+
+document.getElementById(
+"totalIn"
+).innerText = "0";
+
+document.getElementById(
+"totalOut"
+).innerText = "0";
+
+document.getElementById(
+"totalWorking"
+).innerText = "0h 0m";
+
+return;
+
+}
+
+
+let totalIn = 0;
+
+let totalOut = 0;
+
+let totalWorking = 0;
+
+let html = "";
+
+
+employees.forEach(
+employee => {
+
+
+const rows =
+attendanceData.filter(
+row =>
+row.employee_id ===
+employee.id
+);
+
+
+const status =
+getStatus(rows);
+
+
+const minutes =
+getTotalMinutes(rows);
+
+
+totalWorking +=
+minutes;
+
+
+if(
+status.type === "in"
+){
+
+totalIn++;
+
+}
+
+
+if(
+status.type === "out"
+){
+
+totalOut++;
+
+}
+
+
+let badgeClass =
+"badge-out";
+
+
+if(
+status.type === "in"
+){
+
+badgeClass =
+"badge-in";
+
+}
+
+
+if(
+status.type === "away"
+){
+
+badgeClass =
+"badge-away";
+
+}
+
+
+html += `
+
+<div class="employee-card">
+
+
+<div class="employee-header">
+
+
+<div>
+
+
+<div class="employee-name">
+
+${escapeHtml(
+employee.name ||
+"Employee"
+)}
+
+</div>
+
+
+<div class="employee-info">
+
+📧 ${
+escapeHtml(
+employee.email ||
+"—"
+)
+}
+
+<br>
+
+📱 ${
+escapeHtml(
+employee.phone ||
+"—"
+)
+}
+
+</div>
+
+
+</div>
+
+
+<div
+class="badge ${badgeClass}">
+
+${status.text}
+
+</div>
+
+
+</div>
+
+
+<div class="total">
+
+<div class="total-title">
+
+आज का Total Working Time
+
+</div>
+
+
+<div class="total-time">
+
+${formatMinutes(
+minutes
+)}
+
+</div>
+
+</div>
+
+
+<h3>
+Today's Sessions
+</h3>
+
+
+${renderSessions(
+rows
+)}
+
+
+<button
+class="details-btn"
+onclick="
+toggleDetails(
+'${employee.id}'
+);
+">
+
+👤 View Employee Details
+
+</button>
+
+
+${employeeDetails(
+employee,
+rows,
+status,
+minutes
+)}
+
+
+</div>
+
+`;
+
+});
+
+
+list.innerHTML =
+html;
+
+
+document.getElementById(
+"totalEmployees"
+).innerText =
+employees.length;
+
+
+document.getElementById(
+"totalIn"
+).innerText =
+totalIn;
+
+
+document.getElementById(
+"totalOut"
+).innerText =
+totalOut;
+
+
+document.getElementById(
+"totalWorking"
+).innerText =
+formatMinutes(
+totalWorking
+);
+
+
+document.getElementById(
+"message"
+).innerHTML = `
+
+Employees:
+<b>
+${employees.length}
+</b>
+
+&nbsp; | &nbsp;
+
+Attendance Sessions:
+<b>
+${attendanceData.length}
+</b>
+
+`;
+
+}
+
+
+/* =====================================
+   ERROR
+===================================== */
+
+function showError(
+message
+){
+
+const box =
+document.getElementById(
+"message"
+);
+
+
+box.className =
+"message error";
+
+
+box.innerText =
+"❌ " + message;
+
+}
+
+
+/* =====================================
+   LOAD DASHBOARD
+===================================== */
+
+async function loadDashboard(){
+
+if(!currentUser){
+
+return;
+
+}
+
+
+const success =
+await loadAttendance();
+
+
+if(!success){
+
+return;
+
+}
+
+
+renderDashboard();
+
+}
+
+
+/* =====================================
+   LOGOUT
+===================================== */
+
+async function logout(){
+
+await db.auth.signOut();
+
+window.location.href =
+"employee-login.html";
+
+}
+
+
+/* =====================================
+   START APP
+===================================== */
+
+async function startApp(){
+
+setToday();
+
+
+const user =
+await getUser();
+
+
+if(!user){
+
+return;
+
+}
+
+
+const ok =
+await loadEmployees();
+
+
+if(!ok){
+
+return;
+
+}
+
+
+await loadDashboard();
+
+}
+
+
+/* =====================================
+   AUTO REFRESH
+===================================== */
+
+setInterval(
+async function(){
+
+if(currentUser){
+
+await loadDashboard();
+
+}
+
+},
+30000
+);
+
+
+/* =====================================
+   START
+===================================== */
 
 startApp();
 
 </script>
 
 </body>
+
 </html>
