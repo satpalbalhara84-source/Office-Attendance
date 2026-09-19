@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>Login - Office Attendance</title>
+<title>Office Attendance Login</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -30,10 +30,11 @@ body{
 
 .login-box{
     width:380px;
+    max-width:92%;
     background:white;
     padding:30px;
     border-radius:15px;
-    box-shadow:0 5px 25px rgba(0,0,0,0.12);
+    box-shadow:0 5px 25px rgba(0,0,0,.12);
     text-align:center;
 }
 
@@ -83,48 +84,43 @@ button:disabled{
 
 <body>
 
-
 <div class="login-box">
 
-    <h1>Office Attendance</h1>
+<h1>Office Attendance</h1>
 
-    <p>Login करें</p>
-
-
-    <input
-        type="email"
-        id="email"
-        placeholder="Email"
-    >
+<p>Login करें</p>
 
 
-    <input
-        type="password"
-        id="password"
-        placeholder="Password"
-    >
+<input
+    type="email"
+    id="email"
+    placeholder="Email"
+>
 
 
-    <button
-        id="loginButton"
-        onclick="loginUser()">
-
-        Login
-
-    </button>
+<input
+    type="password"
+    id="password"
+    placeholder="Password"
+>
 
 
-    <p id="message"></p>
+<button
+    id="loginBtn"
+    onclick="loginUser()">
+
+    Login
+
+</button>
+
+
+<p id="message"></p>
 
 </div>
 
 
 <script>
 
-
-/* =====================================
-   SUPABASE
-===================================== */
 
 const SUPABASE_URL =
 "https://mxolpvdaengfpmlkgprc.supabase.co";
@@ -134,41 +130,41 @@ const SUPABASE_KEY =
 "sb_publishable_KaXl_tgIR8VZhmWR6vuAgQ_FswcmZes";
 
 
-const supabaseClient =
+const db =
 supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
 
 
-/* =====================================
+/* =================================
    LOGIN
-===================================== */
+================================= */
 
 async function loginUser(){
 
     const email =
-        document.getElementById(
-            "email"
-        ).value.trim();
+        document
+        .getElementById("email")
+        .value
+        .trim()
+        .toLowerCase();
 
 
     const password =
-        document.getElementById(
-            "password"
-        ).value;
+        document
+        .getElementById("password")
+        .value;
 
 
     const message =
-        document.getElementById(
-            "message"
-        );
+        document
+        .getElementById("message");
 
 
     const button =
-        document.getElementById(
-            "loginButton"
-        );
+        document
+        .getElementById("loginBtn");
 
 
     if(!email || !password){
@@ -195,17 +191,8 @@ async function loginUser(){
 
     try{
 
-
-        /* =============================
-           SUPABASE LOGIN
-        ============================= */
-
-        const {
-            data,
-            error
-        } =
-        await supabaseClient.auth
-            .signInWithPassword({
+        const result =
+            await db.auth.signInWithPassword({
 
                 email:email,
 
@@ -214,153 +201,77 @@ async function loginUser(){
             });
 
 
-        if(error){
+        if(result.error){
 
-            throw error;
+            throw result.error;
 
         }
 
 
-        if(
-            !data ||
-            !data.user
-        ){
+        if(!result.data.user){
 
             throw new Error(
-                "User information नहीं मिली।"
+                "User नहीं मिला"
             );
 
         }
-
-
-        const user =
-            data.user;
 
 
         message.innerText =
             "Login Successful ✅";
 
-
         message.style.color =
             "green";
 
 
-        /* =============================
-           OWNER CHECK
-        ============================= */
-
         /*
-           अगर current user का ID
-           किसी employee के owner_id
-           में है, तो यह OWNER है।
+        =================================
+        OWNER CHECK
+        =================================
+
+        अभी आपके system में
+        यह Owner account है।
         */
 
-        const ownerCheck =
-            await supabaseClient
-                .from("employees")
-                .select("id")
-                .eq(
-                    "owner_id",
-                    user.id
-                )
-                .limit(1);
-
-
-        if(ownerCheck.error){
-
-            console.error(
-                "Owner check error:",
-                ownerCheck.error
-            );
-
-        }
-
-
-        /* =============================
-           OWNER
-        ============================= */
-
         if(
-            ownerCheck.data &&
-            ownerCheck.data.length > 0
+            email ===
+            "satpalbalhara84@gmail.com"
         ){
 
             message.innerText =
                 "Owner Login Successful ✅";
 
 
-            setTimeout(() => {
+            setTimeout(function(){
 
-                window.location.href =
-                    "dashboard.html";
+                window.location.replace(
+                    "dashboard.html"
+                );
 
-            },700);
-
-
-            return;
-        }
-
-
-        /* =============================
-           EMPLOYEE
-        ============================= */
-
-        const employeeCheck =
-            await supabaseClient
-                .from("employees")
-                .select("id")
-                .eq(
-                    "email",
-                    user.email
-                )
-                .limit(1);
-
-
-        if(employeeCheck.error){
-
-            console.error(
-                "Employee check error:",
-                employeeCheck.error
-            );
-
-        }
-
-
-        if(
-            employeeCheck.data &&
-            employeeCheck.data.length > 0
-        ){
-
-            message.innerText =
-                "Employee Login Successful ✅";
-
-
-            setTimeout(() => {
-
-                window.location.href =
-                    "employee-dashboard.html";
-
-            },700);
+            },500);
 
 
             return;
         }
 
 
-        /* =============================
-           USER NOT FOUND
-        ============================= */
+        /*
+        =================================
+        EMPLOYEE
+        =================================
+        */
 
         message.innerText =
-            "यह account Owner या Employee के रूप में registered नहीं है।";
+            "Employee Login Successful ✅";
 
 
-        message.style.color =
-            "red";
+        setTimeout(function(){
 
+            window.location.replace(
+                "employee-dashboard.html"
+            );
 
-        await supabaseClient.auth.signOut();
-
+        },500);
 
     }
 
@@ -368,21 +279,12 @@ async function loginUser(){
 
         console.error(error);
 
-
         message.innerText =
             "Login Failed: " +
-            (
-                error.message ||
-                "Unknown error"
-            );
-
+            error.message;
 
         message.style.color =
             "red";
-
-    }
-
-    finally{
 
         button.disabled = false;
 
@@ -391,29 +293,26 @@ async function loginUser(){
 }
 
 
-/* =====================================
-   ENTER KEY LOGIN
-===================================== */
+/* =================================
+   ENTER KEY
+================================= */
 
 document
-    .getElementById("password")
-    .addEventListener(
-        "keydown",
-        function(event){
+.getElementById("password")
+.addEventListener(
+    "keydown",
+    function(e){
 
-            if(
-                event.key === "Enter"
-            ){
+        if(e.key === "Enter"){
 
-                loginUser();
-
-            }
+            loginUser();
 
         }
-    );
+
+    }
+);
 
 </script>
-
 
 </body>
 
