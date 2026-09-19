@@ -102,11 +102,6 @@ button{
     color:white;
 }
 
-.inBtn{
-    background:#16a34a;
-    color:white;
-}
-
 .logout{
     background:#dc2626;
     color:white;
@@ -225,9 +220,7 @@ button:disabled{
         📍 मेरी Location Check करें
 
     </button>
-
-
-    <!-- GRACE -->
+<!-- GRACE -->
 
     <div
         id="graceBox"
@@ -337,13 +330,12 @@ let currentAccuracy = null;
 
 let markOutInProgress = false;
 
-let autoInInProgress = false;
-
-let autoReIn = false;
-
-let todayAttendanceCount = 0;
-
 let graceTimer = null;
+
+/* Automatic IN */
+let autoInInProgress = false;
+let autoReIn = false;
+let todayAttendanceCount = 0;
 
 
 /*
@@ -581,8 +573,7 @@ async function loadOffice(){
     document.getElementById(
         "radius"
     ).innerText =
-        office.radius_meters +
-        " meters";
+        "35 meters";
 
 
     return true;
@@ -645,13 +636,9 @@ async function loadCurrentAttendance(){
     todayAttendanceCount =
         data ? data.length : 0;
 
-    currentAttendance =
-        null;
+    currentAttendance = null;
 
-    if(
-        data &&
-        data.length > 0
-    ){
+    if(data && data.length > 0){
 
         for(
             let i = 0;
@@ -659,9 +646,7 @@ async function loadCurrentAttendance(){
             i++
         ){
 
-            if(
-                !data[i].out_time
-            ){
+            if(!data[i].out_time){
 
                 currentAttendance =
                     data[i];
@@ -680,21 +665,14 @@ async function loadCurrentAttendance(){
         ){
 
             startGraceTimer();
-
         }
 
     }else{
 
         resetAttendanceDisplay();
-
     }
-
 }
 
-
-/* =====================================
-   SHOW CURRENT ATTENDANCE
-===================================== */
 
 function showCurrentAttendance(){
 
@@ -973,10 +951,11 @@ async function gpsSuccess(position){
         " meters";
 
 
-    const radius =
-        Number(
-            office.radius_meters
-        );
+    /*
+       Attendance radius
+       35 meters
+    */
+    const radius = 35;
 
 
     /* =================================
@@ -1058,6 +1037,11 @@ async function gpsSuccess(position){
         ).className =
             "status inside";
 
+        /*
+           पहली attendance या OUT के बाद
+           Office में आते ही Automatic IN
+        */
+
         if(
             todayAttendanceCount === 0 ||
             autoReIn === true
@@ -1087,10 +1071,10 @@ async function gpsSuccess(position){
         message(
             "आप Office Radius से बाहर हैं।"
         );
-
     }
 
 }
+
 
 /* =====================================
    GPS ERROR
@@ -1156,49 +1140,112 @@ async function automaticIN(){
     autoInInProgress = true;
 
     message(
-        "Attendance अपने आप लगाई जा रही है..."
+        "📍 आप Office में हैं। Automatic IN हो रहा है..."
     );
 
-    const now =
-        new Date();
+    try{
 
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-        .from("attendance")
-        .insert({
+        const now =
+            new Date();
 
-            employee_id:
-                employee.id,
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+            .from("attendance")
+            .insert({
 
-            office_id:
-                office.id,
+                employee_id:
+                    employee.id,
 
-            in_time:
-                now.toISOString(),
+                office_id:
+                    office.id,
 
-            status:
-                "present",
+                in_time:
+                    now.toISOString(),
 
-            last_latitude:
-                currentLatitude,
+                status:
+                    "present",
 
-            last_longitude:
-                currentLongitude,
+                last_latitude:
+                    currentLatitude,
 
-            outside_since:
-                null
+                last_longitude:
+                    currentLongitude,
 
-        })
-        .select()
-        .limit(1);
+                outside_since:
+                    null
 
-    if(error){
+            })
+            .select()
+            .limit(1);
+
+        if(error){
+
+            console.log(
+                "AUTOMATIC IN ERROR:",
+                error
+            );
+
+            message(
+                "❌ Automatic IN Error: " +
+                error.message
+            );
+
+            return;
+        }
+
+        if(!data || data.length === 0){
+
+            message(
+                "❌ Attendance save नहीं हुई।"
+            );
+
+            return;
+        }
+
+        currentAttendance =
+            data[0];
+
+        todayAttendanceCount++;
+
+        autoReIn =
+            false;
+
+        document.getElementById(
+            "inTime"
+        ).innerText =
+            formatTime(now);
+
+        document.getElementById(
+            "outTime"
+        ).innerText =
+            "Running";
+
+        document.getElementById(
+            "workingTime"
+        ).innerText =
+            "0h 0m";
+
+        document.getElementById(
+            "status"
+        ).innerText =
+            "🟢 IN हो गया";
+
+        document.getElementById(
+            "status"
+        ).className =
+            "status inside";
+
+        message(
+            "Attendance अपने आप लग गई ✅"
+        );
+
+    }catch(error){
 
         console.log(
-            "AUTOMATIC IN ERROR:",
+            "Automatic IN exception:",
             error
         );
 
@@ -1207,65 +1254,13 @@ async function automaticIN(){
             error.message
         );
 
-        autoInInProgress = false;
+    }finally{
 
-        return;
+        autoInInProgress =
+            false;
     }
-
-    if(
-        !data ||
-        data.length === 0
-    ){
-
-        message(
-            "❌ Attendance save हुई लेकिन record नहीं मिला।"
-        );
-
-        autoInInProgress = false;
-
-        return;
-    }
-
-    currentAttendance =
-        data[0];
-
-    todayAttendanceCount++;
-
-    autoReIn =
-        false;
-
-    document.getElementById(
-        "inTime"
-    ).innerText =
-        formatTime(now);
-
-    document.getElementById(
-        "outTime"
-    ).innerText =
-        "Running";
-
-    document.getElementById(
-        "workingTime"
-    ).innerText =
-        "0h 0m";
-
-    document.getElementById(
-        "status"
-    ).innerText =
-        "🟢 IN हो गया";
-
-    document.getElementById(
-        "status"
-    ).className =
-        "status inside";
-
-    message(
-        "Attendance successfully लग गई ✅"
-    );
-
-    autoInInProgress = false;
-
 }
+
 
 /* =====================================
    START OUTSIDE
@@ -1694,6 +1689,10 @@ async function markOUT(){
     currentAttendance =
         null;
 
+    /*
+       OUT के बाद वापस Office में आने पर
+       Automatic IN होगा
+    */
     autoReIn =
         true;
 
@@ -1711,7 +1710,7 @@ async function markOUT(){
 
 
     message(
-        "2 मिनट पूरे होने पर OUT हो गया।"
+        "2 मिनट पूरे होने पर OUT हो गया। वापस Office में आते ही Automatic IN होगा।"
     );
 
 
