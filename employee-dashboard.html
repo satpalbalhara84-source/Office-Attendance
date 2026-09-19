@@ -27,7 +27,7 @@ body{
 }
 
 .container{
-    max-width:600px;
+    max-width:650px;
     margin:auto;
     padding:20px;
 }
@@ -62,7 +62,7 @@ body{
     background:#f8fafc;
     padding:15px;
     border-radius:10px;
-    line-height:1.8;
+    line-height:1.9;
 }
 
 .graceBox{
@@ -75,7 +75,7 @@ body{
 }
 
 .graceTime{
-    font-size:32px;
+    font-size:34px;
     font-weight:bold;
     color:#ea580c;
     margin-top:8px;
@@ -123,9 +123,15 @@ button:disabled{
 
 .session{
     background:#f8fafc;
-    padding:12px;
-    border-radius:8px;
+    padding:14px;
+    border-radius:9px;
     margin-top:10px;
+    border-left:4px solid #2563eb;
+}
+
+.sessionTitle{
+    font-weight:bold;
+    margin-bottom:8px;
 }
 
 </style>
@@ -192,7 +198,7 @@ button:disabled{
 
         <div>
             Office Radius:
-            <strong id="radius">—</strong>
+            <strong id="radius">60 meters</strong>
         </div>
 
         <div>
@@ -247,7 +253,11 @@ button:disabled{
 
         ⚠️ आप Office से बाहर हैं
 
-        <div>
+        <div style="margin-top:8px;">
+            60 meter radius से बाहर
+        </div>
+
+        <div style="margin-top:8px;">
             वापस Office आने के लिए समय:
         </div>
 
@@ -264,7 +274,7 @@ button:disabled{
 </div>
 
 
-<!-- TODAY ATTENDANCE -->
+<!-- TODAY -->
 
 <div class="card">
 
@@ -276,23 +286,30 @@ button:disabled{
     </div>
 
     <div style="margin-top:10px;">
-
         OUT:
         <strong id="outTime">—</strong>
-
     </div>
 
     <div style="margin-top:10px;">
-
         Working Time:
         <strong id="workingTime">—</strong>
-
     </div>
 
 </div>
 
 
-<!-- LOGOUT -->
+<!-- SESSIONS -->
+
+<div class="card">
+
+    <h3>📋 Today's Attendance Sessions</h3>
+
+    <div id="sessions">
+        Loading...
+    </div>
+
+</div>
+
 
 <button
     class="logout"
@@ -354,12 +371,18 @@ let markOutInProgress = false;
 
 let graceTimer = null;
 
+let locationWatchId = null;
+
 
 /*
-   Continuous GPS Watch ID
+   यह true होगा जब employee
+   2 मिनट बाहर रहने के बाद OUT होगा।
+   
+   फिर वापस Office में आने पर
+   Automatic नया IN होगा।
 */
 
-let locationWatchId = null;
+let autoReIn = false;
 
 
 /* =====================================
@@ -376,7 +399,7 @@ function message(text){
 
 
 /* =====================================
-   TRACKING STATUS
+   TRACKING MESSAGE
 ===================================== */
 
 function trackingMessage(text){
@@ -471,6 +494,7 @@ async function loadUser(){
 
 
     return true;
+
 }
 
 
@@ -530,6 +554,7 @@ async function loadEmployee(){
 
 
     return true;
+
 }
 
 
@@ -590,25 +615,28 @@ async function loadOffice(){
     document.getElementById(
         "radius"
     ).innerText =
-        office.radius_meters +
+        Number(
+            office.radius_meters
+        ) +
         " meters";
 
 
     return true;
+
 }
 
 
 /* =====================================
-   LOAD TODAY OPEN ATTENDANCE
+   LOAD TODAY ATTENDANCE
 ===================================== */
 
-async function loadCurrentAttendance(){
+async function loadTodayAttendance(){
 
-    const todayStart =
+    const start =
         new Date();
 
 
-    todayStart.setHours(
+    start.setHours(
         0,
         0,
         0,
@@ -627,70 +655,81 @@ async function loadCurrentAttendance(){
             "employee_id",
             employee.id
         )
-        .is(
-            "out_time",
-            null
-        )
         .gte(
             "in_time",
-            todayStart.toISOString()
+            start.toISOString()
         )
         .order(
             "in_time",
             {
-                ascending:false
+                ascending:true
             }
-        )
-        .limit(1);
+        );
 
 
     if(error){
 
         console.log(
-            "Attendance load error:",
+            "Today attendance error:",
             error
         );
-
 
         message(
             "Attendance Load Error: " +
             error.message
         );
 
-
         return;
+
     }
 
 
-    if(
-        data &&
-        data.length > 0
+    const sessions =
+        data || [];
+
+
+    /*
+       सबसे latest open session
+    */
+
+    currentAttendance =
+        null;
+
+
+    for(
+        let i = sessions.length - 1;
+        i >= 0;
+        i--
     ){
 
-        currentAttendance =
-            data[0];
-
-
-        showCurrentAttendance();
-
-
         if(
-            currentAttendance.outside_since
+            !sessions[i].out_time
         ){
 
-            startGraceTimer();
+            currentAttendance =
+                sessions[i];
+
+            break;
 
         }
 
+    }
+
+
+    if(currentAttendance){
+
+        showCurrentAttendance();
+
     }else{
-
-        currentAttendance =
-            null;
-
 
         resetAttendanceDisplay();
 
     }
+
+
+    showSessions(
+        sessions
+    );
 
 }
 
@@ -705,20 +744,14 @@ function showCurrentAttendance(){
         return;
 
 
-    if(
-        currentAttendance.in_time
-    ){
-
-        document.getElementById(
-            "inTime"
-        ).innerText =
-            formatTime(
-                new Date(
-                    currentAttendance.in_time
-                )
-            );
-
-    }
+    document.getElementById(
+        "inTime"
+    ).innerText =
+        formatTime(
+            new Date(
+                currentAttendance.in_time
+            )
+        );
 
 
     document.getElementById(
@@ -729,11 +762,20 @@ function showCurrentAttendance(){
 
     updateWorkingTime();
 
+
+    if(
+        currentAttendance.outside_since
+    ){
+
+        startGraceTimer();
+
+    }
+
 }
 
 
 /* =====================================
-   RESET ATTENDANCE
+   RESET DISPLAY
 ===================================== */
 
 function resetAttendanceDisplay(){
@@ -759,7 +801,115 @@ function resetAttendanceDisplay(){
 
 
 /* =====================================
-   DISTANCE CALCULATION
+   SHOW SESSIONS
+===================================== */
+
+function showSessions(sessions){
+
+    const box =
+        document.getElementById(
+            "sessions"
+        );
+
+
+    if(
+        !sessions ||
+        sessions.length === 0
+    ){
+
+        box.innerHTML =
+            "<div>No attendance today.</div>";
+
+        return;
+
+    }
+
+
+    let html = "";
+
+
+    sessions.forEach(
+        function(session,index){
+
+            const inDate =
+                new Date(
+                    session.in_time
+                );
+
+
+            let outText =
+                "Running";
+
+
+            let workingText =
+                "Running";
+
+
+            if(
+                session.out_time
+            ){
+
+                outText =
+                    formatTime(
+                        new Date(
+                            session.out_time
+                        )
+                    );
+
+
+                workingText =
+                    formatMinutes(
+                        session.working_minutes || 0
+                    );
+
+            }
+
+
+            html += `
+
+                <div class="session">
+
+                    <div class="sessionTitle">
+                        Session ${index + 1}
+                    </div>
+
+                    <div>
+                        IN:
+                        <strong>
+                            ${formatTime(inDate)}
+                        </strong>
+                    </div>
+
+                    <div>
+                        OUT:
+                        <strong>
+                            ${outText}
+                        </strong>
+                    </div>
+
+                    <div>
+                        Working:
+                        <strong>
+                            ${workingText}
+                        </strong>
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+
+    box.innerHTML =
+        html;
+
+}
+
+
+/* =====================================
+   DISTANCE
 ===================================== */
 
 function calculateDistance(
@@ -827,7 +977,7 @@ function calculateDistance(
 
 
 /* =====================================
-   CONTINUOUS GPS TRACKING
+   CONTINUOUS GPS
 ===================================== */
 
 function getLocation(){
@@ -847,11 +997,12 @@ function getLocation(){
 
 
         return;
+
     }
 
 
     /*
-       पुरानी watch बंद करें
+       पुरानी tracking बंद करें
     */
 
     if(
@@ -874,10 +1025,6 @@ function getLocation(){
         "GPS location ली जा रही है..."
     );
 
-
-    /*
-       Continuous GPS
-    */
 
     locationWatchId =
         navigator.geolocation.watchPosition(
@@ -943,11 +1090,8 @@ async function gpsSuccess(position){
 
     if(!office){
 
-        message(
-            "Office information उपलब्ध नहीं है।"
-        );
-
         return;
+
     }
 
 
@@ -983,13 +1127,13 @@ async function gpsSuccess(position){
 
 
     /* =================================
-       CURRENT SESSION OPEN
+       OPEN SESSION
     ================================= */
 
     if(currentAttendance){
 
         /*
-           Employee Office के अंदर
+           INSIDE
         */
 
         if(
@@ -1016,11 +1160,13 @@ async function gpsSuccess(position){
             );
 
 
-        }else{
+        }
 
-            /*
-               Employee Office से बाहर
-            */
+        /*
+           OUTSIDE
+        */
+
+        else{
 
             document.getElementById(
                 "status"
@@ -1040,6 +1186,7 @@ async function gpsSuccess(position){
 
 
         return;
+
     }
 
 
@@ -1073,12 +1220,37 @@ async function gpsSuccess(position){
             false;
 
 
+        /*
+           AUTO RE-IN
+        */
+
+        if(autoReIn){
+
+            autoReIn =
+                false;
+
+
+            message(
+                "आप वापस Office में आ गए हैं। Automatic IN हो रहा है..."
+            );
+
+
+            await markIN();
+
+
+            return;
+
+        }
+
+
         message(
             "आप Office में हैं। अब Mark IN दबाएँ।"
         );
 
 
-    }else{
+    }
+
+    else{
 
         canMarkIN =
             false;
@@ -1230,7 +1402,10 @@ async function markIN(){
                 currentLatitude,
 
             last_longitude:
-                currentLongitude
+                currentLongitude,
+
+            outside_since:
+                null
 
         })
         .select()
@@ -1264,6 +1439,14 @@ async function markIN(){
 
     currentAttendance =
         data[0];
+
+
+    /*
+       Automatic Re-IN पूरा हो गया
+    */
+
+    autoReIn =
+        false;
 
 
     document.getElementById(
@@ -1301,6 +1484,13 @@ async function markIN(){
     );
 
 
+    /*
+       Sessions list फिर से load करें
+    */
+
+    await loadTodayAttendance();
+
+
     markInInProgress = false;
 
 }
@@ -1317,8 +1507,8 @@ async function startOutside(){
 
 
     /*
-       बाहर जाने का समय पहले से है
-       तो उसे दोबारा नहीं बदलेंगे
+       अगर outside_since पहले से है
+       तो नया समय नहीं बनाएँगे
     */
 
     if(
@@ -1474,7 +1664,13 @@ function startGraceTimer(){
                 "00:00";
 
 
+            /*
+               2 मिनट पूरे
+               Automatic OUT
+            */
+
             markOUT();
+
 
             return;
         }
@@ -1601,6 +1797,11 @@ async function cancelGrace(){
         "graceTime"
     ).innerText =
         "02:00";
+
+
+    message(
+        "आप वापस Office में आ गए हैं। Grace cancel हो गई।"
+    );
 
 }
 
@@ -1730,12 +1931,25 @@ async function markOUT(){
         );
 
 
+    /*
+       Current session खत्म
+    */
+
     currentAttendance =
         null;
 
 
     canMarkIN =
         false;
+
+
+    /*
+       अगली बार 60m के अंदर आने पर
+       Automatic नया IN
+    */
+
+    autoReIn =
+        true;
 
 
     document.getElementById(
@@ -1757,8 +1971,15 @@ async function markOUT(){
 
 
     message(
-        "2 मिनट पूरे होने पर OUT हो गया।"
+        "2 मिनट पूरे होने पर Automatic OUT हो गया। वापस Office में आने पर Automatic IN होगा।"
     );
+
+
+    /*
+       Sessions refresh
+    */
+
+    await loadTodayAttendance();
 
 
     markOutInProgress = false;
@@ -1828,6 +2049,7 @@ async function logout(){
 
         locationWatchId =
             null;
+
     }
 
 
@@ -1839,6 +2061,7 @@ async function logout(){
 
         graceTimer =
             null;
+
     }
 
 
@@ -1883,7 +2106,12 @@ async function startApp(){
         return;
 
 
-    await loadCurrentAttendance();
+    /*
+       आज की सभी attendance sessions
+       load करें
+    */
+
+    await loadTodayAttendance();
 
 
     /*
@@ -1896,14 +2124,14 @@ async function startApp(){
 
 
 /* =====================================
-   START APPLICATION
+   START
 ===================================== */
 
 startApp();
 
 
 /* =====================================
-   UPDATE WORKING TIME
+   WORKING TIME UPDATE
 ===================================== */
 
 setInterval(
@@ -1917,6 +2145,37 @@ setInterval(
 
     },
     10000
+);
+
+
+/* =====================================
+   PAGE VISIBILITY
+===================================== */
+
+document.addEventListener(
+    "visibilitychange",
+    function(){
+
+        /*
+           वापस page पर आने पर
+           GPS tracking फिर से शुरू करें
+        */
+
+        if(
+            !document.hidden
+        ){
+
+            if(
+                locationWatchId === null
+            ){
+
+                getLocation();
+
+            }
+
+        }
+
+    }
 );
 
 
