@@ -2,903 +2,358 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>Owner Dashboard - Office Attendance</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
-*{
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
-}
-
-body{
-    margin:0;
-    background:#f3f6fa;
-    color:#111827;
-}
-
-header{
-    background:#2563eb;
-    color:white;
-    padding:18px 20px;
-}
-
-.header-inner{
-    max-width:1200px;
-    margin:auto;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-}
-
-header h1{
-    margin:0;
-    font-size:24px;
-}
-
-header p{
-    margin:5px 0 0;
-    opacity:.9;
-}
-
-.logout{
-    background:#dc2626;
-    color:white;
-    border:0;
-    padding:10px 18px;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-.container{
-    max-width:1200px;
-    margin:25px auto;
-    padding:0 15px;
-}
-
-.card{
-    background:white;
-    border-radius:14px;
-    padding:20px;
-    margin-bottom:20px;
-    box-shadow:0 4px 18px rgba(0,0,0,.07);
-}
-
-.card h2{
-    margin-top:0;
-}
-
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:14px;
-}
-
-label{
-    display:block;
-    margin-bottom:5px;
-    font-weight:bold;
-}
-
-input,
-select{
-    width:100%;
-    padding:13px;
-    border:1px solid #d1d5db;
-    border-radius:8px;
-    font-size:15px;
-}
-
-button{
-    border:0;
-    border-radius:8px;
-    padding:12px 18px;
-    cursor:pointer;
-    font-size:15px;
-}
-
-.primary{
-    background:#2563eb;
-    color:white;
-}
-
-.primary:hover{
-    background:#1d4ed8;
-}
-
-.stats{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:15px;
-    margin-bottom:20px;
-}
-
-.stat{
-    background:white;
-    padding:20px;
-    border-radius:14px;
-    box-shadow:0 4px 18px rgba(0,0,0,.06);
-}
-
-.stat h3{
-    margin:0;
-    font-size:28px;
-    color:#2563eb;
-}
-
-.stat p{
-    margin:7px 0 0;
-    color:#6b7280;
-}
-
-.employee-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
-}
-
-.employee{
-    border:1px solid #e5e7eb;
-    border-radius:12px;
-    padding:18px;
-}
-
-.employee h3{
-    margin:0 0 10px;
-}
-
-.employee p{
-    margin:7px 0;
-    color:#4b5563;
-}
-
-.badge{
-    display:inline-block;
-    padding:6px 12px;
-    border-radius:20px;
-    font-size:13px;
-    font-weight:bold;
-}
-
-.badge.in{
-    background:#dcfce7;
-    color:#166534;
-}
-
-.badge.out{
-    background:#fee2e2;
-    color:#991b1b;
-}
-
-.badge.unknown{
-    background:#fef3c7;
-    color:#92400e;
-}
-
-.message{
-    margin-top:15px;
-    padding:12px;
-    border-radius:8px;
-    display:none;
-}
-
-.message.success{
-    display:block;
-    background:#dcfce7;
-    color:#166534;
-}
-
-.message.error{
-    display:block;
-    background:#fee2e2;
-    color:#991b1b;
-}
-
-.small-btn{
-    margin-top:10px;
-    padding:9px 13px;
-    background:#2563eb;
-    color:white;
-}
-
-.loading{
-    text-align:center;
-    padding:20px;
-    color:#6b7280;
-}
-
-.factory-info{
-    background:#eff6ff;
-    padding:12px;
-    border-radius:8px;
-    margin-top:10px;
-}
-
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f3f6fa;color:#111827}
+header{background:#2563eb;color:white;padding:18px}
+.header{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center}
+header h1{margin:0}
+header p{margin:5px 0 0}
+.container{max-width:1200px;margin:25px auto;padding:0 15px}
+.card{background:white;padding:20px;border-radius:14px;margin-bottom:20px;box-shadow:0 4px 18px rgba(0,0,0,.07)}
+h2{margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+input,select{width:100%;padding:13px;border:1px solid #d1d5db;border-radius:8px;font-size:15px}
+button{border:0;border-radius:8px;padding:12px 18px;cursor:pointer;font-size:15px}
+.blue{background:#2563eb;color:white}
+.red{background:#dc2626;color:white}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.stat{background:white;padding:20px;border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.06)}
+.stat h3{margin:0;font-size:28px;color:#2563eb}
+.stat p{margin:6px 0;color:#6b7280}
+.employees{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
+.emp{border:1px solid #e5e7eb;border-radius:12px;padding:18px}
+.emp h3{margin:0 0 10px}
+.emp p{margin:7px 0}
+.badge{display:inline-block;padding:6px 13px;border-radius:20px;font-weight:bold}
+.in{background:#dcfce7;color:#166534}
+.out{background:#fee2e2;color:#991b1b}
+.msg{display:none;padding:12px;margin-top:12px;border-radius:8px}
+.ok{display:block;background:#dcfce7;color:#166534}
+.err{display:block;background:#fee2e2;color:#991b1b}
 @media(max-width:800px){
-
-    .stats{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .employee-grid{
-        grid-template-columns:1fr;
-    }
-
+.stats{grid-template-columns:1fr 1fr}
+.employees{grid-template-columns:1fr}
 }
-
 @media(max-width:600px){
-
-    .form-grid{
-        grid-template-columns:1fr;
-    }
-
-    .header-inner{
-        align-items:flex-start;
-    }
-
-    header h1{
-        font-size:20px;
-    }
-
+.grid{grid-template-columns:1fr}
+.header{align-items:flex-start}
 }
-
 </style>
 </head>
 
 <body>
 
 <header>
-
-<div class="header-inner">
-
+<div class="header">
 <div>
 <h1>Office Attendance</h1>
 <p>Owner Dashboard</p>
 </div>
-
-<button class="logout" onclick="logout()">
-Logout
-</button>
-
+<button class="red" onclick="logout()">Logout</button>
 </div>
-
 </header>
-
 
 <div class="container">
 
-
 <!-- OWNER -->
-
 <div class="card">
-
-<h2>👤 Owner Information</h2>
-
-<div id="ownerInfo">
-Loading...
+<h2>👤 Owner</h2>
+<div id="ownerInfo">Loading...</div>
 </div>
-
-<div id="factoryInfo" class="factory-info" style="display:none;"></div>
-
-</div>
-
 
 <!-- ADD EMPLOYEE -->
-
 <div class="card">
-
 <h2>➕ Add New Employee</h2>
 
-<p style="color:#6b7280;">
-नया employee बनाने के लिए जानकारी भरें।
-</p>
-
-<div class="form-grid">
+<div class="grid">
 
 <div>
-
 <label>Employee Name</label>
-
-<input
-id="employeeName"
-type="text"
-placeholder="Employee Name"
->
-
+<input id="name" placeholder="Employee Name">
 </div>
 
-
 <div>
-
 <label>Mobile Number</label>
-
-<input
-id="employeePhone"
-type="text"
-placeholder="Mobile Number"
->
-
+<input id="phone" placeholder="Mobile Number">
 </div>
 
-
 <div>
-
 <label>Employee Email</label>
-
-<input
-id="employeeEmail"
-type="email"
-placeholder="employee@gmail.com"
->
-
+<input id="email" type="email" placeholder="employee@gmail.com">
 </div>
 
-
 <div>
-
 <label>Password</label>
-
-<input
-id="employeePassword"
-type="password"
-placeholder="Password"
->
-
+<input id="password" type="password" placeholder="Password">
 </div>
-
 
 <div>
-
 <label>Factory</label>
-
-<select id="factorySelect">
-
-<option value="">
-Factory चुनें
-</option>
-
+<select id="factory">
+<option value="">Factory चुनें</option>
 </select>
-
 </div>
 
 </div>
-
 
 <button
-id="addEmployeeBtn"
-class="primary"
-style="margin-top:15px;"
-onclick="addEmployee()"
->
+id="addBtn"
+class="blue"
+style="margin-top:15px"
+onclick="addEmployee()">
 Add Employee
 </button>
 
-
-<div id="addMessage" class="message"></div>
-
+<div id="msg" class="msg"></div>
 </div>
 
-
 <!-- STATS -->
-
 <div class="stats">
 
 <div class="stat">
-
-<h3 id="totalEmployees">
-0
-</h3>
-
+<h3 id="total">0</h3>
 <p>Total Employees</p>
-
 </div>
 
-
 <div class="stat">
-
-<h3 id="totalIn">
-0
-</h3>
-
+<h3 id="inCount">0</h3>
 <p>Currently IN</p>
-
 </div>
 
-
 <div class="stat">
-
-<h3 id="totalOut">
-0
-</h3>
-
+<h3 id="outCount">0</h3>
 <p>Currently OUT</p>
-
 </div>
-
 
 <div class="stat">
-
-<h3 id="totalWorking">
-0h 0m
-</h3>
-
-<p>Today's Working Time</p>
-
+<h3 id="working">0h 0m</h3>
+<p>Today's Working</p>
 </div>
 
 </div>
 
-
-<!-- EMPLOYEE LIST -->
-
+<!-- EMPLOYEES -->
 <div class="card">
-
 <h2>👥 Employees</h2>
-
-<div
-id="employeeList"
-class="employee-grid"
->
-
-<div class="loading">
-Employees loading...
+<div id="list" class="employees">
+Loading...
+</div>
 </div>
 
 </div>
-
-</div>
-
-
-</div>
-
 
 <script>
 
-/* =========================================
+/* ==============================
    SUPABASE
-========================================= */
+============================== */
 
-const SUPABASE_URL =
+const URL =
 "https://mxolpvdaengfpmlkgprc.supabase.co";
 
-const SUPABASE_KEY =
+const KEY =
 "sb_publishable_KaXl_tgIR8VZhmWR6vuAgQ_FswcmZes";
 
 const db =
-window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+supabase.createClient(URL,KEY);
+
+let user=null;
+let employees=[];
+let factories=[];
 
 
-/* =========================================
-   GLOBAL
-========================================= */
-
-let currentUser = null;
-let employees = [];
-let factories = [];
-
-
-/* =========================================
+/* ==============================
    START
-========================================= */
+============================== */
 
-window.addEventListener(
-    "load",
-    async function(){
-
-        await checkLogin();
-
-    }
-);
+window.onload=init;
 
 
-/* =========================================
-   CHECK LOGIN
-========================================= */
+async function init(){
 
-async function checkLogin(){
-
-    const {
-        data:{
-            session
-        }
-    } =
+    const {data} =
     await db.auth.getSession();
 
+    if(!data.session){
 
-    if(!session){
-
-        window.location.href =
-        "owner-login.html";
-
+        location.href="owner-login.html";
         return;
 
     }
 
+    user=data.session.user;
 
-    currentUser =
-    session.user;
-
-
-    document.getElementById(
-        "ownerInfo"
-    ).innerHTML = `
-
-        <strong>Email:</strong>
-        ${escapeHtml(currentUser.email)}
-
-        <br><br>
-
-        <strong>Owner ID:</strong>
-        ${escapeHtml(currentUser.id)}
-
+    document.getElementById("ownerInfo").innerHTML=
+    `
+    <b>Email:</b> ${safe(user.email)}
+    <br><br>
+    <b>Owner ID:</b> ${safe(user.id)}
     `;
 
-
     await loadFactories();
-
     await loadEmployees();
-
 }
 
 
-/* =========================================
-   LOAD FACTORIES
-========================================= */
+/* ==============================
+   FACTORIES
+============================== */
 
 async function loadFactories(){
 
-    const {
-        data,
-        error
-    } =
+    const {data,error} =
     await db
     .from("factories")
-    .select(
-        "id,name,address,status"
-    )
-    .eq(
-        "owner_id",
-        currentUser.id
-    )
-    .order(
-        "created_at",
-        {
-            ascending:false
-        }
-    );
-
+    .select("*")
+    .eq("owner_id",user.id)
+    .order("created_at",{ascending:false});
 
     if(error){
 
-        console.error(
-            "Factory error:",
-            error
-        );
-
+        console.error(error);
         return;
 
     }
 
+    factories=data||[];
 
-    factories =
-    data || [];
+    const select=
+    document.getElementById("factory");
 
+    select.innerHTML=
+    `<option value="">Factory चुनें</option>`;
 
-    const select =
-    document.getElementById(
-        "factorySelect"
-    );
+    factories.forEach(f=>{
 
+        select.innerHTML+=
+        `<option value="${f.id}">
+        ${safe(f.name)}
+        </option>`;
 
-    select.innerHTML =
-    `<option value="">
-        Factory चुनें
-    </option>`;
+    });
 
+    if(factories.length===1){
 
-    factories.forEach(
-        function(factory){
-
-            const option =
-            document.createElement(
-                "option"
-            );
-
-            option.value =
-            factory.id;
-
-            option.textContent =
-            factory.name;
-
-            select.appendChild(
-                option
-            );
-
-        }
-    );
-
-
-    if(factories.length === 1){
-
-        select.value =
-        factories[0].id;
-
-        showFactory(
-            factories[0]
-        );
+        select.value=factories[0].id;
 
     }
-
-
-    if(factories.length > 1){
-
-        select.addEventListener(
-            "change",
-            function(){
-
-                const factory =
-                factories.find(
-                    f =>
-                    f.id ===
-                    select.value
-                );
-
-                if(factory){
-                    showFactory(factory);
-                }
-
-            }
-        );
-
-    }
-
 }
 
 
-/* =========================================
-   SHOW FACTORY
-========================================= */
-
-function showFactory(factory){
-
-    const box =
-    document.getElementById(
-        "factoryInfo"
-    );
-
-
-    box.style.display =
-    "block";
-
-
-    box.innerHTML = `
-
-        <strong>Factory:</strong>
-        ${escapeHtml(factory.name)}
-
-        <br>
-
-        <strong>Status:</strong>
-        ${escapeHtml(factory.status || "active")}
-
-        ${
-            factory.address
-            ?
-            `<br>
-             <strong>Address:</strong>
-             ${escapeHtml(factory.address)}`
-            :
-            ""
-        }
-
-    `;
-
-}
-
-
-/* =========================================
-   LOAD EMPLOYEES
-========================================= */
+/* ==============================
+   EMPLOYEES
+============================== */
 
 async function loadEmployees(){
 
-    const {
-        data,
-        error
-    } =
+    const {data,error} =
     await db
     .from("employees")
     .select("*")
-    .eq(
-        "owner_id",
-        currentUser.id
-    )
-    .order(
-        "created_at",
-        {
-            ascending:false
-        }
-    );
-
+    .eq("owner_id",user.id)
+    .order("created_at",{ascending:false});
 
     if(error){
 
-        console.error(
-            "Employee error:",
-            error
-        );
+        console.error(error);
 
-        document.getElementById(
-            "employeeList"
-        ).innerHTML = `
-
-            <div class="loading">
-                Employee load नहीं हुए
-                <br><br>
-                ${escapeHtml(error.message)}
-            </div>
-
-        `;
+        document.getElementById("list").innerHTML=
+        "Employee load error: "+safe(error.message);
 
         return;
 
     }
 
+    employees=data||[];
 
-    employees =
-    data || [];
-
-
-    document.getElementById(
-        "totalEmployees"
-    ).innerText =
+    document.getElementById("total").innerText=
     employees.length;
 
-
-    await renderEmployees();
-
-}
-
-
-/* =========================================
-   TODAY DATE
-========================================= */
-
-function getToday(){
-
-    const now =
-    new Date();
-
-    const year =
-    now.getFullYear();
-
-    const month =
-    String(
-        now.getMonth()+1
-    ).padStart(2,"0");
-
-    const day =
-    String(
-        now.getDate()
-    ).padStart(2,"0");
-
-
-    return `${year}-${month}-${day}`;
+    await render();
 
 }
 
 
-/* =========================================
-   GET EMPLOYEE ATTENDANCE
-========================================= */
+/* ==============================
+   TODAY
+============================== */
 
-async function getEmployeeAttendance(
-    employeeId
-){
+function today(){
 
-    const today =
-    getToday();
+    const d=new Date();
+
+    return d.getFullYear()+"-"+
+    String(d.getMonth()+1).padStart(2,"0")+"-"+
+    String(d.getDate()).padStart(2,"0");
+
+}
 
 
-    const {
-        data,
-        error
-    } =
+/* ==============================
+   ATTENDANCE
+============================== */
+
+async function attendance(employeeId){
+
+    const {data,error} =
     await db
     .from("attendance")
     .select("*")
-    .eq(
-        "employee_id",
-        employeeId
-    )
-    .eq(
-        "date",
-        today
-    )
-    .order(
-        "check_in",
-        {
-            ascending:false
-        }
-    );
-
+    .eq("employee_id",employeeId)
+    .eq("date",today())
+    .order("check_in",{ascending:false});
 
     if(error){
 
-        console.error(
-            "Attendance error:",
-            error
-        );
-
+        console.error(error);
         return [];
 
     }
 
-
-    return data || [];
+    return data||[];
 
 }
 
 
-/* =========================================
-   GET CURRENT STATUS
-========================================= */
+/* ==============================
+   CURRENT STATUS
+============================== */
 
-function getCurrentStatus(rows){
+function currentStatus(rows){
 
-    if(
-        !rows ||
-        rows.length === 0
-    ){
-
+    if(!rows.length)
         return "OUT";
-
-    }
 
 
     /*
-      सबसे महत्वपूर्ण हिस्सा:
+       सबसे पहले latest record देखें।
 
-      Attendance table में status field
-      मौजूद है तो उसी को प्राथमिकता देंगे।
+       अगर status = IN है
+       तो Owner में IN दिखाएँ।
+
+       अगर status = OUT है
+       तो Owner में OUT दिखाएँ।
     */
 
-    for(
-        let i=0;
-        i<rows.length;
-        i++
-    ){
+    for(const row of rows){
 
-        const row =
-        rows[i];
+        if(row.status){
 
+            const s=
+            String(row.status).trim().toUpperCase();
 
-        if(
-            row.status &&
-            (
-                String(
-                    row.status
-                ).toUpperCase()
-                === "IN"
-                ||
-                String(
-                    row.status
-                ).toUpperCase()
-                === "OUT"
-            )
-        ){
+            if(s==="IN")
+                return "IN";
 
-            return String(
-                row.status
-            ).toUpperCase();
+            if(s==="OUT")
+                return "OUT";
 
         }
 
@@ -906,16 +361,13 @@ function getCurrentStatus(rows){
 
 
     /*
-      अगर status खाली है तो
-      check_in / check_out से पता लगाएँ।
+       अगर status खाली है,
+       check_in/check_out से पता लगाएँ।
     */
 
-    const latest =
-    rows[0];
-
+    const latest=rows[0];
 
     if(
-        latest &&
         latest.check_in &&
         !latest.check_out
     ){
@@ -924,307 +376,149 @@ function getCurrentStatus(rows){
 
     }
 
-
     return "OUT";
 
 }
 
 
-/* =========================================
-   WORKING MINUTES
-========================================= */
+/* ==============================
+   WORKING TIME
+============================== */
 
-function getWorkingMinutes(rows){
+function workingTime(rows){
 
-    if(
-        !rows ||
-        rows.length === 0
-    ){
+    let total=0;
 
-        return 0;
+    rows.forEach(row=>{
 
-    }
+        if(!row.check_in)
+            return;
 
+        const start=
+        new Date(row.check_in);
 
-    let total = 0;
+        const end=
+        row.check_out
+        ? new Date(row.check_out)
+        : new Date();
 
+        if(end>start){
 
-    rows.forEach(
-        function(row){
-
-            if(
-                !row.check_in
-            ){
-
-                return;
-
-            }
-
-
-            const start =
-            new Date(
-                row.check_in
+            total+=
+            Math.floor(
+                (end-start)/60000
             );
 
-
-            let end;
-
-
-            if(row.check_out){
-
-                end =
-                new Date(
-                    row.check_out
-                );
-
-            }
-            else{
-
-                /*
-                  अगर अभी IN है,
-                  तो current time तक count करें।
-                */
-
-                end =
-                new Date();
-
-            }
-
-
-            if(
-                !isNaN(start) &&
-                !isNaN(end) &&
-                end > start
-            ){
-
-                total +=
-                Math.round(
-                    (
-                        end.getTime()
-                        -
-                        start.getTime()
-                    )
-                    /
-                    60000
-                );
-
-            }
-
         }
-    );
 
+    });
 
     return total;
 
 }
 
 
-/* =========================================
-   RENDER EMPLOYEES
-========================================= */
+/* ==============================
+   RENDER
+============================== */
 
-async function renderEmployees(){
+async function render(){
 
-    const container =
-    document.getElementById(
-        "employeeList"
-    );
+    const list=
+    document.getElementById("list");
 
+    if(!employees.length){
 
-    if(
-        employees.length === 0
-    ){
+        list.innerHTML=
+        "<div>अभी कोई employee नहीं है।</div>";
 
-        container.innerHTML = `
-
-            <div class="loading">
-
-                अभी कोई employee नहीं है।
-
-            </div>
-
-        `;
-
-
-        document.getElementById(
-            "totalIn"
-        ).innerText =
-        "0";
-
-
-        document.getElementById(
-            "totalOut"
-        ).innerText =
-        "0";
-
-
-        document.getElementById(
-            "totalWorking"
-        ).innerText =
-        "0h 0m";
-
+        document.getElementById("inCount").innerText=0;
+        document.getElementById("outCount").innerText=0;
+        document.getElementById("working").innerText="0h 0m";
 
         return;
 
     }
 
-
-    let html = "";
-
-    let inCount = 0;
-
-    let outCount = 0;
-
-    let totalWorking = 0;
+    let html="";
+    let ins=0;
+    let outs=0;
+    let totalMinutes=0;
 
 
-    for(
-        const employee of employees
-    ){
+    for(const emp of employees){
 
-        const rows =
-        await getEmployeeAttendance(
-            employee.id
+        const rows=
+        await attendance(emp.id);
+
+        const status=
+        currentStatus(rows);
+
+        const minutes=
+        workingTime(rows);
+
+        totalMinutes+=minutes;
+
+        if(status==="IN")
+            ins++;
+        else
+            outs++;
+
+
+        let factoryName="-";
+
+        const factory=
+        factories.find(
+            f=>f.id===emp.factory_id
         );
 
-
-        /*
-          Employee का actual status
-        */
-
-        const status =
-        getCurrentStatus(
-            rows
-        );
+        if(factory)
+            factoryName=factory.name;
 
 
-        /*
-          Today's total working
-        */
+        html+=`
 
-        const minutes =
-        getWorkingMinutes(
-            rows
-        );
-
-
-        totalWorking +=
-        minutes;
-
-
-        if(
-            status === "IN"
-        ){
-
-            inCount++;
-
-        }
-        else{
-
-            outCount++;
-
-        }
-
-
-        let badgeClass =
-        "out";
-
-
-        if(
-            status === "IN"
-        ){
-
-            badgeClass =
-            "in";
-
-        }
-
-
-        html += `
-
-        <div class="employee">
+        <div class="emp">
 
             <h3>
-                👤
-                ${escapeHtml(
-                    employee.name ||
-                    "Employee"
-                )}
+            👤 ${safe(emp.name||"Employee")}
             </h3>
 
-
             <p>
-                📱
-                ${escapeHtml(
-                    employee.phone ||
-                    "-"
-                )}
+            📱 ${safe(emp.phone||"-")}
             </p>
 
-
             <p>
-                ✉️
-                ${escapeHtml(
-                    employee.email ||
-                    "-"
-                )}
+            ✉️ ${safe(emp.email||"-")}
             </p>
 
-
             <p>
-
-                Status:
-
-                <span
-                    class="badge ${badgeClass}"
-                >
-
-                    ${
-                        status === "IN"
-                        ? "IN"
-                        : "OUT"
-                    }
-
-                </span>
-
+            🏭 ${safe(factoryName)}
             </p>
 
-
             <p>
+            Status:
 
-                ⏱️ Today's Working:
+            <span class="badge ${
+                status==="IN"
+                ?"in"
+                :"out"
+            }">
 
-                <strong>
-                    ${formatMinutes(
-                        minutes
-                    )}
-                </strong>
+            ${status}
 
+            </span>
             </p>
 
-
             <p>
-
-                🏭 Factory:
-
-                <strong>
-                    ${getFactoryName(
-                        employee.factory_id
-                    )}
-                </strong>
-
+            ⏱️ Today's Working:
+            <b>${format(minutes)}</b>
             </p>
-
 
             <button
-                class="small-btn"
-                onclick="viewEmployee(
-                    '${employee.id}'
-                )"
-            >
-
-                View Details
-
+            class="blue"
+            onclick="details('${emp.id}')">
+            View Details
             </button>
 
         </div>
@@ -1234,108 +528,48 @@ async function renderEmployees(){
     }
 
 
-    container.innerHTML =
-    html;
+    list.innerHTML=html;
 
+    document.getElementById("inCount").innerText=ins;
 
-    document.getElementById(
-        "totalIn"
-    ).innerText =
-    inCount;
+    document.getElementById("outCount").innerText=outs;
 
-
-    document.getElementById(
-        "totalOut"
-    ).innerText =
-    outCount;
-
-
-    document.getElementById(
-        "totalWorking"
-    ).innerText =
-    formatMinutes(
-        totalWorking
-    );
+    document.getElementById("working").innerText=
+    format(totalMinutes);
 
 }
 
 
-/* =========================================
-   FACTORY NAME
-========================================= */
-
-function getFactoryName(
-    factoryId
-){
-
-    if(!factoryId){
-
-        return "-";
-
-    }
-
-
-    const factory =
-    factories.find(
-        f =>
-        f.id === factoryId
-    );
-
-
-    return factory
-    ? factory.name
-    : "-";
-
-}
-
-
-/* =========================================
+/* ==============================
    ADD EMPLOYEE
-========================================= */
+============================== */
 
 async function addEmployee(){
 
-    const name =
-    document.getElementById(
-        "employeeName"
-    ).value.trim();
+    const name=
+    document.getElementById("name").value.trim();
 
+    const phone=
+    document.getElementById("phone").value.trim();
 
-    const phone =
-    document.getElementById(
-        "employeePhone"
-    ).value.trim();
+    const email=
+    document.getElementById("email").value.trim();
 
+    const password=
+    document.getElementById("password").value;
 
-    const email =
-    document.getElementById(
-        "employeeEmail"
-    ).value.trim();
+    const factoryId=
+    document.getElementById("factory").value;
 
+    if(!name||
+       !phone||
+       !email||
+       !password||
+       !factoryId){
 
-    const password =
-    document.getElementById(
-        "employeePassword"
-    ).value;
-
-
-    const factoryId =
-    document.getElementById(
-        "factorySelect"
-    ).value;
-
-
-    const btn =
-    document.getElementById(
-        "addEmployeeBtn"
-    );
-
-
-    if(!name){
-
-        showMessage(
-            "Employee Name भरें।",
-            false
+        message(
+        "सभी जानकारी भरें और Factory चुनें।",
+        false
         );
 
         return;
@@ -1343,11 +577,11 @@ async function addEmployee(){
     }
 
 
-    if(!phone){
+    if(password.length<6){
 
-        showMessage(
-            "Mobile Number भरें।",
-            false
+        message(
+        "Password कम से कम 6 characters का होना चाहिए।",
+        false
         );
 
         return;
@@ -1355,260 +589,105 @@ async function addEmployee(){
     }
 
 
-    if(!email){
+    const btn=
+    document.getElementById("addBtn");
 
-        showMessage(
-            "Employee Email भरें।",
-            false
-        );
+    btn.disabled=true;
 
-        return;
-
-    }
-
-
-    if(!password){
-
-        showMessage(
-            "Password भरें।",
-            false
-        );
-
-        return;
-
-    }
-
-
-    if(password.length < 6){
-
-        showMessage(
-            "Password कम से कम 6 characters का होना चाहिए।",
-            false
-        );
-
-        return;
-
-    }
-
-
-    if(!factoryId){
-
-        showMessage(
-            "Factory चुनें।",
-            false
-        );
-
-        return;
-
-    }
-
-
-    btn.disabled =
-    true;
-
-    btn.innerText =
+    btn.innerText=
     "Employee बन रहा है...";
 
 
     try{
 
-        /*
-          Existing Edge Function
-        */
-
-        const {
-            data,
-            error
-        } =
+        const {data,error}=
         await db.functions.invoke(
-            "quick-endpoint",
-            {
-                body:{
-                    name:name,
-                    phone:phone,
-                    email:email,
-                    password:password
-                }
+        "quick-endpoint",
+        {
+            body:{
+                name:name,
+                phone:phone,
+                email:email,
+                password:password
             }
-        );
+        });
 
 
-        if(error){
+        if(error)
+            throw error;
 
-            throw new Error(
-                error.message ||
-                "Employee create नहीं हुआ"
-            );
-
-        }
-
-
-        console.log(
-            "Employee created:",
-            data
-        );
-
-
-        /*
-          थोड़ी देर wait
-        */
 
         await new Promise(
-            resolve =>
-            setTimeout(
-                resolve,
-                1200
-            )
+        r=>setTimeout(r,1000)
         );
 
 
         /*
-          Employee record खोजें
+          Created employee खोजें
         */
 
-        const {
-            data:created,
-            error:findError
-        }
-        =
+        const {data:emp,error:findError}=
         await db
         .from("employees")
-        .select(
-            "id,email,owner_id,factory_id"
-        )
-        .eq(
-            "email",
-            email
-        )
-        .eq(
-            "owner_id",
-            currentUser.id
-        )
+        .select("id,email,owner_id")
+        .eq("email",email)
+        .eq("owner_id",user.id)
         .limit(1);
 
 
-        if(findError){
-
-            console.error(
-                findError
-            );
-
-        }
+        if(findError)
+            throw findError;
 
 
-        if(
-            created &&
-            created.length > 0
-        ){
+        if(emp && emp.length){
 
-            const employeeId =
-            created[0].id;
-
-
-            /*
-              Factory assign
-            */
-
-            const {
-                error:updateError
-            }
-            =
+            const {error:updateError}=
             await db
             .from("employees")
             .update({
-                factory_id:
-                factoryId
+                factory_id:factoryId
             })
-            .eq(
-                "id",
-                employeeId
-            )
-            .eq(
-                "owner_id",
-                currentUser.id
-            );
+            .eq("id",emp[0].id)
+            .eq("owner_id",user.id);
 
 
-            if(updateError){
-
-                console.error(
-                    updateError
-                );
-
-                showMessage(
-                    "Employee बन गया, लेकिन Factory mapping में समस्या हुई।",
-                    false
-                );
-
-            }
-            else{
-
-                showMessage(
-                    "Employee सफलतापूर्वक बन गया ✅",
-                    true
-                );
-
-            }
-
-        }
-        else{
-
-            showMessage(
-                "Employee बन गया है। List refresh करके check करें।",
-                true
-            );
+            if(updateError)
+                throw updateError;
 
         }
 
 
-        /*
-          Form clear
-        */
-
-        document.getElementById(
-            "employeeName"
-        ).value = "";
+        message(
+        "Employee सफलतापूर्वक बन गया ✅",
+        true
+        );
 
 
-        document.getElementById(
-            "employeePhone"
-        ).value = "";
-
-
-        document.getElementById(
-            "employeeEmail"
-        ).value = "";
-
-
-        document.getElementById(
-            "employeePassword"
-        ).value = "";
+        document.getElementById("name").value="";
+        document.getElementById("phone").value="";
+        document.getElementById("email").value="";
+        document.getElementById("password").value="";
 
 
         await loadEmployees();
 
-
     }
-    catch(error){
+    catch(e){
 
-        console.error(
-            error
-        );
+        console.error(e);
 
-
-        showMessage(
-            "Employee create नहीं हुआ: " +
-            error.message,
-            false
+        message(
+        "Employee create नहीं हुआ: "+
+        (e.message||e),
+        false
         );
 
     }
     finally{
 
-        btn.disabled =
-        false;
+        btn.disabled=false;
 
-        btn.innerText =
+        btn.innerText=
         "Add Employee";
 
     }
@@ -1616,224 +695,123 @@ async function addEmployee(){
 }
 
 
-/* =========================================
-   MESSAGE
-========================================= */
+/* ==============================
+   DETAILS
+============================== */
 
-function showMessage(
-    text,
-    success
-){
+async function details(id){
 
-    const box =
-    document.getElementById(
-        "addMessage"
-    );
+    const emp=
+    employees.find(e=>e.id===id);
 
-
-    box.innerText =
-    text;
-
-
-    box.className =
-    success
-    ? "message success"
-    : "message error";
-
-}
-
-
-/* =========================================
-   EMPLOYEE DETAILS
-========================================= */
-
-async function viewEmployee(
-    employeeId
-){
-
-    const employee =
-    employees.find(
-        e =>
-        e.id === employeeId
-    );
-
-
-    if(!employee){
-
+    if(!emp)
         return;
 
-    }
 
+    const rows=
+    await attendance(id);
 
-    const rows =
-    await getEmployeeAttendance(
-        employeeId
-    );
+    const status=
+    currentStatus(rows);
 
-
-    const status =
-    getCurrentStatus(
-        rows
-    );
-
-
-    const minutes =
-    getWorkingMinutes(
-        rows
-    );
-
-
-    let details = "";
-
-    details +=
-    "Employee Details\n\n";
-
-
-    details +=
-    "Name: " +
-    (employee.name || "-") +
-    "\n";
-
-
-    details +=
-    "Mobile: " +
-    (employee.phone || "-") +
-    "\n";
-
-
-    details +=
-    "Email: " +
-    (employee.email || "-") +
-    "\n";
-
-
-    details +=
-    "Status: " +
-    status +
-    "\n";
-
-
-    details +=
-    "Today's Working: " +
-    formatMinutes(minutes) +
-    "\n";
-
-
-    details +=
-    "Factory: " +
-    getFactoryName(
-        employee.factory_id
-    );
+    const minutes=
+    workingTime(rows);
 
 
     alert(
-        details
+`Employee Details
+
+Name: ${emp.name||"-"}
+Mobile: ${emp.phone||"-"}
+Email: ${emp.email||"-"}
+
+Status: ${status}
+
+Today's Working:
+${format(minutes)}`
     );
 
 }
 
 
-/* =========================================
-   FORMAT MINUTES
-========================================= */
+/* ==============================
+   MESSAGE
+============================== */
 
-function formatMinutes(
-    minutes
-){
+function message(text,ok){
 
-    minutes =
-    Math.max(
-        0,
-        Math.round(
-            minutes || 0
-        )
-    );
+    const box=
+    document.getElementById("msg");
 
+    box.innerText=text;
 
-    const hours =
-    Math.floor(
-        minutes / 60
-    );
-
-
-    const mins =
-    minutes % 60;
-
-
-    return (
-        hours +
-        "h " +
-        mins +
-        "m"
-    );
+    box.className=
+    ok
+    ?"msg ok"
+    :"msg err";
 
 }
 
 
-/* =========================================
-   ESCAPE HTML
-========================================= */
+/* ==============================
+   FORMAT
+============================== */
 
-function escapeHtml(
-    value
-){
+function format(minutes){
 
-    return String(
-        value ?? ""
-    )
-    .replace(
-        /&/g,
-        "&amp;"
-    )
-    .replace(
-        /</g,
-        "&lt;"
-    )
-    .replace(
-        />/g,
-        "&gt;"
-    )
-    .replace(
-        /"/g,
-        "&quot;"
-    )
-    .replace(
-        /'/g,
-        "&#039;"
-    );
+    const h=
+    Math.floor(minutes/60);
+
+    const m=
+    minutes%60;
+
+    return h+"h "+m+"m";
 
 }
 
 
-/* =========================================
+/* ==============================
+   SAFE TEXT
+============================== */
+
+function safe(value){
+
+    return String(value??"")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* ==============================
    LOGOUT
-========================================= */
+============================== */
 
 async function logout(){
 
     await db.auth.signOut();
 
-    window.location.href =
+    location.href=
     "owner-login.html";
 
 }
 
 
-/* =========================================
+/* ==============================
    AUTO REFRESH
-========================================= */
+============================== */
 
 setInterval(
-    async function(){
+async function(){
 
-        if(currentUser){
+    if(user)
+        await loadEmployees();
 
-            await loadEmployees();
-
-        }
-
-    },
-    30000
+},
+30000
 );
 
 </script>
